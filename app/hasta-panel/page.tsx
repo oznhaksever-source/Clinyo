@@ -35,7 +35,7 @@ export default function HastaPanel() {
       <div style={{ width: "240px", background: "#0a1628", minHeight: "100vh", padding: "24px 0", flexShrink: 0 }}>
         <div style={{ padding: "0 20px 24px", borderBottom: "1px solid #1a2a3a" }}>
           <a href="/" style={{ fontSize: "20px", fontWeight: 500, color: "#fff", textDecoration: "none" }}>
-            Clin<span style={{ color: "#4A9EF5" }}>yo</span>
+            med<span style={{ color: "#7F77DD", fontWeight: 300 }}>oqa</span>
           </a>
         </div>
         <div style={{ padding: "16px 12px" }}>

@@ -55,7 +55,7 @@ export default function TeklifTalep() {
 
       <nav style={{ padding: "16px 32px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
         <a href="/" style={{ fontSize: "22px", fontWeight: 500, color: "#fff", textDecoration: "none" }}>
-          Clin<span style={{ color: "#4A9EF5" }}>yo</span>
+          med<span style={{ color: "#7F77DD", fontWeight: 300 }}>oqa</span>
         </a>
         <a href="/" style={{ color: "#aab4c8", fontSize: "13px", textDecoration: "none" }}>Ana Sayfaya Don</a>
       </nav>

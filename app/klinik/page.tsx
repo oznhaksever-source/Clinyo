@@ -24,7 +24,7 @@ export default function KlinikProfil() {
 
       <nav style={{ background: "#0a1628", padding: "16px 32px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
         <a href="/" style={{ fontSize: "22px", fontWeight: 500, color: "#fff", textDecoration: "none" }}>
-          Clin<span style={{ color: "#4A9EF5" }}>yo</span>
+          med<span style={{ color: "#7F77DD", fontWeight: 300 }}>oqa</span>
         </a>
         <div style={{ display: "flex", gap: "24px", alignItems: "center" }}>
           <a href="#" style={{ color: "#aab4c8", fontSize: "13px", textDecoration: "none" }}>Klinikler</a>
@@ -150,7 +150,7 @@ export default function KlinikProfil() {
       </div>
 
       <footer style={{ background: "#0a1628", padding: "20px 32px", display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: "32px" }}>
-        <div style={{ color: "#fff", fontSize: "16px", fontWeight: 500 }}>Clin<span style={{ color: "#4A9EF5" }}>yo</span></div>
+        <div style={{ color: "#fff", fontSize: "16px", fontWeight: 500 }}>med<span style={{ color: "#7F77DD", fontWeight: 300 }}>oqa</span></div>
         <div style={{ display: "flex", gap: "20px" }}>
           {["Gizlilik", "KVKK", "Iletisim", "Blog"].map((l) => (
             <a key={l} href="#" style={{ color: "#5a7a9a", fontSize: "12px", textDecoration: "none" }}>{l}</a>
