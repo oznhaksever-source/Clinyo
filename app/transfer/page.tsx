@@ -1,4 +1,5 @@
 "use client";
+import Navbar from "../components/Navbar";
 import { useState } from "react";
 
 const transferler = [
@@ -51,17 +52,7 @@ export default function Transfer() {
   return (
     <main style={{ minHeight: "100vh", background: "#f9fafb", fontFamily: "sans-serif" }}>
 
-      <nav style={{ background: "#12103a", padding: "16px 32px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-        <a href="/" style={{ fontSize: "22px", fontWeight: 700, color: "#fff", textDecoration: "none" }}>
-          med<span style={{ color: "#7F77DD", fontWeight: 300 }}>oqa</span>
-        </a>
-        <div style={{ display: "flex", gap: "24px", alignItems: "center" }}>
-          <a href="/klinikler" style={{ color: "#aab4c8", fontSize: "13px", textDecoration: "none" }}>Klinikler</a>
-          <a href="/oteller" style={{ color: "#aab4c8", fontSize: "13px", textDecoration: "none" }}>Oteller</a>
-          <a href="/transfer" style={{ color: "#fff", fontSize: "13px", textDecoration: "none", borderBottom: "2px solid #534AB7", paddingBottom: "2px" }}>Transfer</a>
-          <a href="/giris" style={{ background: "#534AB7", color: "#fff", padding: "8px 16px", borderRadius: "8px", fontSize: "13px", textDecoration: "none" }}>Giriş Yap</a>
-        </div>
-      </nav>
+      <Navbar />
 
       <section style={{ background: "linear-gradient(135deg, #12103a 0%, #1e1b4b 100%)", padding: "40px 32px" }}>
         <h1 style={{ color: "#fff", fontSize: "32px", fontWeight: 700, marginBottom: "8px" }}>Transfer Hizmetleri</h1>

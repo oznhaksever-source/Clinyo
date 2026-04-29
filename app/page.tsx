@@ -1,25 +1,9 @@
+import Navbar from "./components/Navbar";
 export default function Home() {
   return (
     <main style={{ minHeight: "100vh", background: "#f9fafb", fontFamily: "sans-serif" }}>
 
-      <nav style={{ background: "#12103a", padding: "16px 32px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-        <div style={{ fontSize: "22px", fontWeight: 700, color: "#fff" }}>
-          med<span style={{ color: "#7F77DD", fontWeight: 300 }}>oqa</span>
-        </div>
-        <div style={{ display: "flex", gap: "24px", alignItems: "center" }}>
-          <a href="/klinikler" style={{ color: "#aab4c8", fontSize: "13px", textDecoration: "none" }}>Klinikler</a>
-          <a href="/tedaviler" style={{ color: "#aab4c8", fontSize: "13px", textDecoration: "none" }}>Tedaviler</a>
-          <a href="/oteller" style={{ color: "#aab4c8", fontSize: "13px", textDecoration: "none" }}>Oteller</a>
-          <a href="/transfer" style={{ color: "#aab4c8", fontSize: "13px", textDecoration: "none" }}>Transfer</a>
-          <a href="/nasil-calisir" style={{ color: "#aab4c8", fontSize: "13px", textDecoration: "none" }}>Nasıl Çalışır</a>
-          <div style={{ display: "flex", gap: "6px" }}>
-            <span style={{ fontSize: "11px", padding: "3px 8px", border: "1px solid #534AB7", borderRadius: "4px", color: "#7F77DD" }}>TR</span>
-            <span style={{ fontSize: "11px", padding: "3px 8px", border: "1px solid #2a2a4e", borderRadius: "4px", color: "#aab4c8" }}>EN</span>
-            <span style={{ fontSize: "11px", padding: "3px 8px", border: "1px solid #2a2a4e", borderRadius: "4px", color: "#aab4c8" }}>DE</span>
-          </div>
-          <a href="/giris" style={{ background: "#534AB7", color: "#fff", padding: "8px 16px", borderRadius: "8px", fontSize: "13px", textDecoration: "none" }}>Giris Yap</a>
-        </div>
-      </nav>
+     <Navbar /> 
 
       <section style={{ background: "linear-gradient(135deg, #12103a 0%, #1e1b4b 60%, #2d2a6e 100%)", padding: "80px 32px", textAlign: "center" }}>
         <div style={{ display: "inline-block", background: "rgba(83,74,183,0.25)", color: "#AFA9EC", fontSize: "12px", padding: "4px 16px", borderRadius: "20px", border: "0.5px solid #534AB7", marginBottom: "20px" }}>

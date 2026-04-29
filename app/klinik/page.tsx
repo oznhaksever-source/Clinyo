@@ -1,4 +1,4 @@
- 
+ import Navbar from "../components/Navbar";
 export default function KlinikProfil() {
   const doktorlar = [
     { kisaltma: "AK", ad: "Dr. Ahmet Kaya", uzmanlik: "Implant Uzmani", deneyim: "15 yil" },
@@ -22,16 +22,7 @@ export default function KlinikProfil() {
   return (
     <main style={{ minHeight: "100vh", background: "#f9fafb", fontFamily: "sans-serif" }}>
 
-      <nav style={{ background: "#0a1628", padding: "16px 32px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-        <a href="/" style={{ fontSize: "22px", fontWeight: 500, color: "#fff", textDecoration: "none" }}>
-          med<span style={{ color: "#7F77DD", fontWeight: 300 }}>oqa</span>
-        </a>
-        <div style={{ display: "flex", gap: "24px", alignItems: "center" }}>
-          <a href="#" style={{ color: "#aab4c8", fontSize: "13px", textDecoration: "none" }}>Klinikler</a>
-          <a href="#" style={{ color: "#aab4c8", fontSize: "13px", textDecoration: "none" }}>Tedaviler</a>
-          <a href="#" style={{ background: "#185FA5", color: "#fff", padding: "8px 16px", borderRadius: "8px", fontSize: "13px", textDecoration: "none" }}>Giris Yap</a>
-        </div>
-      </nav>
+      <Navbar />
 
       <div style={{ background: "#0d2144", padding: "32px", display: "flex", gap: "24px", alignItems: "center" }}>
         <div style={{ width: "80px", height: "80px", background: "#185FA5", borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", color: "#fff", fontSize: "28px", fontWeight: 500, flexShrink: 0 }}>SD</div>
