@@ -9,7 +9,9 @@ export default function Home() {
         <div style={{ display: "flex", gap: "24px", alignItems: "center" }}>
           <a href="/klinikler" style={{ color: "#aab4c8", fontSize: "13px", textDecoration: "none" }}>Klinikler</a>
           <a href="/tedaviler" style={{ color: "#aab4c8", fontSize: "13px", textDecoration: "none" }}>Tedaviler</a>
-          <a href="/nasil-calisir" style={{ color: "#aab4c8", fontSize: "13px", textDecoration: "none" }}>Nasil Calisir</a>
+          <a href="/oteller" style={{ color: "#aab4c8", fontSize: "13px", textDecoration: "none" }}>Oteller</a>
+          <a href="/transfer" style={{ color: "#aab4c8", fontSize: "13px", textDecoration: "none" }}>Transfer</a>
+          <a href="/nasil-calisir" style={{ color: "#aab4c8", fontSize: "13px", textDecoration: "none" }}>Nasıl Çalışır</a>
           <div style={{ display: "flex", gap: "6px" }}>
             <span style={{ fontSize: "11px", padding: "3px 8px", border: "1px solid #534AB7", borderRadius: "4px", color: "#7F77DD" }}>TR</span>
             <span style={{ fontSize: "11px", padding: "3px 8px", border: "1px solid #2a2a4e", borderRadius: "4px", color: "#aab4c8" }}>EN</span>
@@ -119,6 +121,58 @@ export default function Home() {
               <div style={{ fontSize: "12px", color: "#888" }}>{item.aciklama}</div>
             </div>
           ))}
+        </div>
+      </section>
+      {/* OTEL VE TRANSFER BÖLÜMÜ */}
+      <section style={{ background: "#1e1b4b", padding: "56px 32px" }}>
+        <div style={{ maxWidth: "1100px", margin: "0 auto" }}>
+          <h2 style={{ fontSize: "22px", fontWeight: 700, color: "#fff", marginBottom: "6px", textAlign: "center" }}>Eksiksiz Sağlık Turizmi Paketi</h2>
+          <p style={{ fontSize: "14px", color: "#8b8fc8", marginBottom: "36px", textAlign: "center" }}>Klinikten otele, transferden tedaviye — her şey tek platformda</p>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "20px" }}>
+
+            <div style={{ background: "rgba(83,74,183,0.15)", border: "1px solid #534AB7", borderRadius: "16px", padding: "28px" }}>
+              <div style={{ fontSize: "36px", marginBottom: "16px" }}>🏥</div>
+              <h3 style={{ fontSize: "18px", fontWeight: 700, color: "#fff", marginBottom: "10px" }}>Klinik</h3>
+              <p style={{ fontSize: "13px", color: "#8b8fc8", lineHeight: 1.6, marginBottom: "20px" }}>500+ onaylı klinik arasından seçin. Diş, saç ekimi, göz, plastik cerrahi ve daha fazlası.</p>
+              <div style={{ display: "flex", flexDirection: "column", gap: "6px", marginBottom: "20px" }}>
+                {["500+ onaylı klinik", "Ücretsiz teklif", "Karşılaştırmalı fiyatlar"].map((m) => (
+                  <div key={m} style={{ fontSize: "12px", color: "#AFA9EC", display: "flex", alignItems: "center", gap: "6px" }}>
+                    <span style={{ color: "#7F77DD" }}>✓</span> {m}
+                  </div>
+                ))}
+              </div>
+              <a href="/klinikler" style={{ display: "block", textAlign: "center", background: "#534AB7", color: "#fff", padding: "10px", borderRadius: "8px", fontSize: "13px", textDecoration: "none", fontWeight: 600 }}>Klinikleri Gör</a>
+            </div>
+
+            <div style={{ background: "rgba(83,74,183,0.15)", border: "1px solid #534AB7", borderRadius: "16px", padding: "28px" }}>
+              <div style={{ fontSize: "36px", marginBottom: "16px" }}>🏨</div>
+              <h3 style={{ fontSize: "18px", fontWeight: 700, color: "#fff", marginBottom: "10px" }}>Otel</h3>
+              <p style={{ fontSize: "13px", color: "#8b8fc8", lineHeight: 1.6, marginBottom: "20px" }}>Kliniğinize yakın en iyi otelleri keşfedin. Konforlu konaklama, uygun fiyatlar.</p>
+              <div style={{ display: "flex", flexDirection: "column", gap: "6px", marginBottom: "20px" }}>
+                {["Kliniğe yakın oteller", "3-5 yıldızlı seçenekler", "Özel hasta indirimleri"].map((m) => (
+                  <div key={m} style={{ fontSize: "12px", color: "#AFA9EC", display: "flex", alignItems: "center", gap: "6px" }}>
+                    <span style={{ color: "#7F77DD" }}>✓</span> {m}
+                  </div>
+                ))}
+              </div>
+              <a href="/oteller" style={{ display: "block", textAlign: "center", background: "#534AB7", color: "#fff", padding: "10px", borderRadius: "8px", fontSize: "13px", textDecoration: "none", fontWeight: 600 }}>Otelleri Gör</a>
+            </div>
+
+            <div style={{ background: "rgba(83,74,183,0.15)", border: "1px solid #534AB7", borderRadius: "16px", padding: "28px" }}>
+              <div style={{ fontSize: "36px", marginBottom: "16px" }}>🚗</div>
+              <h3 style={{ fontSize: "18px", fontWeight: 700, color: "#fff", marginBottom: "10px" }}>Transfer</h3>
+              <p style={{ fontSize: "13px", color: "#8b8fc8", lineHeight: 1.6, marginBottom: "20px" }}>Havalimanından kliniğe, kliniğe otele güvenli ve konforlu transfer hizmeti.</p>
+              <div style={{ display: "flex", flexDirection: "column", gap: "6px", marginBottom: "20px" }}>
+                {["7/24 transfer hizmeti", "Uçuş takibi", "VIP araç seçenekleri"].map((m) => (
+                  <div key={m} style={{ fontSize: "12px", color: "#AFA9EC", display: "flex", alignItems: "center", gap: "6px" }}>
+                    <span style={{ color: "#7F77DD" }}>✓</span> {m}
+                  </div>
+                ))}
+              </div>
+              <a href="/transfer" style={{ display: "block", textAlign: "center", background: "#534AB7", color: "#fff", padding: "10px", borderRadius: "8px", fontSize: "13px", textDecoration: "none", fontWeight: 600 }}>Transferleri Gör</a>
+            </div>
+
+          </div>
         </div>
       </section>
 
