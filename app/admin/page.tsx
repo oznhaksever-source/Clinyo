@@ -5,9 +5,9 @@ export default function AdminPanel() {
   const [aktifSayfa, setAktifSayfa] = useState("ozet");
 
   const klinikler = [
-    { id: "1", ad: "Smile Dental Clinic", sehir: "Istanbul", kategori: "Dis", durum: "onaylandi", puan: "4.9" },
-    { id: "2", ad: "Hair Turkey Center", sehir: "Istanbul", kategori: "Sac Ekimi", durum: "beklemede", puan: "-" },
-    { id: "3", ad: "Vision Eye Center", sehir: "Izmir", kategori: "Goz", durum: "onaylandi", puan: "4.7" },
+    { id: "1", ad: "Smile Dental Clinic", sehir: "İstanbul", kategori: "Diş", durum: "onaylandi", puan: "4.9" },
+    { id: "2", ad: "Hair Turkey Center", sehir: "İstanbul", kategori: "Saç Ekimi", durum: "beklemede", puan: "-" },
+    { id: "3", ad: "Vision Eye Center", sehir: "İzmir", kategori: "Göz", durum: "onaylandi", puan: "4.7" },
     { id: "4", ad: "Estetik Klinik", sehir: "Ankara", kategori: "Plastik Cerrahi", durum: "beklemede", puan: "-" },
   ];
 

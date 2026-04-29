@@ -3,7 +3,7 @@ import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import { useState } from "react";
 
-const tumOteller = [
+const tümOteller = [
   { id: "1", kisaltma: "RH", ad: "Radisson Blu Hotel", sehir: "İstanbul", ilce: "Şişli", yildiz: 5, puan: 4.8, yorum: 312, fiyat: 120, para: "EUR", klinikYakinligi: ["Smile Dental Clinic", "Hair Turkey Center"], olanaklar: ["WiFi", "Havuz", "Spa", "Restoran", "Transfer"], oda: "Standart Oda" },
   { id: "2", kisaltma: "HI", ad: "Holiday Inn Istanbul", sehir: "İstanbul", ilce: "Beşiktaş", yildiz: 4, puan: 4.6, yorum: 218, fiyat: 85, para: "EUR", klinikYakinligi: ["Hair Turkey Center", "Vision Eye Center"], olanaklar: ["WiFi", "Restoran", "Transfer"], oda: "Standart Oda" },
   { id: "3", kisaltma: "MW", ad: "Marriott Hotel", sehir: "İstanbul", ilce: "Kadıköy", yildiz: 5, puan: 4.9, yorum: 445, fiyat: 150, para: "EUR", klinikYakinligi: ["Vision Eye Center", "Estetik Plus"], olanaklar: ["WiFi", "Havuz", "Spa", "Restoran", "Bar", "Transfer"], oda: "Deluxe Oda" },
@@ -18,38 +18,38 @@ const olanakListesi = ["WiFi", "Havuz", "Spa", "Restoran", "Transfer"];
 
 export default function Oteller() {
   const [aramaMetni, setAramaMetni] = useState("");
-  const [secilenSehirler, setSecilenSehirler] = useState<string[]>([]);
-  const [secilenYildizlar, setSecilenYildizlar] = useState<number[]>([]);
-  const [secilenOlanaklar, setSecilenOlanaklar] = useState<string[]>([]);
+  const [seçilenSehirler, setSeçilenSehirler] = useState<string[]>([]);
+  const [seçilenYildizlar, setSeçilenYildizlar] = useState<number[]>([]);
+  const [seçilenOlanaklar, setSeçilenOlanaklar] = useState<string[]>([]);
   const [maxFiyat, setMaxFiyat] = useState(500);
-  const [sirala, setSirala] = useState("puan");
+  const [sırala, setSirala] = useState("puan");
 
   function toggleSehir(sehir: string) {
-    setSecilenSehirler((prev) => prev.includes(sehir) ? prev.filter((s) => s !== sehir) : [...prev, sehir]);
+    setSeçilenŞehirler((prev) => prev.includes(sehir) ? prev.filter((s) => s !== şehir) : [...prev, sehir]);
   }
 
-  function toggleYildiz(yildiz: number) {
-    setSecilenYildizlar((prev) => prev.includes(yildiz) ? prev.filter((y) => y !== yildiz) : [...prev, yildiz]);
+  function toggleYıldız(yıldız: number) {
+    setSeçilenYıldızlar((prev) => prev.includes(yıldız) ? prev.filter((y) => y !== yildiz) : [...prev, yildiz]);
   }
 
   function toggleOlanak(olanak: string) {
-    setSecilenOlanaklar((prev) => prev.includes(olanak) ? prev.filter((o) => o !== olanak) : [...prev, olanak]);
+    setSeçilenOlanaklar((prev) => prev.includes(olanak) ? prev.filter((o) => o !== olanak) : [...prev, olanak]);
   }
 
   function filtreleriSifirla() {
-    setSecilenSehirler([]);
-    setSecilenYildizlar([]);
-    setSecilenOlanaklar([]);
+    setSeçilenŞehirler([]);
+    setSeçilenYıldızlar([]);
+    setSeçilenOlanaklar([]);
     setMaxFiyat(500);
     setAramaMetni("");
   }
 
-  const filtreliOteller = tumOteller
+  const filtreliOteller = tümOteller
     .filter((o) => {
       const aramaUygun = o.ad.toLowerCase().includes(aramaMetni.toLowerCase()) || o.sehir.toLowerCase().includes(aramaMetni.toLowerCase());
-      const sehirUygun = secilenSehirler.length === 0 || secilenSehirler.includes(o.sehir);
-      const yildizUygun = secilenYildizlar.length === 0 || secilenYildizlar.includes(o.yildiz);
-      const olanakUygun = secilenOlanaklar.length === 0 || secilenOlanaklar.every((ol) => o.olanaklar.includes(ol));
+      const sehirUygun = seçilenŞehirler.length === 0 || seçilenŞehirler.includes(o.sehir);
+      const yildizUygun = seçilenYıldızlar.length === 0 || seçilenYıldızlar.includes(o.yildiz);
+      const olanakUygun = seçilenOlanaklar.length === 0 || seçilenOlanaklar.every((ol) => o.olanaklar.includes(ol));
       const fiyatUygun = o.fiyat <= maxFiyat;
       return aramaUygun && sehirUygun && yildizUygun && olanakUygun && fiyatUygun;
     })
@@ -61,7 +61,7 @@ export default function Oteller() {
       return 0;
     });
 
-  const aktifFiltreSayisi = secilenSehirler.length + secilenYildizlar.length + secilenOlanaklar.length + (maxFiyat < 500 ? 1 : 0);
+  const aktifFiltreSayisi = seçilenŞehirler.length + seçilenYıldızlar.length + seçilenOlanaklar.length + (maxFiyat < 500 ? 1 : 0);
 
   return (
     <main style={{ minHeight: "100vh", background: "#f9fafb", fontFamily: "sans-serif" }}>
@@ -70,7 +70,7 @@ export default function Oteller() {
 
       <section style={{ background: "linear-gradient(135deg, #12103a 0%, #1e1b4b 100%)", padding: "40px 32px" }}>
         <h1 style={{ color: "#fff", fontSize: "32px", fontWeight: 700, marginBottom: "8px" }}>Oteller</h1>
-        <p style={{ color: "#8b8fc8", fontSize: "15px", marginBottom: "24px" }}>Kliniğinize yakın {tumOteller.length} onaylı otel arasından seçin</p>
+        <p style={{ color: "#8b8fc8", fontSize: "15px", marginBottom: "24px" }}>Kliniğinize yakın {tümOteller.length} onaylı otel arasından seçin</p>
         <div style={{ background: "#fff", borderRadius: "12px", padding: "8px", display: "flex", gap: "8px", maxWidth: "600px" }}>
           <input type="text" placeholder="Otel veya şehir ara..." value={aramaMetni} onChange={(e) => setAramaMetni(e.target.value)} style={{ flex: 1, border: "none", outline: "none", padding: "10px 14px", fontSize: "14px", background: "transparent" }} />
           <button style={{ background: "#534AB7", color: "#fff", border: "none", padding: "10px 24px", borderRadius: "8px", fontSize: "14px", cursor: "pointer" }}>Ara</button>
@@ -93,8 +93,8 @@ export default function Oteller() {
             <h3 style={{ fontSize: "13px", fontWeight: 700, color: "#12103a", marginBottom: "12px", textTransform: "uppercase", letterSpacing: "0.5px" }}>Şehir</h3>
             {sehirler.map((s) => (
               <label key={s} style={{ display: "flex", alignItems: "center", gap: "8px", padding: "6px 0", cursor: "pointer" }}>
-                <input type="checkbox" checked={secilenSehirler.includes(s)} onChange={() => toggleSehir(s)} style={{ accentColor: "#534AB7", width: "15px", height: "15px" }} />
-                <span style={{ fontSize: "13px", color: secilenSehirler.includes(s) ? "#534AB7" : "#555", fontWeight: secilenSehirler.includes(s) ? 600 : 400 }}>{s}</span>
+                <input type="checkbox" checked={seçilenŞehirler.includes(s)} onChange={() => toggleSehir(s)} style={{ accentColor: "#534AB7", width: "15px", height: "15px" }} />
+                <span style={{ fontSize: "13px", color: seçilenŞehirler.includes(s) ? "#534AB7" : "#555", fontWeight: seçilenSehirler.includes(s) ? 600 : 400 }}>{s}</span>
               </label>
             ))}
           </div>
@@ -103,8 +103,8 @@ export default function Oteller() {
             <h3 style={{ fontSize: "13px", fontWeight: 700, color: "#12103a", marginBottom: "12px", textTransform: "uppercase", letterSpacing: "0.5px" }}>Yıldız</h3>
             {yildizlar.map((y) => (
               <label key={y} style={{ display: "flex", alignItems: "center", gap: "8px", padding: "6px 0", cursor: "pointer" }}>
-                <input type="checkbox" checked={secilenYildizlar.includes(y)} onChange={() => toggleYildiz(y)} style={{ accentColor: "#534AB7", width: "15px", height: "15px" }} />
-                <span style={{ fontSize: "13px", color: secilenYildizlar.includes(y) ? "#534AB7" : "#555", fontWeight: secilenYildizlar.includes(y) ? 600 : 400 }}>{"★".repeat(y)} {y} Yıldız</span>
+                <input type="checkbox" checked={seçilenYıldızlar.includes(y)} onChange={() => toggleYildiz(y)} style={{ accentColor: "#534AB7", width: "15px", height: "15px" }} />
+                <span style={{ fontSize: "13px", color: seçilenYıldızlar.includes(y) ? "#534AB7" : "#555", fontWeight: ilenYildizlar.includes(y) ? 600 : 400 }}>{"★".repeat(y)} {y} Yıldız</span>
               </label>
             ))}
           </div>
@@ -113,8 +113,8 @@ export default function Oteller() {
             <h3 style={{ fontSize: "13px", fontWeight: 700, color: "#12103a", marginBottom: "12px", textTransform: "uppercase", letterSpacing: "0.5px" }}>Olanaklar</h3>
             {olanakListesi.map((o) => (
               <label key={o} style={{ display: "flex", alignItems: "center", gap: "8px", padding: "6px 0", cursor: "pointer" }}>
-                <input type="checkbox" checked={secilenOlanaklar.includes(o)} onChange={() => toggleOlanak(o)} style={{ accentColor: "#534AB7", width: "15px", height: "15px" }} />
-                <span style={{ fontSize: "13px", color: secilenOlanaklar.includes(o) ? "#534AB7" : "#555", fontWeight: secilenOlanaklar.includes(o) ? 600 : 400 }}>{o}</span>
+                <input type="checkbox" checked={seçilenOlanaklar.includes(o)} onChange={() => toggleOlanak(o)} style={{ accentColor: "#534AB7", width: "15px", height: "15px" }} />
+                <span style={{ fontSize: "13px", color: seçilenOlanaklar.includes(o) ? "#534AB7" : "#555", fontWeight: seçilenOlanaklar.includes(o) ? 600 : 400 }}>{o}</span>
               </label>
             ))}
           </div>

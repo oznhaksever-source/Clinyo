@@ -15,7 +15,7 @@ export default function Navbar() {
         <a href="/tedaviler" style={{ color: "#aab4c8", fontSize: "13px", textDecoration: "none" }}>Tedaviler</a>
         <a href="/oteller" style={{ color: "#aab4c8", fontSize: "13px", textDecoration: "none" }}>Oteller</a>
         <a href="/transfer" style={{ color: "#aab4c8", fontSize: "13px", textDecoration: "none" }}>Transfer</a>
-        <a href="/nasil-calisir" style={{ color: "#aab4c8", fontSize: "13px", textDecoration: "none" }}>Nasıl Çalışır</a>
+        <a href="/nasıl-çalışır" style={{ color: "#aab4c8", fontSize: "13px", textDecoration: "none" }}>Nasıl Çalışır</a>
         <div style={{ width: "1px", height: "16px", background: "#2a2a4e" }} />
         <div style={{ display: "flex", gap: "6px" }}>
           <span style={{ fontSize: "11px", padding: "3px 8px", border: "1px solid #534AB7", borderRadius: "4px", color: "#7F77DD", cursor: "pointer" }}>TR</span>

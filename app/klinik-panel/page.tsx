@@ -27,7 +27,7 @@ export default function KlinikPanel() {
   const tedaviler = [
     { ad: "Implant", fiyat: "500", para: "EUR" },
     { ad: "Zirkonyum Kaplama", fiyat: "150", para: "EUR" },
-    { ad: "Dis Beyazlatma", fiyat: "200", para: "EUR" },
+    { ad: "Diş Beyazlatma", fiyat: "200", para: "EUR" },
     { ad: "Kanal Tedavisi", fiyat: "120", para: "EUR" },
   ];
 

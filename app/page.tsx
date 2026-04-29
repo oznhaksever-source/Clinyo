@@ -8,21 +8,21 @@ export default function Home() {
 
       <section style={{ background: "linear-gradient(135deg, #12103a 0%, #1e1b4b 60%, #2d2a6e 100%)", padding: "80px 32px", textAlign: "center" }}>
         <div style={{ display: "inline-block", background: "rgba(83,74,183,0.25)", color: "#AFA9EC", fontSize: "12px", padding: "4px 16px", borderRadius: "20px", border: "0.5px solid #534AB7", marginBottom: "20px" }}>
-          Guvenli · Seffaf · Karsilastirabilir Saglik Platformu
+          Güvenli · Seffaf · Karşılaştırabilir Sağlık Platformu
         </div>
         <h1 style={{ color: "#fff", fontSize: "52px", fontWeight: 700, marginBottom: "16px", lineHeight: 1.15 }}>
           En Iyi <span style={{ color: "#7F77DD", fontWeight: 300 }}>Klinikleri Kesfet</span>
         </h1>
         <p style={{ color: "#8b8fc8", fontSize: "18px", marginBottom: "36px", maxWidth: "600px", margin: "0 auto 36px" }}>
-          Dis, sac ekimi, goz, plastik cerrahi icin teklif al, karsilastir, karar ver.
+          Diş, saç ekimi, göz, plastik cerrahi için teklif al, karsılastır, karar ver.
         </p>
         <div style={{ maxWidth: "580px", margin: "0 auto 32px", background: "#fff", borderRadius: "12px", padding: "8px", display: "flex", gap: "8px" }}>
-          <input type="text" placeholder="Tedavi ara... (implant, sac ekimi, burun estetigi)" style={{ flex: 1, border: "none", outline: "none", padding: "10px 14px", fontSize: "14px", background: "transparent" }} />
+          <input type="text" placeholder="Tedavi ara... (implant, saç ekimi, burun estetiği)" style={{ flex: 1, border: "none", outline: "none", padding: "10px 14px", fontSize: "14px", background: "transparent" }} />
           <select style={{ border: "none", outline: "none", fontSize: "13px", color: "#666", padding: "8px", borderLeft: "1px solid #e5e7eb", background: "transparent" }}>
-            <option>Tum Sehirler</option>
-            <option>Istanbul</option>
+            <option>Tüm Şehirler</option>
+            <option>İstanbul</option>
             <option>Ankara</option>
-            <option>Izmir</option>
+            <option>İzmir</option>
           </select>
           <button style={{ background: "#534AB7", color: "#fff", border: "none", padding: "10px 24px", borderRadius: "8px", fontSize: "14px", cursor: "pointer" }}>Ara</button>
         </div>
@@ -47,10 +47,10 @@ export default function Home() {
         <div style={{ display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gap: "14px", maxWidth: "1100px", margin: "0 auto" }}>
           {[
             { ad: "Dis Tedavisi", sayi: "148" },
-            { ad: "Sac Ekimi", sayi: "92" },
-            { ad: "Goz Ameliyati", sayi: "64" },
+            { ad: "Saç Ekimi", sayi: "92" },
+            { ad: "Göz Ameliyati", sayi: "64" },
             { ad: "Plastik Cerrahi", sayi: "76" },
-            { ad: "Genel Saglik", sayi: "110" },
+            { ad: "Genel Sağlık", sayi: "110" },
           ].map((k) => (
             <div key={k.ad} style={{ border: "1px solid #EEEDFE", borderRadius: "12px", padding: "20px", textAlign: "center", cursor: "pointer", background: "#FAFAFA" }}>
               <div style={{ width: "44px", height: "44px", background: "#EEEDFE", borderRadius: "50%", margin: "0 auto 12px", display: "flex", alignItems: "center", justifyContent: "center" }}>
@@ -68,9 +68,9 @@ export default function Home() {
         <p style={{ fontSize: "14px", color: "#888", marginBottom: "28px", textAlign: "center" }}>Dogrulanmis, puan almis, guvenilir klinikler</p>
         <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "18px", maxWidth: "1100px", margin: "0 auto" }}>
           {[
-            { kisaltma: "SD", ad: "Smile Dental Clinic", konum: "Sisli, Istanbul", kategori: "Dis Tedavisi", puan: "4.9", yorum: "218" },
-            { kisaltma: "HT", ad: "Hair Turkey Center", konum: "Besiktas, Istanbul", kategori: "Sac Ekimi", puan: "4.8", yorum: "341" },
-            { kisaltma: "VE", ad: "Vision Eye Center", konum: "Kadikoy, Istanbul", kategori: "Goz Ameliyati", puan: "4.7", yorum: "189" },
+            { kisaltma: "SD", ad: "Smile Dental Clinic", konum: "Şişli, İstanbul", kategori: "Diş Tedavisi", puan: "4.9", yorum: "218" },
+            { kisaltma: "HT", ad: "Hair Turkey Center", konum: "Beşiktaş, İstanbul", kategori: "Saç Ekimi", puan: "4.8", yorum: "341" },
+            { kisaltma: "VE", ad: "Vision Eye Center", konum: "Kadıkoy, İstanbul", kategori: "Göz Ameliyati", puan: "4.7", yorum: "189" },
           ].map((k) => (
             <div key={k.ad} style={{ border: "1px solid #EEEDFE", borderRadius: "14px", overflow: "hidden" }}>
               <div style={{ height: "110px", background: "linear-gradient(135deg, #EEEDFE, #CECBF6)", display: "flex", alignItems: "center", justifyContent: "center" }}>
@@ -93,9 +93,9 @@ export default function Home() {
       <section style={{ padding: "48px 32px", background: "#f9fafb", borderTop: "1px solid #f0f0f0" }}>
         <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "16px", maxWidth: "1100px", margin: "0 auto" }}>
           {[
-            { baslik: "Dogrulanmis Klinikler", aciklama: "Tum klinikler belgeli ve onaylidir" },
-            { baslik: "Guvenli Odeme", aciklama: "Hasta onaylamadan odeme alinmaz" },
-            { baslik: "Gercek Yorumlar", aciklama: "Sadece islem yapan hasta yorum yapar" },
+            { baslik: "Doğrulanmış Klinikler", aciklama: "Tüm klinikler belgeli ve onaylıdır" },
+            { baslik: "Güvenli Odeme", aciklama: "Hasta onaylamadan odeme alınmaz" },
+            { baslik: "Gerçek Yorumlar", aciklama: "Sadece işlem yapan hasta yorum yapar" },
             { baslik: "7/24 Destek", aciklama: "TR, EN, DE dillerinde destek" },
           ].map((item) => (
             <div key={item.baslik} style={{ textAlign: "center" }}>

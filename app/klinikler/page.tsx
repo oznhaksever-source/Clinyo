@@ -3,31 +3,31 @@ import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import { useState } from "react";
 
-const tumKlinikler = [
-  { id: "1", kisaltma: "SD", ad: "Smile Dental Clinic", sehir: "Istanbul", ilce: "Sisli", kategori: "Dis Tedavisi", puan: 4.9, yorum: 218, fiyat: 500, para: "EUR", doktor: 3, sure: "2-3 gun", diller: ["TR", "EN", "DE"], onaylandi: true },
-  { id: "2", kisaltma: "HT", ad: "Hair Turkey Center", sehir: "Istanbul", ilce: "Besiktas", kategori: "Sac Ekimi", puan: 4.8, yorum: 341, fiyat: 1200, para: "EUR", doktor: 5, sure: "1 gun", diller: ["TR", "EN"], onaylandi: true },
-  { id: "3", kisaltma: "VE", ad: "Vision Eye Center", sehir: "Istanbul", ilce: "Kadikoy", kategori: "Goz Ameliyati", puan: 4.7, yorum: 189, fiyat: 800, para: "EUR", doktor: 2, sure: "1 gun", diller: ["TR", "EN", "DE"], onaylandi: true },
-  { id: "4", kisaltma: "EP", ad: "Estetik Plus", sehir: "Istanbul", ilce: "Nisantasi", kategori: "Plastik Cerrahi", puan: 4.6, yorum: 124, fiyat: 2000, para: "EUR", doktor: 4, sure: "3-5 gun", diller: ["TR", "EN"], onaylandi: true },
-  { id: "5", kisaltma: "AD", ad: "Ankara Dental", sehir: "Ankara", ilce: "Cankaya", kategori: "Dis Tedavisi", puan: 4.5, yorum: 98, fiyat: 400, para: "EUR", doktor: 2, sure: "2-3 gun", diller: ["TR", "EN"], onaylandi: true },
-  { id: "6", kisaltma: "IH", ad: "Izmir Hair Clinic", sehir: "Izmir", ilce: "Karsiyaka", kategori: "Sac Ekimi", puan: 4.4, yorum: 76, fiyat: 1000, para: "EUR", doktor: 3, sure: "1 gun", diller: ["TR", "EN"], onaylandi: true },
-  { id: "7", kisaltma: "BG", ad: "Bursa Goz Merkezi", sehir: "Bursa", ilce: "Nilufer", kategori: "Goz Ameliyati", puan: 4.3, yorum: 54, fiyat: 750, para: "EUR", doktor: 2, sure: "1 gun", diller: ["TR"], onaylandi: true },
-  { id: "8", kisaltma: "AS", ad: "Antalya Smile", sehir: "Antalya", ilce: "Muratpasa", kategori: "Dis Tedavisi", puan: 4.7, yorum: 167, fiyat: 450, para: "EUR", doktor: 4, sure: "2-3 gun", diller: ["TR", "EN", "DE"], onaylandi: true },
+const tümKlinikler = [
+  { id: "1", kisaltma: "SD", ad: "Smile Dental Clinic", sehir: "İstanbul", ilce: "Şişli", kategori: "Diş Tedavisi", puan: 4.9, yorum: 218, fiyat: 500, para: "EUR", doktor: 3, sure: "2-3 gün", diller: ["TR", "EN", "DE"], onaylandi: true },
+  { id: "2", kisaltma: "HT", ad: "Hair Turkey Center", sehir: "İstanbul", ilce: "Beşiktaş", kategori: "Saç Ekimi", puan: 4.8, yorum: 341, fiyat: 1200, para: "EUR", doktor: 5, sure: "1 gün", diller: ["TR", "EN"], onaylandi: true },
+  { id: "3", kisaltma: "VE", ad: "Vision Eye Center", sehir: "İstanbul", ilce: "Kadıköy", kategori: "Göz Ameliyati", puan: 4.7, yorum: 189, fiyat: 800, para: "EUR", doktor: 2, sure: "1 gün", diller: ["TR", "EN", "DE"], onaylandi: true },
+  { id: "4", kisaltma: "EP", ad: "Estetik Plus", sehir: "İstanbul", ilce: "Nişantaşi", kategori: "Plastik Cerrahi", puan: 4.6, yorum: 124, fiyat: 2000, para: "EUR", doktor: 4, sure: "3-5 gün", diller: ["TR", "EN"], onaylandi: true },
+  { id: "5", kisaltma: "AD", ad: "Ankara Dental", sehir: "Ankara", ilce: "Çankaya", kategori: "Diş Tedavisi", puan: 4.5, yorum: 98, fiyat: 400, para: "EUR", doktor: 2, sure: "2-3 gün", diller: ["TR", "EN"], onaylandi: true },
+  { id: "6", kisaltma: "IH", ad: "İzmir Hair Clinic", sehir: "İzmir", ilce: "Karşıyaka", kategori: "Saç Ekimi", puan: 4.4, yorum: 76, fiyat: 1000, para: "EUR", doktor: 3, sure: "1 gün", diller: ["TR", "EN"], onaylandi: true },
+  { id: "7", kisaltma: "BG", ad: "Bursa Göz Merkezi", sehir: "Bursa", ilce: "Nilüfer", kategori: "Göz Ameliyati", puan: 4.3, yorum: 54, fiyat: 750, para: "EUR", doktor: 2, sure: "1 gün", diller: ["TR"], onaylandi: true },
+  { id: "8", kisaltma: "AS", ad: "Antalya Smile", sehir: "Antalya", ilce: "Muratpaşa", kategori: "Diş Tedavisi", puan: 4.7, yorum: 167, fiyat: 450, para: "EUR", doktor: 4, sure: "2-3 gün", diller: ["TR", "EN", "DE"], onaylandi: true },
 ];
 
-const kategoriler = ["Dis Tedavisi", "Sac Ekimi", "Goz Ameliyati", "Plastik Cerrahi", "Genel Saglik"];
-const sehirler = ["Istanbul", "Ankara", "Izmir", "Bursa", "Antalya"];
+const kategoriler = ["Diş Tedavisi", "Saç Ekimi", "Göz Ameliyati", "Plastik Cerrahi", "Genel Sağlık"];
+const sehirler = ["İstanbul", "Ankara", "İzmir", "Bursa", "Antalya"];
 const diller = ["TR", "EN", "DE"];
 
 export default function Klinikler() {
   const [aramaMetni, setAramaMetni] = useState("");
-  const [secilenKategoriler, setSecilenKategoriler] = useState<string[]>([]);
-  const [secilenSehirler, setSecilenSehirler] = useState<string[]>([]);
-  const [secilenDiller, setSecilenDiller] = useState<string[]>([]);
+  const [seçilenKategoriler, setSeçilenKategoriler] = useState<string[]>([]);
+  const [seçilenSehirler, setSeçilenSehirler] = useState<string[]>([]);
+  const [seçilenDiller, setSeçilenDiller] = useState<string[]>([]);
   const [minPuan, setMinPuan] = useState(0);
   const [maxFiyat, setMaxFiyat] = useState(5000);
   const [sirala, setSirala] = useState("puan");
 
-  function toggleSecim(liste: string[], setListe: (v: string[]) => void, deger: string) {
+  function toggleSeçim(liste: string[], setListe: (v: string[]) => void, deger: string) {
     if (liste.includes(deger)) {
       setListe(liste.filter((i) => i !== deger));
     } else {
@@ -36,20 +36,20 @@ export default function Klinikler() {
   }
 
   function filtreleriSifirla() {
-    setSecilenKategoriler([]);
-    setSecilenSehirler([]);
-    setSecilenDiller([]);
+    setSeçilenKategoriler([]);
+    setSeçilenSehirler([]);
+    setSeçilenDiller([]);
     setMinPuan(0);
     setMaxFiyat(5000);
     setAramaMetni("");
   }
 
-  const filtreliKlinikler = tumKlinikler
+  const filtreliKlinikler = tümKlinikler
     .filter((k) => {
       const aramaUygun = k.ad.toLowerCase().includes(aramaMetni.toLowerCase()) || k.kategori.toLowerCase().includes(aramaMetni.toLowerCase()) || k.sehir.toLowerCase().includes(aramaMetni.toLowerCase());
-      const kategoriUygun = secilenKategoriler.length === 0 || secilenKategoriler.includes(k.kategori);
-      const sehirUygun = secilenSehirler.length === 0 || secilenSehirler.includes(k.sehir);
-      const dilUygun = secilenDiller.length === 0 || secilenDiller.every((d) => k.diller.includes(d));
+      const kategoriUygun = seçilenKategoriler.length === 0 || seçilenKategoriler.includes(k.kategori);
+      const sehirUygun = seçilenSehirler.length === 0 || seçilenSehirler.includes(k.sehir);
+      const dilUygun = seçilenDiller.length === 0 || seçilenDiller.every((d) => k.diller.includes(d));
       const puanUygun = k.puan >= minPuan;
       const fiyatUygun = k.fiyat <= maxFiyat;
       return aramaUygun && kategoriUygun && sehirUygun && dilUygun && puanUygun && fiyatUygun;
@@ -62,7 +62,7 @@ export default function Klinikler() {
       return 0;
     });
 
-  const aktifFiltreSayisi = secilenKategoriler.length + secilenSehirler.length + secilenDiller.length + (minPuan > 0 ? 1 : 0) + (maxFiyat < 5000 ? 1 : 0);
+  const aktifFiltreSayisi = seçilenKategoriler.length + seçilenSehirler.length + seçilenDiller.length + (minPuan > 0 ? 1 : 0) + (maxFiyat < 5000 ? 1 : 0);
 
   return (
     <main style={{ minHeight: "100vh", background: "#f9fafb", fontFamily: "sans-serif" }}>
@@ -71,7 +71,7 @@ export default function Klinikler() {
 
       <section style={{ background: "linear-gradient(135deg, #12103a 0%, #1e1b4b 100%)", padding: "40px 32px" }}>
         <h1 style={{ color: "#fff", fontSize: "32px", fontWeight: 700, marginBottom: "8px" }}>Klinikler</h1>
-        <p style={{ color: "#8b8fc8", fontSize: "15px", marginBottom: "24px" }}>{tumKlinikler.length} onaylanmis klinik arasından secim yapin</p>
+        <p style={{ color: "#8b8fc8", fontSize: "15px", marginBottom: "24px" }}>{tümKlinikler.length} onaylanmis klinik arasından seçim yapin</p>
         <div style={{ background: "#fff", borderRadius: "12px", padding: "8px", display: "flex", gap: "8px", maxWidth: "600px" }}>
           <input type="text" placeholder="Klinik, tedavi veya sehir ara..." value={aramaMetni} onChange={(e) => setAramaMetni(e.target.value)} style={{ flex: 1, border: "none", outline: "none", padding: "10px 14px", fontSize: "14px", background: "transparent" }} />
           <button style={{ background: "#534AB7", color: "#fff", border: "none", padding: "10px 24px", borderRadius: "8px", fontSize: "14px", cursor: "pointer" }}>Ara</button>
@@ -94,8 +94,8 @@ export default function Klinikler() {
             <h3 style={{ fontSize: "13px", fontWeight: 700, color: "#12103a", marginBottom: "12px", textTransform: "uppercase", letterSpacing: "0.5px" }}>Tedavi Kategorisi</h3>
             {kategoriler.map((k) => (
               <label key={k} style={{ display: "flex", alignItems: "center", gap: "8px", padding: "6px 0", cursor: "pointer" }}>
-                <input type="checkbox" checked={secilenKategoriler.includes(k)} onChange={() => toggleSecim(secilenKategoriler, setSecilenKategoriler, k)} style={{ accentColor: "#534AB7", width: "15px", height: "15px" }} />
-                <span style={{ fontSize: "13px", color: secilenKategoriler.includes(k) ? "#534AB7" : "#555", fontWeight: secilenKategoriler.includes(k) ? 600 : 400 }}>{k}</span>
+                <input type="checkbox" checked={seçilenKategoriler.includes(k)} onChange={() => toggleSeçim(seçilenKategoriler, setSeçilenKategoriler, k)} style={{ accentColor: "#534AB7", width: "15px", height: "15px" }} />
+                <span style={{ fontSize: "13px", color: seçilenKategoriler.includes(k) ? "#534AB7" : "#555", fontWeight: seçilenKategoriler.includes(k) ? 600 : 400 }}>{k}</span>
               </label>
             ))}
           </div>
@@ -104,8 +104,8 @@ export default function Klinikler() {
             <h3 style={{ fontSize: "13px", fontWeight: 700, color: "#12103a", marginBottom: "12px", textTransform: "uppercase", letterSpacing: "0.5px" }}>Sehir</h3>
             {sehirler.map((s) => (
               <label key={s} style={{ display: "flex", alignItems: "center", gap: "8px", padding: "6px 0", cursor: "pointer" }}>
-                <input type="checkbox" checked={secilenSehirler.includes(s)} onChange={() => toggleSecim(secilenSehirler, setSecilenSehirler, s)} style={{ accentColor: "#534AB7", width: "15px", height: "15px" }} />
-                <span style={{ fontSize: "13px", color: secilenSehirler.includes(s) ? "#534AB7" : "#555", fontWeight: secilenSehirler.includes(s) ? 600 : 400 }}>{s}</span>
+                <input type="checkbox" checked={ilenSehirler.includes(s)} onChange={() => toggleSeçim(seçilenSehirler, setSeçilenSehirler, s)} style={{ accentColor: "#534AB7", width: "15px", height: "15px" }} />
+                <span style={{ fontSize: "13px", color: seçilenSehirler.includes(s) ? "#534AB7" : "#555", fontWeight: seçilenSehirler.includes(s) ? 600 : 400 }}>{s}</span>
               </label>
             ))}
           </div>
@@ -114,8 +114,8 @@ export default function Klinikler() {
             <h3 style={{ fontSize: "13px", fontWeight: 700, color: "#12103a", marginBottom: "12px", textTransform: "uppercase", letterSpacing: "0.5px" }}>Dil Destegi</h3>
             {diller.map((d) => (
               <label key={d} style={{ display: "flex", alignItems: "center", gap: "8px", padding: "6px 0", cursor: "pointer" }}>
-                <input type="checkbox" checked={secilenDiller.includes(d)} onChange={() => toggleSecim(secilenDiller, setSecilenDiller, d)} style={{ accentColor: "#534AB7", width: "15px", height: "15px" }} />
-                <span style={{ fontSize: "13px", color: secilenDiller.includes(d) ? "#534AB7" : "#555", fontWeight: secilenDiller.includes(d) ? 600 : 400 }}>{d}</span>
+                <input type="checkbox" checked={seçilenDiller.includes(d)} onChange={() => toggleSeçim(seçilenDiller, setSeçilenDiller, d)} style={{ accentColor: "#534AB7", width: "15px", height: "15px" }} />
+                <span style={{ fontSize: "13px", color: seçilenDiller.includes(d) ? "#534AB7" : "#555", fontWeight: seçilenDiller.includes(d) ? 600 : 400 }}>{d}</span>
               </label>
             ))}
           </div>
@@ -155,18 +155,18 @@ export default function Klinikler() {
 
           {aktifFiltreSayisi > 0 && (
             <div style={{ display: "flex", flexWrap: "wrap", gap: "8px", marginBottom: "16px" }}>
-              {secilenKategoriler.map((k) => (
-                <span key={k} onClick={() => toggleSecim(secilenKategoriler, setSecilenKategoriler, k)} style={{ fontSize: "12px", background: "#EEEDFE", color: "#534AB7", padding: "4px 10px", borderRadius: "20px", cursor: "pointer" }}>
+              {seçilenKategoriler.map((k) => (
+                <span key={k} onClick={() => toggleSeçim(seçilenKategoriler, setSeçilenKategoriler, k)} style={{ fontSize: "12px", background: "#EEEDFE", color: "#534AB7", padding: "4px 10px", borderRadius: "20px", cursor: "pointer" }}>
                   {k} ×
                 </span>
               ))}
-              {secilenSehirler.map((s) => (
-                <span key={s} onClick={() => toggleSecim(secilenSehirler, setSecilenSehirler, s)} style={{ fontSize: "12px", background: "#EEEDFE", color: "#534AB7", padding: "4px 10px", borderRadius: "20px", cursor: "pointer" }}>
+              {seçilenSehirler.map((s) => (
+                <span key={s} onClick={() => toggleSeçim(seçilenSehirler, setSeçilenSehirler, s)} style={{ fontSize: "12px", background: "#EEEDFE", color: "#534AB7", padding: "4px 10px", borderRadius: "20px", cursor: "pointer" }}>
                   {s} ×
                 </span>
               ))}
-              {secilenDiller.map((d) => (
-                <span key={d} onClick={() => toggleSecim(secilenDiller, setSecilenDiller, d)} style={{ fontSize: "12px", background: "#EEEDFE", color: "#534AB7", padding: "4px 10px", borderRadius: "20px", cursor: "pointer" }}>
+              {seçilenDiller.map((d) => (
+                <span key={d} onClick={() => toggleSeçim(seçilenDiller, setSeçilenDiller, d)} style={{ fontSize: "12px", background: "#EEEDFE", color: "#534AB7", padding: "4px 10px", borderRadius: "20px", cursor: "pointer" }}>
                   {d} ×
                 </span>
               ))}

@@ -15,14 +15,14 @@ export default function TeklifTalep() {
   const [gonderildi, setGonderildi] = useState(false);
 
   const tedaviler = [
-    { id: "implant", ad: "Implant", aciklama: "Eksik dis yerine kalici implant" },
-    { id: "zirkonyum", ad: "Zirkonyum Kaplama", aciklama: "Estetik dis kaplama" },
-    { id: "sac-ekimi", ad: "Sac Ekimi", aciklama: "FUE / DHI yontemi" },
-    { id: "goz", ad: "Goz Ameliyati", aciklama: "Laser, Lasik, Lasek" },
+    { id: "implant", ad: "Implant", aciklama: "Eksik diş yerine kalici implant" },
+    { id: "zirkonyum", ad: "Zirkonyum Kaplama", aciklama: "Estetik diş kaplama" },
+    { id: "saç-ekimi", ad: "Saç Ekimi", aciklama: "FUE / DHI yontemi" },
+    { id: "göz", ad: "Göz Ameliyati", aciklama: "Laser, Lasik, Lasek" },
     { id: "burun", ad: "Burun Estetigi", aciklama: "Rinoplasti" },
-    { id: "dis-beyazlatma", ad: "Dis Beyazlatma", aciklama: "Profesyonel beyazlatma" },
+    { id: "diş-beyazlatma", ad: "Diş Beyazlatma", aciklama: "Profesyonel beyazlatma" },
     { id: "kanal", ad: "Kanal Tedavisi", aciklama: "Kok kanal tedavisi" },
-    { id: "diger", ad: "Diger", aciklama: "Baska bir tedavi" },
+    { id: "diğer", ad: "Diğer", aciklama: "Başka bir tedavi" },
   ];
 
   function gonder() {
@@ -39,7 +39,7 @@ export default function TeklifTalep() {
             Klinikler teklifinizi inceleyecek ve en kisa surede size ulaşacak. Ortalama yanit suresi 2-4 saattir.
           </p>
           <div style={{ background: "#f9fafb", borderRadius: "10px", padding: "16px", marginBottom: "24px", textAlign: "left" }}>
-            <div style={{ fontSize: "13px", color: "#888", marginBottom: "4px" }}>Secilen Tedavi</div>
+            <div style={{ fontSize: "13px", color: "#888", marginBottom: "4px" }}>Seçilen Tedavi</div>
             <div style={{ fontSize: "15px", fontWeight: 500, color: "#1a1a1a", marginBottom: "12px" }}>{tedavi}</div>
             <div style={{ fontSize: "13px", color: "#888", marginBottom: "4px" }}>Email</div>
             <div style={{ fontSize: "15px", fontWeight: 500, color: "#1a1a1a" }}>{email}</div>
@@ -60,8 +60,8 @@ export default function TeklifTalep() {
       <div style={{ maxWidth: "640px", margin: "0 auto", padding: "32px" }}>
 
         <div style={{ textAlign: "center", marginBottom: "32px" }}>
-          <h1 style={{ color: "#fff", fontSize: "28px", fontWeight: 500, marginBottom: "8px" }}>Ucretsiz Teklif Al</h1>
-          <p style={{ color: "#7a90b0", fontSize: "14px" }}>Birden fazla klinikten teklif al, karsilastir, en iyisini sec</p>
+          <h1 style={{ color: "#fff", fontSize: "28px", fontWeight: 500, marginBottom: "8px" }}>Ücretsiz Teklif Al</h1>
+          <p style={{ color: "#7a90b0", fontSize: "14px" }}>Birden fazla klinikten teklif al, karşılaştır, en iyisini seç</p>
         </div>
 
         <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "0", marginBottom: "32px" }}>
@@ -80,7 +80,7 @@ export default function TeklifTalep() {
           {adim === 1 && (
             <div>
               <h2 style={{ fontSize: "18px", fontWeight: 500, color: "#1a1a1a", marginBottom: "6px" }}>Hangi tedaviyi istiyorsunuz?</h2>
-              <p style={{ fontSize: "13px", color: "#888", marginBottom: "20px" }}>Size uygun klinikleri bulabilmemiz icin tedaviyi secin</p>
+              <p style={{ fontSize: "13px", color: "#888", marginBottom: "20px" }}>Size uygun klinikleri bulabilmemiz icin tedaviyi seçin</p>
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px", marginBottom: "20px" }}>
                 {tedaviler.map((t) => (
                   <div key={t.id} onClick={() => setTedavi(t.ad)} style={{ border: tedavi === t.ad ? "2px solid #185FA5" : "1px solid #e5e7eb", borderRadius: "10px", padding: "14px", cursor: "pointer", background: tedavi === t.ad ? "#f0f4ff" : "#fff" }}>
@@ -91,7 +91,7 @@ export default function TeklifTalep() {
               </div>
               <div style={{ marginBottom: "20px" }}>
                 <label style={{ fontSize: "13px", color: "#555", display: "block", marginBottom: "6px" }}>Durumunuzu aciklayin (opsiyonel)</label>
-                <textarea rows={3} placeholder="Ornegin: Sol alt cene implant, acim var, daha once dis cekimi yapildi..." value={aciklama} onChange={(e) => setAciklama(e.target.value)} style={{ width: "100%", border: "1px solid #e5e7eb", borderRadius: "8px", padding: "10px 12px", fontSize: "13px", boxSizing: "border-box", outline: "none", resize: "none" }} />
+                <textarea rows={3} placeholder="Ornegin: Sol alt çene implant, acım var, daha once diş çekimi yapıldı..." value={aciklama} onChange={(e) => setAciklama(e.target.value)} style={{ width: "100%", border: "1px solid #e5e7eb", borderRadius: "8px", padding: "10px 12px", fontSize: "13px", boxSizing: "border-box", outline: "none", resize: "none" }} />
               </div>
               <button onClick={() => { if (tedavi) setAdim(2); }} style={{ width: "100%", background: tedavi ? "#185FA5" : "#ccc", color: "#fff", border: "none", padding: "12px", borderRadius: "8px", fontSize: "14px", cursor: tedavi ? "pointer" : "not-allowed", fontWeight: 500 }}>
                 Devam Et
@@ -123,8 +123,8 @@ export default function TeklifTalep() {
               </div>
               <div style={{ marginBottom: "20px" }}>
                 <label style={{ fontSize: "13px", color: "#555", display: "block", marginBottom: "6px" }}>Ulkeniz</label>
-                <select value={ulke} onChange={(e) => setUlke(e.target.value)} style={{ width: "100%", border: "1px solid #e5e7eb", borderRadius: "8px", padding: "10px 12px", fontSize: "13px", boxSizing: "border-box", outline: "none", background: "#fff" }}>
-                  <option value="">Ulke secin</option>
+                <select value={ulke} onChange={(e) => setÜlke(e.target.value)} style={{ width: "100%", border: "1px solid #e5e7eb", borderRadius: "8px", padding: "10px 12px", fontSize: "13px", boxSizing: "border-box", outline: "none", background: "#fff" }}>
+                  <option value="">Ülke seçin</option>
                   <option>Almanya</option>
                   <option>Ingiltere</option>
                   <option>Hollanda</option>

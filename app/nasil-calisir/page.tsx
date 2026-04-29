@@ -42,7 +42,7 @@ export default function nasılÇalışır() {
 
   const sorular = [
     { soru: "Medoqa Ücretsiz mi?", cevap: "Evet! Hastalar icin Medoqa tamamen ücretsizdir. Teklif almak, karşılaştırmak ve kliniklerle iletisim kurmak icin hicbir ucret ödemezsiniz." },
-    { soru: "Klinikler nasıl dogrulanir?", cevap: "Tüm klinikler platformumuza katilmadan once belgelerini sunar. Saglik Bakanligi lisanslari, doktor sertifikalari ve sigorta belgeleri kontrol edilir." },
+    { soru: "Klinikler nasıl dogrulanir?", cevap: "Tüm klinikler platformumuza katilmadan once belgelerini sunar. Sağlık Bakanligi lisanslari, doktor sertifikalari ve sigorta belgeleri kontrol edilir." },
     { soru: "Blokeli ödeme sistemi nasıl çalışır?", cevap: "Ödemeniz platformumuzda guvenle tutulur. Tedaviniz tamamlanip siz onaylayana kadar klinige gectmez. Sorun yasarsaniz itiraz mekanizmamizi kullanabilirsiniz." },
     { soru: "Ek islemler icin ekstra ucret ödemek zorunda miyim?", cevap: "Hayir! Klinik ek islem onerecekse oncelikle sizden onay almak zorundadir. Siz onaylamadan fiyata eklenemez." },
     { soru: "Hangi ulkelerden hasta kabul ediyorsunuz?", cevap: "Platformumuz uluslararasi hastalar icin tasarlanmistir. Almanya, Ingiltere, Hollanda, Avusturya ve diger Avrupa ulkelerinden hastalarimiz var. Turkiye icinden de hizmet veriyoruz." },
@@ -123,7 +123,7 @@ export default function nasılÇalışır() {
 
       <section style={{ background: "linear-gradient(135deg, #1e1b4b 0%, #12103a 100%)", padding: "64px 32px", textAlign: "center" }}>
         <h2 style={{ fontSize: "28px", fontWeight: 700, color: "#fff", marginBottom: "16px" }}>Hemen Basla</h2>
-        <p style={{ color: "#8b8fc8", fontSize: "15px", marginBottom: "32px" }}>Ücretsiz teklif al, en iyi klinigi sec</p>
+        <p style={{ color: "#8b8fc8", fontSize: "15px", marginBottom: "32px" }}>Ücretsiz teklif al, en iyi kliniği seç</p>
         <div style={{ display: "flex", gap: "12px", justifyContent: "center" }}>
           <a href="/teklif" style={{ background: "#534AB7", color: "#fff", padding: "14px 32px", borderRadius: "10px", fontSize: "15px", textDecoration: "none", fontWeight: 600 }}>
             Ücretsiz Teklif Al

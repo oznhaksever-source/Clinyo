@@ -4,13 +4,13 @@ export default function KlinikProfil() {
   const doktorlar = [
     { kisaltma: "AK", ad: "Dr. Ahmet Kaya", uzmanlik: "Implant Uzmani", deneyim: "15 yil" },
     { kisaltma: "FY", ad: "Dr. Fatma Yilmaz", uzmanlik: "Ortodonti", deneyim: "10 yil" },
-    { kisaltma: "MO", ad: "Dr. Mehmet Oz", uzmanlik: "Estetik Dis", deneyim: "12 yil" },
+    { kisaltma: "MO", ad: "Dr. Mehmet Oz", uzmanlik: "Estetik Diş", deneyim: "12 yil" },
   ];
 
   const tedaviler = [
     { ad: "Implant", fiyat: "500", para: "EUR" },
     { ad: "Zirkonyum Kaplama", fiyat: "150", para: "EUR" },
-    { ad: "Dis Beyazlatma", fiyat: "200", para: "EUR" },
+    { ad: "Diş Beyazlatma", fiyat: "200", para: "EUR" },
     { ad: "Kanal Tedavisi", fiyat: "120", para: "EUR" },
   ];
 
@@ -109,17 +109,17 @@ export default function KlinikProfil() {
             <input type="text" placeholder="Adiniz" style={{ width: "100%", border: "1px solid #e5e7eb", borderRadius: "8px", padding: "10px 12px", fontSize: "13px", marginBottom: "10px", boxSizing: "border-box", outline: "none" }} />
             <input type="email" placeholder="E-posta adresiniz" style={{ width: "100%", border: "1px solid #e5e7eb", borderRadius: "8px", padding: "10px 12px", fontSize: "13px", marginBottom: "10px", boxSizing: "border-box", outline: "none" }} />
             <select style={{ width: "100%", border: "1px solid #e5e7eb", borderRadius: "8px", padding: "10px 12px", fontSize: "13px", marginBottom: "10px", boxSizing: "border-box", outline: "none", background: "#fff" }}>
-              <option>Tedavi secin</option>
+              <option>Tedavi seçin</option>
               <option>Implant</option>
               <option>Zirkonyum Kaplama</option>
-              <option>Dis Beyazlatma</option>
+              <option>Diş Beyazlatma</option>
               <option>Kanal Tedavisi</option>
             </select>
             <textarea placeholder="Notunuz..." rows={3} style={{ width: "100%", border: "1px solid #e5e7eb", borderRadius: "8px", padding: "10px 12px", fontSize: "13px", marginBottom: "16px", boxSizing: "border-box", outline: "none", resize: "none" }} />
             <button style={{ width: "100%", background: "#185FA5", color: "#fff", border: "none", padding: "12px", borderRadius: "8px", fontSize: "14px", cursor: "pointer", fontWeight: 500 }}>
               Teklif Gonder
             </button>
-            <p style={{ fontSize: "11px", color: "#888", textAlign: "center", marginTop: "10px" }}>Ucretsiz, baglamayici teklif</p>
+            <p style={{ fontSize: "11px", color: "#888", textAlign: "center", marginTop: "10px" }}>Ücretsiz, baglamayici teklif</p>
           </div>
 
           <div style={{ background: "#fff", borderRadius: "12px", border: "1px solid #e5e7eb", padding: "20px" }}>

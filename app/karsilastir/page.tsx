@@ -2,8 +2,8 @@
 import { useState } from "react";
 import Footer from "../components/Footer";
 
-export default function TeklifKarsilastir() {
-  const [secilenTeklif, setSecilenTeklif] = useState("");
+export default function TeklifKarşılaştır() {
+  const [seçilenTeklif, setSeçilenTeklif] = useState("");
 
   const talep = {
     tedavi: "Implant",
@@ -22,7 +22,7 @@ export default function TeklifKarsilastir() {
       para: "EUR",
       puan: "4.9",
       yorumSayisi: "218",
-      sure: "3 gun",
+      sure: "3 gün",
       garanti: "5 yil",
       dahil: ["Implant", "Zirkonyum kaplama", "Kontrol muayeneleri", "Transfer"],
       aciklama: "Nobel Biocare implant kullaniyoruz. 5 yil garanti sunuyoruz.",
@@ -38,10 +38,10 @@ export default function TeklifKarsilastir() {
       para: "EUR",
       puan: "4.6",
       yorumSayisi: "142",
-      sure: "2 gun",
+      sure: "2 gün",
       garanti: "3 yil",
       dahil: ["Implant", "Geçici kaplama", "1 kontrol muayenesi"],
-      aciklama: "Straumann implant kullaniyoruz. Hizli tedavi secenegi mevcuttur.",
+      aciklama: "Straumann implant kullanıyoruz. Hızlı tedavi seçeneği mevcuttur.",
       rozet: "EN UYGUN",
       rozetRenk: "#185FA5",
     },
@@ -54,7 +54,7 @@ export default function TeklifKarsilastir() {
       para: "EUR",
       puan: "4.8",
       yorumSayisi: "189",
-      sure: "4 gun",
+      sure: "4 gün",
       garanti: "10 yil",
       dahil: ["Implant", "Zirkonyum kaplama", "Sınırsız kontrol", "Transfer", "Otel"],
       aciklama: "Premium paket. 10 yil garanti ve otel dahil.",
@@ -87,12 +87,12 @@ export default function TeklifKarsilastir() {
           </div>
         </div>
 
-        <h1 style={{ fontSize: "20px", fontWeight: 500, color: "#1a1a1a", marginBottom: "6px" }}>Teklifleri Karsilastir</h1>
-        <p style={{ fontSize: "13px", color: "#888", marginBottom: "24px" }}>En uygun teklifi sec ve tedavine basla</p>
+        <h1 style={{ fontSize: "20px", fontWeight: 500, color: "#1a1a1a", marginBottom: "6px" }}>Teklifleri Karşılaştır</h1>
+        <p style={{ fontSize: "13px", color: "#888", marginBottom: "24px" }}>En uygun teklifi seç ve tedavine basla</p>
 
         <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "16px", marginBottom: "24px" }}>
           {teklifler.map((t) => (
-            <div key={t.id} onClick={() => setSecilenTeklif(t.id)} style={{ background: "#fff", border: secilenTeklif === t.id ? "2px solid #185FA5" : "1px solid #e5e7eb", borderRadius: "12px", overflow: "hidden", cursor: "pointer", transition: "box-shadow 0.2s", boxShadow: secilenTeklif === t.id ? "0 4px 16px rgba(24,95,165,0.15)" : "none" }}>
+            <div key={t.id} onClick={() => setSeçilenTeklif(t.id)} style={{ background: "#fff", border: seçilenTeklif === t.id ? "2px solid #185FA5" : "1px solid #e5e7eb", borderRadius: "12px", overflow: "hidden", cursor: "pointer", transition: "box-shadow 0.2s", boxShadow: seçilenTeklif === t.id ? "0 4px 16px rgba(24,95,165,0.15)" : "none" }}>
               <div style={{ background: t.rozetRenk, padding: "6px 12px", textAlign: "center" }}>
                 <span style={{ color: "#fff", fontSize: "11px", fontWeight: 500 }}>{t.rozet}</span>
               </div>
@@ -135,22 +135,22 @@ export default function TeklifKarsilastir() {
 
                 <p style={{ fontSize: "12px", color: "#888", lineHeight: 1.5, marginBottom: "16px" }}>{t.aciklama}</p>
 
-                <button style={{ width: "100%", background: secilenTeklif === t.id ? "#185FA5" : "#f0f4ff", color: secilenTeklif === t.id ? "#fff" : "#185FA5", border: "none", padding: "10px", borderRadius: "8px", fontSize: "13px", cursor: "pointer", fontWeight: 500 }}>
-                  {secilenTeklif === t.id ? "Secildi ✓" : "Bu Teklifi Sec"}
+                <button style={{ width: "100%", background: seçilenTeklif === t.id ? "#185FA5" : "#f0f4ff", color: seçilenTeklif === t.id ? "#fff" : "#185FA5", border: "none", padding: "10px", borderRadius: "8px", fontSize: "13px", cursor: "pointer", fontWeight: 500 }}>
+                  {seçilenTeklif === t.id ? "Seçildi ✓" : "Bu Teklifi Seç"}
                 </button>
               </div>
             </div>
           ))}
         </div>
 
-        {secilenTeklif && (
+        {seçilenTeklif && (
           <div style={{ background: "#fff", border: "2px solid #185FA5", borderRadius: "12px", padding: "24px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
             <div>
               <div style={{ fontSize: "15px", fontWeight: 500, color: "#1a1a1a", marginBottom: "4px" }}>
-                {teklifler.find(t => t.id === secilenTeklif)?.klinik} secildi
+                {teklifler.find(t => t.id === seçilenTeklif)?.klinik} seçildi
               </div>
               <div style={{ fontSize: "13px", color: "#888" }}>
-                Fiyat: {teklifler.find(t => t.id === secilenTeklif)?.fiyat} {teklifler.find(t => t.id === secilenTeklif)?.para}
+                Fiyat: {teklifler.find(t => t.id === seçilenTeklif)?.fiyat} {teklifler.find(t => t.id === seçilenTeklif)?.para}
               </div>
             </div>
             <button style={{ background: "#185FA5", color: "#fff", border: "none", padding: "14px 32px", borderRadius: "10px", fontSize: "15px", cursor: "pointer", fontWeight: 500 }}>

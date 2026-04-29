@@ -48,9 +48,9 @@ export default function Iletisim() {
           <div style={{ background: "#fff", border: "1px solid #EEEDFE", borderRadius: "12px", padding: "20px", marginTop: "20px" }}>
             <h3 style={{ fontSize: "14px", fontWeight: 700, color: "#12103a", marginBottom: "12px" }}>Çalışma Saatleri</h3>
             {[
-              { gun: "Pazartesi - Cuma", saat: "09:00 - 18:00" },
-              { gun: "Cumartesi", saat: "10:00 - 16:00" },
-              { gun: "Pazar", saat: "Kapalı" },
+              { gün: "Pazartesi - Cuma", saat: "09:00 - 18:00" },
+              { gün: "Cumartesi", saat: "10:00 - 16:00" },
+              { gün: "Pazar", saat: "Kapalı" },
             ].map((item) => (
               <div key={item.gun} style={{ display: "flex", justifyContent: "space-between", padding: "8px 0", borderBottom: "1px solid #f5f5f5", fontSize: "13px" }}>
                 <span style={{ color: "#555" }}>{item.gun}</span>

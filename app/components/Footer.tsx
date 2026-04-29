@@ -26,7 +26,7 @@ export default function Footer() {
               { ad: "Tedaviler", href: "/tedaviler" },
               { ad: "Oteller", href: "/oteller" },
               { ad: "Transfer", href: "/transfer" },
-              { ad: "Nasıl Çalışır", href: "/nasil-calisir" },
+              { ad: "Nasıl Çalışır", href: "/nasıl-çalışır" },
             ].map((link) => (
               <a key={link.ad} href={link.href} style={{ fontSize: "13px", color: "#6b6fa8", textDecoration: "none" }}>{link.ad}</a>
             ))}

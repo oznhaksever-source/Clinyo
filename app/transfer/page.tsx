@@ -16,29 +16,29 @@ const aracTipleri = ["Sedan", "Van", "VIP Sedan", "VIP Van", "Limuzin", "VIP Min
 
 export default function Transfer() {
   const [aramaMetni, setAramaMetni] = useState("");
-  const [secilenSehirler, setSecilenSehirler] = useState<string[]>([]);
-  const [secilenAraclar, setSecilenAraclar] = useState<string[]>([]);
-  const [sirala, setSirala] = useState("puan");
+  const [seçilenŞehirler, setSeçilenŞehirler] = useState<string[]>([]);
+  const [seçilenAraçlar, setSeçilenAraçlar] = useState<string[]>([]);
+  const [sırala, setSırala] = useState("puan");
 
-  function toggleSehir(sehir: string) {
-    setSecilenSehirler((prev) => prev.includes(sehir) ? prev.filter((s) => s !== sehir) : [...prev, sehir]);
+  function toggleŞehir(şehir: string) {
+    setSeçilenŞehirler((prev) => prev.includes(şehir) ? prev.filter((s) => s !== şehir) : [...prev, sehir]);
   }
 
-  function toggleArac(arac: string) {
-    setSecilenAraclar((prev) => prev.includes(arac) ? prev.filter((a) => a !== arac) : [...prev, arac]);
+  function toggleAraç(arac: string) {
+    setSeçilenAraçlar((prev) => prev.includes(araç) ? prev.filter((a) => a !== araç) : [...prev, arac]);
   }
 
-  function filtreleriSifirla() {
-    setSecilenSehirler([]);
-    setSecilenAraclar([]);
+  function filtreleriSıfırla() {
+    setSeçilenŞehirler([]);
+    setSeçilenAraçlar([]);
     setAramaMetni("");
   }
 
   const filtreliTransferler = transferler
     .filter((t) => {
       const aramaUygun = t.ad.toLowerCase().includes(aramaMetni.toLowerCase()) || t.sehir.toLowerCase().includes(aramaMetni.toLowerCase());
-      const sehirUygun = secilenSehirler.length === 0 || secilenSehirler.includes(t.sehir);
-      const aracUygun = secilenAraclar.length === 0 || secilenAraclar.some((a) => t.araclar.includes(a));
+      const sehirUygun = seçilenŞehirler.length === 0 || seçilenŞehirler.includes(t.sehir);
+      const aracUygun = seçilenAraclar.length === 0 || seçilenAraclar.some((a) => t.araclar.includes(a));
       return aramaUygun && sehirUygun && aracUygun;
     })
     .sort((a, b) => {
@@ -48,7 +48,7 @@ export default function Transfer() {
       return 0;
     });
 
-  const aktifFiltreSayisi = secilenSehirler.length + secilenAraclar.length;
+  const aktifFiltreSayisi = seçilenŞehirler.length + seçilenAraçlar.length;
 
   return (
     <main style={{ minHeight: "100vh", background: "#f9fafb", fontFamily: "sans-serif" }}>
@@ -97,8 +97,8 @@ export default function Transfer() {
             <h3 style={{ fontSize: "13px", fontWeight: 700, color: "#12103a", marginBottom: "12px", textTransform: "uppercase", letterSpacing: "0.5px" }}>Şehir</h3>
             {sehirler.map((s) => (
               <label key={s} style={{ display: "flex", alignItems: "center", gap: "8px", padding: "6px 0", cursor: "pointer" }}>
-                <input type="checkbox" checked={secilenSehirler.includes(s)} onChange={() => toggleSehir(s)} style={{ accentColor: "#534AB7", width: "15px", height: "15px" }} />
-                <span style={{ fontSize: "13px", color: secilenSehirler.includes(s) ? "#534AB7" : "#555", fontWeight: secilenSehirler.includes(s) ? 600 : 400 }}>{s}</span>
+                <input type="checkbox" checked={seçilenŞehirler.includes(s)} onChange={() => toggleSehir(s)} style={{ accentColor: "#534AB7", width: "15px", height: "15px" }} />
+                <span style={{ fontSize: "13px", color: seçilenŞehirler.includes(s) ? "#534AB7" : "#555", fontWeight: seçilenSehirler.includes(s) ? 600 : 400 }}>{s}</span>
               </label>
             ))}
           </div>
@@ -107,8 +107,8 @@ export default function Transfer() {
             <h3 style={{ fontSize: "13px", fontWeight: 700, color: "#12103a", marginBottom: "12px", textTransform: "uppercase", letterSpacing: "0.5px" }}>Araç Tipi</h3>
             {aracTipleri.map((a) => (
               <label key={a} style={{ display: "flex", alignItems: "center", gap: "8px", padding: "6px 0", cursor: "pointer" }}>
-                <input type="checkbox" checked={secilenAraclar.includes(a)} onChange={() => toggleArac(a)} style={{ accentColor: "#534AB7", width: "15px", height: "15px" }} />
-                <span style={{ fontSize: "13px", color: secilenAraclar.includes(a) ? "#534AB7" : "#555", fontWeight: secilenAraclar.includes(a) ? 600 : 400 }}>{a}</span>
+                <input type="checkbox" checked={seçilenAraçlar.includes(a)} onChange={() => toggleArac(a)} style={{ accentColor: "#534AB7", width: "15px", height: "15px" }} />
+                <span style={{ fontSize: "13px", color: seçilenAraçlar.includes(a) ? "#534AB7" : "#555", fontWeight: seçilenAraclar.includes(a) ? 600 : 400 }}>{a}</span>
               </label>
             ))}
           </div>
