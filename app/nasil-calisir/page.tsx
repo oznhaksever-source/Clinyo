@@ -1,4 +1,5 @@
 import Navbar from "../components/Navbar";
+import Footer from "../components/Footer";
 export default function nasılÇalışır() {
   const adımlar = [
     {
@@ -133,17 +134,7 @@ export default function nasılÇalışır() {
         </div>
       </section>
 
-      <footer style={{ background: "#12103a", padding: "24px 32px", display: "flex", justifyContent: "space-between", alignItems: "center", borderTop: "1px solid #1e1b4b" }}>
-        <div style={{ fontSize: "18px", fontWeight: 700, color: "#fff" }}>
-          med<span style={{ color: "#7F77DD", fontWeight: 300 }}>oqa</span>
-        </div>
-        <div style={{ display: "flex", gap: "24px" }}>
-          {["Gizlilik", "KVKK", "Iletisim", "Blog"].map((l) => (
-            <a key={l} href="#" style={{ color: "#6b6fa8", fontSize: "12px", textDecoration: "none" }}>{l}</a>
-          ))}
-        </div>
-        <div style={{ fontSize: "12px", color: "#6b6fa8" }}>2024 Medoqa. Tüm haklari saklidir.</div>
-      </footer>
+      <Footer />
 
     </main>
   );

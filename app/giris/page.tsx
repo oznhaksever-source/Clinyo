@@ -1,5 +1,6 @@
 "use client";
 import { useState } from "react";
+import Footer from "../components/Footer";
 
 export default function Giris() {
   const [mod, setMod] = useState("giris");
@@ -110,6 +111,7 @@ export default function Giris() {
 
         </div>
       </div>
+      <Footer />
 
     </main>
   );

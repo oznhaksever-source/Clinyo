@@ -1,5 +1,6 @@
  "use client";
  import Navbar from "../components/Navbar";
+ import Footer from "../components/Footer";
 import { useState } from "react";
 
 export default function TeklifTalep() {
@@ -183,6 +184,7 @@ export default function TeklifTalep() {
 
         </div>
       </div>
+      <Footer />
     </main>
   );
 }

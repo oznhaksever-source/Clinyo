@@ -1,5 +1,6 @@
  "use client";
 import { useState } from "react";
+import Footer from "../components/Footer";
 
 export default function TeklifKarsilastir() {
   const [secilenTeklif, setSecilenTeklif] = useState("");
@@ -159,6 +160,7 @@ export default function TeklifKarsilastir() {
         )}
 
       </div>
+      <Footer />
     </main>
   );
 }

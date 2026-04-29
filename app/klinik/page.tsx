@@ -1,4 +1,5 @@
  import Navbar from "../components/Navbar";
+ import Footer from "../components/Footer";
 export default function KlinikProfil() {
   const doktorlar = [
     { kisaltma: "AK", ad: "Dr. Ahmet Kaya", uzmanlik: "Implant Uzmani", deneyim: "15 yil" },
@@ -140,14 +141,7 @@ export default function KlinikProfil() {
 
       </div>
 
-      <footer style={{ background: "#0a1628", padding: "20px 32px", display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: "32px" }}>
-        <div style={{ color: "#fff", fontSize: "16px", fontWeight: 500 }}>med<span style={{ color: "#7F77DD", fontWeight: 300 }}>oqa</span></div>
-        <div style={{ display: "flex", gap: "20px" }}>
-          {["Gizlilik", "KVKK", "Iletisim", "Blog"].map((l) => (
-            <a key={l} href="#" style={{ color: "#5a7a9a", fontSize: "12px", textDecoration: "none" }}>{l}</a>
-          ))}
-        </div>
-      </footer>
+      <Footer />
 
     </main>
   );
