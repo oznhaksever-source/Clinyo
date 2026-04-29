@@ -20,9 +20,9 @@ const diller = ["TR", "EN", "DE"];
 
 export default function Klinikler() {
   const [aramaMetni, setAramaMetni] = useState("");
-  const [seçilenKategoriler, setSeçilenKategoriler] = useState<string[]>([]);
-  const [seçilenSehirler, setSeçilenSehirler] = useState<string[]>([]);
-  const [seçilenDiller, setSeçilenDiller] = useState<string[]>([]);
+  const [secilenKategoriler, setsecilenKategoriler] = useState<string[]>([]);
+  const [secilenSehirler, setSecilenSehirler] = useState<string[]>([]);
+  const [secilenDiller, setsecilenDiller] = useState<string[]>([]);
   const [minPuan, setMinPuan] = useState(0);
   const [maxFiyat, setMaxFiyat] = useState(5000);
   const [sirala, setSirala] = useState("puan");
@@ -36,9 +36,9 @@ export default function Klinikler() {
   }
 
   function filtreleriSifirla() {
-    setSeçilenKategoriler([]);
-    setSeçilenSehirler([]);
-    setSeçilenDiller([]);
+    setsecilenKategoriler([]);
+    setSecilenSehirler([]);
+    setsecilenDiller([]);
     setMinPuan(0);
     setMaxFiyat(5000);
     setAramaMetni("");
@@ -47,9 +47,9 @@ export default function Klinikler() {
   const filtreliKlinikler = tümKlinikler
     .filter((k) => {
       const aramaUygun = k.ad.toLowerCase().includes(aramaMetni.toLowerCase()) || k.kategori.toLowerCase().includes(aramaMetni.toLowerCase()) || k.sehir.toLowerCase().includes(aramaMetni.toLowerCase());
-      const kategoriUygun = seçilenKategoriler.length === 0 || seçilenKategoriler.includes(k.kategori);
-      const sehirUygun = seçilenSehirler.length === 0 || seçilenSehirler.includes(k.sehir);
-      const dilUygun = seçilenDiller.length === 0 || seçilenDiller.every((d) => k.diller.includes(d));
+      const kategoriUygun = secilenKategoriler.length === 0 || secilenKategoriler.includes(k.kategori);
+      const sehirUygun = secilenSehirler.length === 0 || secilenSehirler.includes(k.sehir);
+      const dilUygun = secilenDiller.length === 0 || secilenDiller.every((d) => k.diller.includes(d));
       const puanUygun = k.puan >= minPuan;
       const fiyatUygun = k.fiyat <= maxFiyat;
       return aramaUygun && kategoriUygun && sehirUygun && dilUygun && puanUygun && fiyatUygun;
@@ -62,7 +62,7 @@ export default function Klinikler() {
       return 0;
     });
 
-  const aktifFiltreSayisi = seçilenKategoriler.length + seçilenSehirler.length + seçilenDiller.length + (minPuan > 0 ? 1 : 0) + (maxFiyat < 5000 ? 1 : 0);
+  const aktifFiltreSayisi = secilenKategoriler.length + secilenSehirler.length + secilenDiller.length + (minPuan > 0 ? 1 : 0) + (maxFiyat < 5000 ? 1 : 0);
 
   return (
     <main style={{ minHeight: "100vh", background: "#f9fafb", fontFamily: "sans-serif" }}>
@@ -94,8 +94,8 @@ export default function Klinikler() {
             <h3 style={{ fontSize: "13px", fontWeight: 700, color: "#12103a", marginBottom: "12px", textTransform: "uppercase", letterSpacing: "0.5px" }}>Tedavi Kategorisi</h3>
             {kategoriler.map((k) => (
               <label key={k} style={{ display: "flex", alignItems: "center", gap: "8px", padding: "6px 0", cursor: "pointer" }}>
-                <input type="checkbox" checked={seçilenKategoriler.includes(k)} onChange={() => toggleSeçim(seçilenKategoriler, setSeçilenKategoriler, k)} style={{ accentColor: "#534AB7", width: "15px", height: "15px" }} />
-                <span style={{ fontSize: "13px", color: seçilenKategoriler.includes(k) ? "#534AB7" : "#555", fontWeight: seçilenKategoriler.includes(k) ? 600 : 400 }}>{k}</span>
+                <input type="checkbox" checked={secilenKategoriler.includes(k)} onChange={() => toggleSeçim(secilenKategoriler, setsecilenKategoriler, k)} style={{ accentColor: "#534AB7", width: "15px", height: "15px" }} />
+                <span style={{ fontSize: "13px", color: secilenKategoriler.includes(k) ? "#534AB7" : "#555", fontWeight: secilenKategoriler.includes(k) ? 600 : 400 }}>{k}</span>
               </label>
             ))}
           </div>
@@ -104,8 +104,8 @@ export default function Klinikler() {
             <h3 style={{ fontSize: "13px", fontWeight: 700, color: "#12103a", marginBottom: "12px", textTransform: "uppercase", letterSpacing: "0.5px" }}>Sehir</h3>
             {sehirler.map((s) => (
               <label key={s} style={{ display: "flex", alignItems: "center", gap: "8px", padding: "6px 0", cursor: "pointer" }}>
-                <input type="checkbox" checked={ilenSehirler.includes(s)} onChange={() => toggleSeçim(seçilenSehirler, setSeçilenSehirler, s)} style={{ accentColor: "#534AB7", width: "15px", height: "15px" }} />
-                <span style={{ fontSize: "13px", color: seçilenSehirler.includes(s) ? "#534AB7" : "#555", fontWeight: seçilenSehirler.includes(s) ? 600 : 400 }}>{s}</span>
+                <input type="checkbox" checked={secilenSehirler.includes(s)} onChange={() => toggleSeçim(secilenSehirler, setSecilenSehirler, s)} style={{ accentColor: "#534AB7", width: "15px", height: "15px" }} />
+                <span style={{ fontSize: "13px", color: secilenSehirler.includes(s) ? "#534AB7" : "#555", fontWeight: secilenSehirler.includes(s) ? 600 : 400 }}>{s}</span>
               </label>
             ))}
           </div>
@@ -114,8 +114,8 @@ export default function Klinikler() {
             <h3 style={{ fontSize: "13px", fontWeight: 700, color: "#12103a", marginBottom: "12px", textTransform: "uppercase", letterSpacing: "0.5px" }}>Dil Destegi</h3>
             {diller.map((d) => (
               <label key={d} style={{ display: "flex", alignItems: "center", gap: "8px", padding: "6px 0", cursor: "pointer" }}>
-                <input type="checkbox" checked={seçilenDiller.includes(d)} onChange={() => toggleSeçim(seçilenDiller, setSeçilenDiller, d)} style={{ accentColor: "#534AB7", width: "15px", height: "15px" }} />
-                <span style={{ fontSize: "13px", color: seçilenDiller.includes(d) ? "#534AB7" : "#555", fontWeight: seçilenDiller.includes(d) ? 600 : 400 }}>{d}</span>
+                <input type="checkbox" checked={secilenDiller.includes(d)} onChange={() => toggleSeçim(secilenDiller, setsecilenDiller, d)} style={{ accentColor: "#534AB7", width: "15px", height: "15px" }} />
+                <span style={{ fontSize: "13px", color: secilenDiller.includes(d) ? "#534AB7" : "#555", fontWeight: secilenDiller.includes(d) ? 600 : 400 }}>{d}</span>
               </label>
             ))}
           </div>
@@ -155,18 +155,18 @@ export default function Klinikler() {
 
           {aktifFiltreSayisi > 0 && (
             <div style={{ display: "flex", flexWrap: "wrap", gap: "8px", marginBottom: "16px" }}>
-              {seçilenKategoriler.map((k) => (
-                <span key={k} onClick={() => toggleSeçim(seçilenKategoriler, setSeçilenKategoriler, k)} style={{ fontSize: "12px", background: "#EEEDFE", color: "#534AB7", padding: "4px 10px", borderRadius: "20px", cursor: "pointer" }}>
+              {secilenKategoriler.map((k) => (
+                <span key={k} onClick={() => toggleSeçim(secilenKategoriler, setsecilenKategoriler, k)} style={{ fontSize: "12px", background: "#EEEDFE", color: "#534AB7", padding: "4px 10px", borderRadius: "20px", cursor: "pointer" }}>
                   {k} ×
                 </span>
               ))}
-              {seçilenSehirler.map((s) => (
-                <span key={s} onClick={() => toggleSeçim(seçilenSehirler, setSeçilenSehirler, s)} style={{ fontSize: "12px", background: "#EEEDFE", color: "#534AB7", padding: "4px 10px", borderRadius: "20px", cursor: "pointer" }}>
+              {secilenSehirler.map((s) => (
+                <span key={s} onClick={() => toggleSeçim(secilenSehirler, setSecilenSehirler, s)} style={{ fontSize: "12px", background: "#EEEDFE", color: "#534AB7", padding: "4px 10px", borderRadius: "20px", cursor: "pointer" }}>
                   {s} ×
                 </span>
               ))}
-              {seçilenDiller.map((d) => (
-                <span key={d} onClick={() => toggleSeçim(seçilenDiller, setSeçilenDiller, d)} style={{ fontSize: "12px", background: "#EEEDFE", color: "#534AB7", padding: "4px 10px", borderRadius: "20px", cursor: "pointer" }}>
+              {secilenDiller.map((d) => (
+                <span key={d} onClick={() => toggleSeçim(secilenDiller, setsecilenDiller, d)} style={{ fontSize: "12px", background: "#EEEDFE", color: "#534AB7", padding: "4px 10px", borderRadius: "20px", cursor: "pointer" }}>
                   {d} ×
                 </span>
               ))}

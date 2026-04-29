@@ -9,20 +9,19 @@ export default function Navbar() {
       <a href="/" style={{ fontSize: "22px", fontWeight: 700, color: "#fff", textDecoration: "none" }}>
         med<span style={{ color: "#7F77DD", fontWeight: 300 }}>oqa</span>
       </a>
-
       <div style={{ display: "flex", gap: "20px", alignItems: "center" }}>
         <a href="/klinikler" style={{ color: "#aab4c8", fontSize: "13px", textDecoration: "none" }}>Klinikler</a>
         <a href="/tedaviler" style={{ color: "#aab4c8", fontSize: "13px", textDecoration: "none" }}>Tedaviler</a>
         <a href="/oteller" style={{ color: "#aab4c8", fontSize: "13px", textDecoration: "none" }}>Oteller</a>
         <a href="/transfer" style={{ color: "#aab4c8", fontSize: "13px", textDecoration: "none" }}>Transfer</a>
-        <a href="/nasıl-çalışır" style={{ color: "#aab4c8", fontSize: "13px", textDecoration: "none" }}>Nasıl Çalışır</a>
+        <a href="/nasil-calisir" style={{ color: "#aab4c8", fontSize: "13px", textDecoration: "none" }}>Nasil Calisir</a>
         <div style={{ width: "1px", height: "16px", background: "#2a2a4e" }} />
         <div style={{ display: "flex", gap: "6px" }}>
           <span style={{ fontSize: "11px", padding: "3px 8px", border: "1px solid #534AB7", borderRadius: "4px", color: "#7F77DD", cursor: "pointer" }}>TR</span>
           <span style={{ fontSize: "11px", padding: "3px 8px", border: "1px solid #2a2a4e", borderRadius: "4px", color: "#aab4c8", cursor: "pointer" }}>EN</span>
           <span style={{ fontSize: "11px", padding: "3px 8px", border: "1px solid #2a2a4e", borderRadius: "4px", color: "#aab4c8", cursor: "pointer" }}>DE</span>
         </div>
-        <a href="/giris" style={{ background: "#534AB7", color: "#fff", padding: "8px 16px", borderRadius: "8px", fontSize: "13px", textDecoration: "none", fontWeight: 600 }}>Giriş Yap</a>
+        <a href="/giris" style={{ background: "#534AB7", color: "#fff", padding: "8px 16px", borderRadius: "8px", fontSize: "13px", textDecoration: "none", fontWeight: 600 }}>Giris Yap</a>
       </div>
     </nav>
   );
