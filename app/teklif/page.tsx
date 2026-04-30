@@ -123,7 +123,7 @@ export default function TeklifTalep() {
               </div>
               <div style={{ marginBottom: "20px" }}>
                 <label style={{ fontSize: "13px", color: "#555", display: "block", marginBottom: "6px" }}>Ulkeniz</label>
-                <select value={ulke} onChange={(e) => setÜlke(e.target.value)} style={{ width: "100%", border: "1px solid #e5e7eb", borderRadius: "8px", padding: "10px 12px", fontSize: "13px", boxSizing: "border-box", outline: "none", background: "#fff" }}>
+                <select value={ulke} onChange={(e) => setUlke(e.target.value)} style={{ width: "100%", border: "1px solid #e5e7eb", borderRadius: "8px", padding: "10px 12px", fontSize: "13px", boxSizing: "border-box", outline: "none", background: "#fff" }}>
                   <option value="">Ülke seçin</option>
                   <option>Almanya</option>
                   <option>Ingiltere</option>
