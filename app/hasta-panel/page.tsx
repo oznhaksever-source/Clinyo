@@ -1,186 +1,208 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { createClient } from "../../utils/supabase/client";
 
 export default function HastaPanel() {
-  const [aktifSayfa, setAktifSayfa] = useState("ozet");
+  const [aktifMenu, setAktifMenu] = useState("ozet");
+  const [kullanici, setKullanici] = useState<any>(null);
+  const [talepler, setTalepler] = useState<any[]>([]);
+  const [teklifler, setTeklifler] = useState<any[]>([]);
+  const [yukleniyor, setYukleniyor] = useState(true);
 
-  const talepler = [
-    { id: "1", tedavi: "Implant", tarih: "20 Nisan 2024", durum: "teklif_alindi", teklifSayisi: 3 },
-    { id: "2", tedavi: "Zirkonyum Kaplama", tarih: "15 Nisan 2024", durum: "beklemede", teklifSayisi: 0 },
-  ];
+  const supabase = createClient();
 
-  const teklifler = [
-    { klinik: "Smile Dental Clinic", tedavi: "Implant", fiyat: "500", para: "EUR", puan: "4.9", durum: "beklemede" },
-    { klinik: "Istanbul Dental", tedavi: "Implant", fiyat: "450", para: "EUR", puan: "4.7", durum: "beklemede" },
-    { klinik: "Dent Plus", tedavi: "Implant", fiyat: "520", para: "EUR", puan: "4.8", durum: "beklemede" },
-  ];
+  useEffect(() => {
+    veriYukle();
+  }, []);
 
-  const durumRenk: Record<string, string> = {
-    beklemede: "#BA7517",
-    teklif_alindi: "#185FA5",
-    tamamlandi: "#0a7a3a",
-    iptal: "#c00",
-  };
+  async function veriYukle() {
+    setYukleniyor(true);
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) { window.location.href = "/giris"; return; }
 
-  const durumYazi: Record<string, string> = {
-    beklemede: "Beklemede",
-    teklif_alindi: "Teklif Alindi",
-    tamamlandi: "Tamamlandi",
-    iptal: "Iptal",
-  };
+    const { data: profile } = await supabase.from("profiles").select("*").eq("id", user.id).single();
+    setKullanici(profile);
+
+    const { data: talepData } = await supabase.from("talepler").select("*").eq("hasta_id", user.id).order("olusturma_tarihi", { ascending: false });
+    setTalepler(talepData || []);
+
+    if (talepData && talepData.length > 0) {
+      const talepIdleri = talepData.map((t: any) => t.id);
+      const { data: teklifData } = await supabase.from("teklifler").select("*").in("talep_id", talepIdleri);
+      setTeklifler(teklifData || []);
+    }
+
+    setYukleniyor(false);
+  }
+
+  async function cikisYap() {
+    await supabase.auth.signOut();
+    window.location.href = "/giris";
+  }
 
   return (
     <main style={{ minHeight: "100vh", background: "#f9fafb", fontFamily: "sans-serif", display: "flex" }}>
 
-      <div style={{ width: "240px", background: "#0a1628", minHeight: "100vh", padding: "24px 0", flexShrink: 0 }}>
-        <div style={{ padding: "0 20px 24px", borderBottom: "1px solid #1a2a3a" }}>
-          <a href="/" style={{ fontSize: "20px", fontWeight: 500, color: "#fff", textDecoration: "none" }}>
+      <div style={{ width: "220px", background: "#12103a", display: "flex", flexDirection: "column", padding: "24px 0", flexShrink: 0 }}>
+        <div style={{ padding: "0 20px 24px", borderBottom: "1px solid #1e1b4b" }}>
+          <a href="/" style={{ fontSize: "20px", fontWeight: 700, color: "#fff", textDecoration: "none" }}>
             med<span style={{ color: "#7F77DD", fontWeight: 300 }}>oqa</span>
           </a>
+          <div style={{ fontSize: "11px", color: "#6b6fa8", marginTop: "4px" }}>Hasta Paneli</div>
         </div>
-        <div style={{ padding: "16px 12px" }}>
-          <div style={{ display: "flex", alignItems: "center", gap: "10px", padding: "10px 12px", marginBottom: "16px" }}>
-            <div style={{ width: "40px", height: "40px", background: "#185FA5", borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", color: "#fff", fontWeight: 500 }}>H</div>
-            <div>
-              <div style={{ color: "#fff", fontSize: "13px", fontWeight: 500 }}>Hasta</div>
-              <div style={{ color: "#5a7a9a", fontSize: "11px" }}>hasta@email.com</div>
+
+        {kullanici && (
+          <div style={{ padding: "16px 20px", borderBottom: "1px solid #1e1b4b" }}>
+            <div style={{ width: "36px", height: "36px", background: "#534AB7", borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", color: "#fff", fontWeight: 700, fontSize: "14px", marginBottom: "8px" }}>
+              {kullanici.ad?.[0]?.toUpperCase() || "H"}
             </div>
+            <div style={{ fontSize: "13px", fontWeight: 600, color: "#fff" }}>{kullanici.ad} {kullanici.soyad}</div>
+            <div style={{ fontSize: "11px", color: "#6b6fa8" }}>{kullanici.email}</div>
           </div>
+        )}
+
+        <div style={{ padding: "20px 12px", flex: 1 }}>
           {[
-            { id: "ozet", etiket: "Genel Ozet" },
-            { id: "talepler", etiket: "Taleplerim" },
-            { id: "teklifler", etiket: "Teklifler" },
-            { id: "profil", etiket: "Profilim" },
-          ].map((item) => (
-            <button key={item.id} onClick={() => setAktifSayfa(item.id)} style={{ width: "100%", padding: "10px 12px", border: "none", borderRadius: "8px", fontSize: "13px", cursor: "pointer", textAlign: "left", marginBottom: "4px", background: aktifSayfa === item.id ? "#185FA5" : "transparent", color: aktifSayfa === item.id ? "#fff" : "#aab4c8" }}>
-              {item.etiket}
-            </button>
+            { id: "ozet", ad: "Genel Özet" },
+            { id: "talepler", ad: "Teklif Taleplerim" },
+            { id: "teklifler", ad: "Gelen Teklifler" },
+            { id: "profil", ad: "Profilim" },
+          ].map((m) => (
+            <div key={m.id} onClick={() => setAktifMenu(m.id)} style={{ padding: "10px 12px", borderRadius: "8px", cursor: "pointer", marginBottom: "4px", background: aktifMenu === m.id ? "#534AB7" : "transparent", color: aktifMenu === m.id ? "#fff" : "#8b8fc8", fontSize: "13px" }}>
+              {m.ad}
+            </div>
           ))}
-          <div style={{ borderTop: "1px solid #1a2a3a", marginTop: "16px", paddingTop: "16px" }}>
-            <button onClick={() => { window.location.href = "/"; }} style={{ width: "100%", padding: "10px 12px", border: "none", borderRadius: "8px", fontSize: "13px", cursor: "pointer", textAlign: "left", background: "transparent", color: "#aab4c8" }}>
-              Cikis Yap
-            </button>
-          </div>
+        </div>
+
+        <div style={{ padding: "0 12px 20px" }}>
+          <a href="/teklif" style={{ display: "block", textAlign: "center", background: "#534AB7", color: "#fff", padding: "10px", borderRadius: "8px", fontSize: "13px", textDecoration: "none", marginBottom: "8px" }}>
+            + Yeni Teklif Talebi
+          </a>
+          <button onClick={cikisYap} style={{ width: "100%", padding: "10px", background: "transparent", border: "1px solid #2a2a4e", borderRadius: "8px", color: "#8b8fc8", fontSize: "13px", cursor: "pointer" }}>
+            Çıkış Yap
+          </button>
         </div>
       </div>
 
-      <div style={{ flex: 1, padding: "32px" }}>
+      <div style={{ flex: 1, padding: "32px", overflow: "auto" }}>
+        {yukleniyor ? (
+          <div style={{ textAlign: "center", padding: "64px", color: "#888" }}>Yükleniyor...</div>
+        ) : (
+          <>
+            {aktifMenu === "ozet" && (
+              <div>
+                <h1 style={{ fontSize: "24px", fontWeight: 700, color: "#12103a", marginBottom: "8px" }}>
+                  Hoş Geldiniz, {kullanici?.ad}! 👋
+                </h1>
+                <p style={{ fontSize: "14px", color: "#888", marginBottom: "28px" }}>Tedavi sürecinizi buradan takip edebilirsiniz.</p>
 
-        {aktifSayfa === "ozet" && (
-          <div>
-            <h1 style={{ fontSize: "22px", fontWeight: 500, color: "#1a1a1a", marginBottom: "24px" }}>Genel Ozet</h1>
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "16px", marginBottom: "32px" }}>
-              {[
-                { sayi: "2", etiket: "Aktif Talep" },
-                { sayi: "3", etiket: "Gelen Teklif" },
-                { sayi: "0", etiket: "Tamamlanan Islem" },
-              ].map((k) => (
-                <div key={k.etiket} style={{ background: "#fff", border: "1px solid #e5e7eb", borderRadius: "12px", padding: "20px" }}>
-                  <div style={{ fontSize: "28px", fontWeight: 500, color: "#185FA5", marginBottom: "4px" }}>{k.sayi}</div>
-                  <div style={{ fontSize: "13px", color: "#888" }}>{k.etiket}</div>
-                </div>
-              ))}
-            </div>
-            <div style={{ background: "#fff", border: "1px solid #e5e7eb", borderRadius: "12px", padding: "24px" }}>
-              <h2 style={{ fontSize: "16px", fontWeight: 500, color: "#1a1a1a", marginBottom: "16px" }}>Son Taleplerim</h2>
-              {talepler.map((t) => (
-                <div key={t.id} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "12px 0", borderBottom: "1px solid #f5f5f5" }}>
-                  <div>
-                    <div style={{ fontSize: "14px", fontWeight: 500, color: "#1a1a1a" }}>{t.tedavi}</div>
-                    <div style={{ fontSize: "12px", color: "#888" }}>{t.tarih}</div>
-                  </div>
-                  <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
-                    {t.teklifSayisi > 0 && <span style={{ fontSize: "12px", color: "#185FA5" }}>{t.teklifSayisi} teklif</span>}
-                    <span style={{ fontSize: "12px", padding: "3px 10px", borderRadius: "20px", background: "#f0f4ff", color: durumRenk[t.durum] }}>{durumYazi[t.durum]}</span>
-                  </div>
-                </div>
-              ))}
-              <button onClick={() => setAktifSayfa("talepler")} style={{ marginTop: "16px", background: "#185FA5", color: "#fff", border: "none", padding: "10px 20px", borderRadius: "8px", fontSize: "13px", cursor: "pointer" }}>
-                Yeni Talep Olustur
-              </button>
-            </div>
-          </div>
-        )}
-
-        {aktifSayfa === "talepler" && (
-          <div>
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "24px" }}>
-              <h1 style={{ fontSize: "22px", fontWeight: 500, color: "#1a1a1a", margin: 0 }}>Taleplerim</h1>
-              <button style={{ background: "#185FA5", color: "#fff", border: "none", padding: "10px 20px", borderRadius: "8px", fontSize: "13px", cursor: "pointer" }}>
-                + Yeni Talep
-              </button>
-            </div>
-            <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
-              {talepler.map((t) => (
-                <div key={t.id} style={{ background: "#fff", border: "1px solid #e5e7eb", borderRadius: "12px", padding: "20px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                  <div>
-                    <div style={{ fontSize: "15px", fontWeight: 500, color: "#1a1a1a", marginBottom: "4px" }}>{t.tedavi}</div>
-                    <div style={{ fontSize: "12px", color: "#888" }}>{t.tarih}</div>
-                  </div>
-                  <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
-                    {t.teklifSayisi > 0 && <span style={{ fontSize: "13px", color: "#185FA5", fontWeight: 500 }}>{t.teklifSayisi} teklif geldi</span>}
-                    <span style={{ fontSize: "12px", padding: "4px 12px", borderRadius: "20px", background: "#f0f4ff", color: durumRenk[t.durum] }}>{durumYazi[t.durum]}</span>
-                    <button onClick={() => setAktifSayfa("teklifler")} style={{ background: "#f0f4ff", color: "#185FA5", border: "none", padding: "8px 14px", borderRadius: "8px", fontSize: "12px", cursor: "pointer" }}>
-                      Teklifleri Gor
-                    </button>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {aktifSayfa === "teklifler" && (
-          <div>
-            <h1 style={{ fontSize: "22px", fontWeight: 500, color: "#1a1a1a", marginBottom: "24px" }}>Gelen Teklifler</h1>
-            <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
-              {teklifler.map((t, i) => (
-                <div key={i} style={{ background: "#fff", border: i === 1 ? "2px solid #185FA5" : "1px solid #e5e7eb", borderRadius: "12px", padding: "20px" }}>
-                  {i === 1 && <div style={{ fontSize: "11px", color: "#185FA5", fontWeight: 500, marginBottom: "8px" }}>EN UYGUN FIYAT</div>}
-                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                    <div>
-                      <div style={{ fontSize: "15px", fontWeight: 500, color: "#1a1a1a", marginBottom: "4px" }}>{t.klinik}</div>
-                      <div style={{ fontSize: "12px", color: "#888", marginBottom: "8px" }}>{t.tedavi}</div>
-                      <span style={{ fontSize: "12px", color: "#BA7517" }}>★ {t.puan}</span>
+                <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "16px", marginBottom: "32px" }}>
+                  {[
+                    { baslik: "Teklif Talebim", deger: talepler.length, renk: "#534AB7" },
+                    { baslik: "Gelen Teklif", deger: teklifler.length, renk: "#0a7a3a" },
+                    { baslik: "Bekleyen", deger: talepler.filter(t => t.durum === "beklemede").length, renk: "#BA7517" },
+                  ].map((k) => (
+                    <div key={k.baslik} style={{ background: "#fff", border: "1px solid #EEEDFE", borderRadius: "12px", padding: "20px" }}>
+                      <div style={{ fontSize: "32px", fontWeight: 700, color: k.renk, marginBottom: "8px" }}>{k.deger}</div>
+                      <div style={{ fontSize: "13px", color: "#888" }}>{k.baslik}</div>
                     </div>
-                    <div style={{ textAlign: "right" }}>
-                      <div style={{ fontSize: "22px", fontWeight: 500, color: "#185FA5", marginBottom: "12px" }}>{t.fiyat} {t.para}</div>
-                      <button style={{ background: "#185FA5", color: "#fff", border: "none", padding: "10px 20px", borderRadius: "8px", fontSize: "13px", cursor: "pointer" }}>
-                        Teklifi Kabul Et
-                      </button>
-                    </div>
+                  ))}
+                </div>
+
+                {talepler.length === 0 && (
+                  <div style={{ background: "#fff", border: "1px solid #EEEDFE", borderRadius: "12px", padding: "48px", textAlign: "center" }}>
+                    <div style={{ fontSize: "48px", marginBottom: "16px" }}>🏥</div>
+                    <h3 style={{ fontSize: "18px", fontWeight: 700, color: "#12103a", marginBottom: "8px" }}>Henüz teklif talebiniz yok</h3>
+                    <p style={{ fontSize: "13px", color: "#888", marginBottom: "20px" }}>İlk teklif talebinizi oluşturun ve kliniklerden fiyat alın.</p>
+                    <a href="/teklif" style={{ background: "#534AB7", color: "#fff", padding: "12px 24px", borderRadius: "8px", fontSize: "14px", textDecoration: "none", fontWeight: 600 }}>
+                      Teklif Talebi Oluştur
+                    </a>
                   </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
+                )}
+              </div>
+            )}
 
-        {aktifSayfa === "profil" && (
-          <div>
-            <h1 style={{ fontSize: "22px", fontWeight: 500, color: "#1a1a1a", marginBottom: "24px" }}>Profilim</h1>
-            <div style={{ background: "#fff", border: "1px solid #e5e7eb", borderRadius: "12px", padding: "24px", maxWidth: "500px" }}>
-              {[
-                { etiket: "Ad", placeholder: "Adiniz" },
-                { etiket: "Soyad", placeholder: "Soyadiniz" },
-                { etiket: "E-posta", placeholder: "E-posta adresiniz" },
-                { etiket: "Telefon", placeholder: "Telefon numaraniz" },
-                { etiket: "Ulke", placeholder: "Ulkeniz" },
-              ].map((f) => (
-                <div key={f.etiket} style={{ marginBottom: "16px" }}>
-                  <label style={{ fontSize: "13px", color: "#555", display: "block", marginBottom: "6px" }}>{f.etiket}</label>
-                  <input type="text" placeholder={f.placeholder} style={{ width: "100%", border: "1px solid #e5e7eb", borderRadius: "8px", padding: "10px 12px", fontSize: "13px", boxSizing: "border-box", outline: "none" }} />
+            {aktifMenu === "talepler" && (
+              <div>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "24px" }}>
+                  <h1 style={{ fontSize: "24px", fontWeight: 700, color: "#12103a" }}>Teklif Taleplerim</h1>
+                  <a href="/teklif" style={{ background: "#534AB7", color: "#fff", padding: "10px 20px", borderRadius: "8px", fontSize: "13px", textDecoration: "none" }}>+ Yeni Talep</a>
                 </div>
-              ))}
-              <button style={{ background: "#185FA5", color: "#fff", border: "none", padding: "12px 24px", borderRadius: "8px", fontSize: "14px", cursor: "pointer", fontWeight: 500 }}>
-                Kaydet
-              </button>
-            </div>
-          </div>
-        )}
+                {talepler.length === 0 ? (
+                  <div style={{ background: "#fff", border: "1px solid #EEEDFE", borderRadius: "12px", padding: "48px", textAlign: "center" }}>
+                    <div style={{ fontSize: "13px", color: "#888" }}>Henüz teklif talebiniz yok</div>
+                  </div>
+                ) : (
+                  <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+                    {talepler.map((t) => (
+                      <div key={t.id} style={{ background: "#fff", border: "1px solid #EEEDFE", borderRadius: "12px", padding: "20px" }}>
+                        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
+                          <div>
+                            <div style={{ fontSize: "15px", fontWeight: 700, color: "#12103a", marginBottom: "4px" }}>{t.tedavi_turu}</div>
+                            <div style={{ fontSize: "13px", color: "#888", marginBottom: "8px" }}>{t.aciklama}</div>
+                            <div style={{ fontSize: "12px", color: "#888" }}>{new Date(t.olusturma_tarihi).toLocaleDateString("tr-TR")}</div>
+                          </div>
+                          <span style={{ fontSize: "11px", padding: "4px 12px", borderRadius: "20px", background: t.durum === "beklemede" ? "#fff8e1" : "#f0fff4", color: t.durum === "beklemede" ? "#BA7517" : "#0a7a3a" }}>
+                            {t.durum}
+                          </span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
 
+            {aktifMenu === "teklifler" && (
+              <div>
+                <h1 style={{ fontSize: "24px", fontWeight: 700, color: "#12103a", marginBottom: "24px" }}>Gelen Teklifler</h1>
+                {teklifler.length === 0 ? (
+                  <div style={{ background: "#fff", border: "1px solid #EEEDFE", borderRadius: "12px", padding: "48px", textAlign: "center" }}>
+                    <div style={{ fontSize: "48px", marginBottom: "16px" }}>📋</div>
+                    <div style={{ fontSize: "13px", color: "#888" }}>Henüz gelen teklif yok. Teklif talebi oluşturduktan sonra klinikler size teklif gönderecek.</div>
+                  </div>
+                ) : (
+                  <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+                    {teklifler.map((t) => (
+                      <div key={t.id} style={{ background: "#fff", border: "1px solid #EEEDFE", borderRadius: "12px", padding: "20px" }}>
+                        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                          <div>
+                            <div style={{ fontSize: "15px", fontWeight: 700, color: "#12103a", marginBottom: "4px" }}>{t.aciklama}</div>
+                            <div style={{ fontSize: "12px", color: "#888" }}>{new Date(t.olusturma_tarihi).toLocaleDateString("tr-TR")}</div>
+                          </div>
+                          <div style={{ textAlign: "right" }}>
+                            <div style={{ fontSize: "22px", fontWeight: 700, color: "#534AB7" }}>{t.fiyat} {t.para_birimi}</div>
+                            <span style={{ fontSize: "11px", padding: "3px 10px", borderRadius: "20px", background: "#fff8e1", color: "#BA7517" }}>{t.durum}</span>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
+
+            {aktifMenu === "profil" && (
+              <div>
+                <h1 style={{ fontSize: "24px", fontWeight: 700, color: "#12103a", marginBottom: "24px" }}>Profilim</h1>
+                <div style={{ background: "#fff", border: "1px solid #EEEDFE", borderRadius: "12px", padding: "28px", maxWidth: "500px" }}>
+                  {[
+                    { etiket: "Ad", deger: kullanici?.ad },
+                    { etiket: "Soyad", deger: kullanici?.soyad },
+                    { etiket: "E-posta", deger: kullanici?.email },
+                    { etiket: "Hesap Türü", deger: kullanici?.hesap_turu },
+                  ].map((item) => (
+                    <div key={item.etiket} style={{ display: "flex", justifyContent: "space-between", padding: "12px 0", borderBottom: "1px solid #f5f5f5" }}>
+                      <span style={{ fontSize: "13px", color: "#888" }}>{item.etiket}</span>
+                      <span style={{ fontSize: "13px", fontWeight: 600, color: "#12103a" }}>{item.deger}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </>
+        )}
       </div>
     </main>
   );
 }
- 
