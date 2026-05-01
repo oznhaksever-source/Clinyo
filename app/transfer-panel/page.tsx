@@ -8,6 +8,17 @@ export default function TransferPanel() {
   const [araclar, setAraclar] = useState<any[]>([]);
   const [yukleniyor, setYukleniyor] = useState(true);
   const [mesaj, setMesaj] = useState("");
+
+  const [profil, setProfil] = useState({
+    tanitim_yazisi: "",
+    telefon: "",
+    website: "",
+    instagram: "",
+    facebook: "",
+    google_maps_url: "",
+    konum_adres: "",
+  });
+
   const [yeniArac, setYeniArac] = useState({
     arac_tipi: "Sedan",
     kapasite: "4",
@@ -26,9 +37,48 @@ export default function TransferPanel() {
     if (!user) { window.location.href = "/giris"; return; }
     const { data: profile } = await supabase.from("profiles").select("*").eq("id", user.id).single();
     setKullanici(profile);
+    if (profile) {
+      setProfil({
+        tanitim_yazisi: profile.tanitim_yazisi || "",
+        telefon: profile.telefon || "",
+        website: profile.website || "",
+        instagram: profile.instagram || "",
+        facebook: profile.facebook || "",
+        google_maps_url: profile.google_maps_url || "",
+        konum_adres: profile.konum_adres || "",
+      });
+    }
     const { data: aracData } = await supabase.from("transfer_araclar").select("*").eq("transfer_id", user.id).order("olusturma_tarihi");
     setAraclar(aracData || []);
     setYukleniyor(false);
+  }
+
+  async function fotografYukle(file: File, klasor: string) {
+    const { data: { user } } = await supabase.auth.getUser();
+    const dosyaAdi = `${user?.id}/${klasor}/${Date.now()}_${file.name}`;
+    const { error } = await supabase.storage.from("medoqa-images").upload(dosyaAdi, file);
+    if (error) return null;
+    const { data: url } = supabase.storage.from("medoqa-images").getPublicUrl(dosyaAdi);
+    return url.publicUrl;
+  }
+
+  async function profilKaydet() {
+    const { data: { user } } = await supabase.auth.getUser();
+    const { error } = await supabase.from("profiles").update(profil).eq("id", user?.id);
+    if (error) { setMesaj("Hata: " + error.message); }
+    else { setMesaj("Profil kaydedildi!"); veriYukle(); }
+    setTimeout(() => setMesaj(""), 3000);
+  }
+
+  async function kapakFotografYukle(file: File) {
+    const url = await fotografYukle(file, "kapak");
+    if (url) {
+      const { data: { user } } = await supabase.auth.getUser();
+      await supabase.from("profiles").update({ kapak_fotograf: url }).eq("id", user?.id);
+      veriYukle();
+      setMesaj("Kapak fotoğrafı yüklendi!");
+      setTimeout(() => setMesaj(""), 3000);
+    }
   }
 
   async function aracEkle() {
@@ -88,6 +138,7 @@ export default function TransferPanel() {
         <div style={{ padding: "20px 12px", flex: 1 }}>
           {[
             { id: "ozet", ad: "Genel Özet" },
+            { id: "profil-duzenle", ad: "Profil Düzenle" },
             { id: "araclar", ad: "Araç & Fiyat Listesi" },
             { id: "profil", ad: "Firma Profilim" },
           ].map((m) => (
@@ -121,7 +172,7 @@ export default function TransferPanel() {
             {aktifMenu === "ozet" && (
               <div>
                 <h1 style={{ fontSize: "24px", fontWeight: 700, color: "#12103a", marginBottom: "8px" }}>Hoş Geldiniz, {kullanici?.ad}! 👋</h1>
-                <p style={{ fontSize: "14px", color: "#888", marginBottom: "28px" }}>Transfer panelinizden araç ve fiyatlarınızı yönetebilirsiniz.</p>
+                <p style={{ fontSize: "14px", color: "#888", marginBottom: "28px" }}>Transfer panelinizden profil ve araçlarınızı yönetebilirsiniz.</p>
                 <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "16px", marginBottom: "32px" }}>
                   {[
                     { baslik: "Toplam Araç", deger: araclar.length, renk: "#534AB7" },
@@ -134,7 +185,68 @@ export default function TransferPanel() {
                     </div>
                   ))}
                 </div>
-                <button onClick={() => setAktifMenu("araclar")} style={{ background: "#534AB7", color: "#fff", border: "none", padding: "12px 24px", borderRadius: "8px", fontSize: "13px", cursor: "pointer" }}>+ Araç Ekle</button>
+                <div style={{ display: "flex", gap: "12px" }}>
+                  <button onClick={() => setAktifMenu("profil-duzenle")} style={{ background: "#534AB7", color: "#fff", border: "none", padding: "10px 20px", borderRadius: "8px", fontSize: "13px", cursor: "pointer" }}>Profil Düzenle</button>
+                  <button onClick={() => setAktifMenu("araclar")} style={{ background: "#fff", color: "#534AB7", border: "1px solid #534AB7", padding: "10px 20px", borderRadius: "8px", fontSize: "13px", cursor: "pointer" }}>+ Araç Ekle</button>
+                </div>
+              </div>
+            )}
+
+            {aktifMenu === "profil-duzenle" && (
+              <div>
+                <h1 style={{ fontSize: "24px", fontWeight: 700, color: "#12103a", marginBottom: "24px" }}>Profil Düzenle</h1>
+
+                <div style={{ background: "#fff", border: "1px solid #EEEDFE", borderRadius: "12px", padding: "24px", marginBottom: "20px" }}>
+                  <h2 style={{ fontSize: "16px", fontWeight: 700, color: "#12103a", marginBottom: "16px" }}>Kapak Fotoğrafı</h2>
+                  {kullanici?.kapak_fotograf && (
+                    <img src={kullanici.kapak_fotograf} alt="Kapak" style={{ width: "100%", maxHeight: "200px", objectFit: "cover", borderRadius: "8px", marginBottom: "12px" }} />
+                  )}
+                  <input type="file" accept="image/*" onChange={(e) => { const file = e.target.files?.[0]; if (file) kapakFotografYukle(file); }} style={{ border: "1px solid #e5e7eb", borderRadius: "8px", padding: "8px 12px", fontSize: "13px", width: "100%", boxSizing: "border-box" }} />
+                </div>
+
+                <div style={{ background: "#fff", border: "1px solid #EEEDFE", borderRadius: "12px", padding: "24px", marginBottom: "20px" }}>
+                  <h2 style={{ fontSize: "16px", fontWeight: 700, color: "#12103a", marginBottom: "16px" }}>Firma Bilgileri</h2>
+                  <div style={{ marginBottom: "12px" }}>
+                    <label style={{ fontSize: "12px", color: "#888", display: "block", marginBottom: "4px" }}>Firma Tanıtım Yazısı</label>
+                    <textarea rows={4} placeholder="Firmanız hakkında kısa bir tanıtım yazısı..." value={profil.tanitim_yazisi} onChange={(e) => setProfil({ ...profil, tanitim_yazisi: e.target.value })} style={{ width: "100%", border: "1px solid #e5e7eb", borderRadius: "8px", padding: "9px 12px", fontSize: "13px", outline: "none", resize: "none", boxSizing: "border-box" }} />
+                  </div>
+                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px", marginBottom: "12px" }}>
+                    <div>
+                      <label style={{ fontSize: "12px", color: "#888", display: "block", marginBottom: "4px" }}>Telefon</label>
+                      <input type="text" placeholder="+90 212 000 00 00" value={profil.telefon} onChange={(e) => setProfil({ ...profil, telefon: e.target.value })} style={{ width: "100%", border: "1px solid #e5e7eb", borderRadius: "8px", padding: "9px 12px", fontSize: "13px", outline: "none", boxSizing: "border-box" }} />
+                    </div>
+                    <div>
+                      <label style={{ fontSize: "12px", color: "#888", display: "block", marginBottom: "4px" }}>Website</label>
+                      <input type="text" placeholder="https://www.firmaniz.com" value={profil.website} onChange={(e) => setProfil({ ...profil, website: e.target.value })} style={{ width: "100%", border: "1px solid #e5e7eb", borderRadius: "8px", padding: "9px 12px", fontSize: "13px", outline: "none", boxSizing: "border-box" }} />
+                    </div>
+                  </div>
+                  <div style={{ marginBottom: "12px" }}>
+                    <label style={{ fontSize: "12px", color: "#888", display: "block", marginBottom: "4px" }}>Adres / Hizmet Bölgesi</label>
+                    <input type="text" placeholder="İstanbul, Türkiye" value={profil.konum_adres} onChange={(e) => setProfil({ ...profil, konum_adres: e.target.value })} style={{ width: "100%", border: "1px solid #e5e7eb", borderRadius: "8px", padding: "9px 12px", fontSize: "13px", outline: "none", boxSizing: "border-box" }} />
+                  </div>
+                  <div style={{ marginBottom: "12px" }}>
+                    <label style={{ fontSize: "12px", color: "#888", display: "block", marginBottom: "4px" }}>Google Maps URL</label>
+                    <input type="text" placeholder="https://maps.google.com/..." value={profil.google_maps_url} onChange={(e) => setProfil({ ...profil, google_maps_url: e.target.value })} style={{ width: "100%", border: "1px solid #e5e7eb", borderRadius: "8px", padding: "9px 12px", fontSize: "13px", outline: "none", boxSizing: "border-box" }} />
+                  </div>
+                </div>
+
+                <div style={{ background: "#fff", border: "1px solid #EEEDFE", borderRadius: "12px", padding: "24px", marginBottom: "20px" }}>
+                  <h2 style={{ fontSize: "16px", fontWeight: 700, color: "#12103a", marginBottom: "16px" }}>Sosyal Medya</h2>
+                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px" }}>
+                    <div>
+                      <label style={{ fontSize: "12px", color: "#888", display: "block", marginBottom: "4px" }}>Instagram</label>
+                      <input type="text" placeholder="@firma_adi" value={profil.instagram} onChange={(e) => setProfil({ ...profil, instagram: e.target.value })} style={{ width: "100%", border: "1px solid #e5e7eb", borderRadius: "8px", padding: "9px 12px", fontSize: "13px", outline: "none", boxSizing: "border-box" }} />
+                    </div>
+                    <div>
+                      <label style={{ fontSize: "12px", color: "#888", display: "block", marginBottom: "4px" }}>Facebook</label>
+                      <input type="text" placeholder="facebook.com/firma" value={profil.facebook} onChange={(e) => setProfil({ ...profil, facebook: e.target.value })} style={{ width: "100%", border: "1px solid #e5e7eb", borderRadius: "8px", padding: "9px 12px", fontSize: "13px", outline: "none", boxSizing: "border-box" }} />
+                    </div>
+                  </div>
+                </div>
+
+                <button onClick={profilKaydet} style={{ background: "#534AB7", color: "#fff", border: "none", padding: "12px 32px", borderRadius: "8px", fontSize: "14px", cursor: "pointer", fontWeight: 600 }}>
+                  Profili Kaydet
+                </button>
               </div>
             )}
 
@@ -163,10 +275,7 @@ export default function TransferPanel() {
                     <div>
                       <label style={{ fontSize: "12px", color: "#888", display: "block", marginBottom: "4px" }}>Para Birimi</label>
                       <select value={yeniArac.para_birimi} onChange={(e) => setYeniArac({ ...yeniArac, para_birimi: e.target.value })} style={{ width: "100%", border: "1px solid #e5e7eb", borderRadius: "8px", padding: "9px 12px", fontSize: "13px", outline: "none", background: "#fff" }}>
-                        <option>EUR</option>
-                        <option>USD</option>
-                        <option>TRY</option>
-                        <option>GBP</option>
+                        <option>EUR</option><option>USD</option><option>TRY</option><option>GBP</option>
                       </select>
                     </div>
                   </div>
@@ -233,12 +342,20 @@ export default function TransferPanel() {
                     { etiket: "E-posta", deger: kullanici?.email },
                     { etiket: "Durum", deger: kullanici?.onaylandi ? "Onaylandı" : "Onay Bekleniyor" },
                     { etiket: "Toplam Araç", deger: `${araclar.length} araç` },
+                    { etiket: "Hizmet Bölgesi", deger: kullanici?.konum_adres || "—" },
                   ].map((item) => (
                     <div key={item.etiket} style={{ display: "flex", justifyContent: "space-between", padding: "12px 0", borderBottom: "1px solid #f5f5f5" }}>
                       <span style={{ fontSize: "13px", color: "#888" }}>{item.etiket}</span>
                       <span style={{ fontSize: "13px", fontWeight: 600, color: "#12103a" }}>{item.deger}</span>
                     </div>
                   ))}
+                  {kullanici?.google_maps_url && (
+                    <div style={{ marginTop: "16px" }}>
+                      <a href={kullanici.google_maps_url} target="_blank" rel="noreferrer" style={{ background: "#534AB7", color: "#fff", padding: "10px 20px", borderRadius: "8px", fontSize: "13px", textDecoration: "none", display: "inline-block" }}>
+                        📍 Google Maps'te Görüntüle
+                      </a>
+                    </div>
+                  )}
                 </div>
               </div>
             )}
