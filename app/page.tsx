@@ -47,7 +47,7 @@ export default function AnaSayfa() {
         <div style={{ maxWidth: "700px", margin: "0 auto" }}>
           <div style={{ fontSize: "13px", color: "#7F77DD", fontWeight: 600, marginBottom: "16px", letterSpacing: "2px" }}>SAĞLIK TURİZMİ PLATFORMU</div>
           <h1 style={{ fontSize: "48px", fontWeight: 800, color: "#fff", marginBottom: "20px", lineHeight: 1.2 }}>
-            Türkiye'de <span style={{ color: "#7F77DD" }}>Sağlık</span> Hizmetleri
+            En İyi <span style={{ color: "#7F77DD" }}>Sağlık</span> Teklifleri
           </h1>
           <p style={{ fontSize: "18px", color: "#8b8fc8", marginBottom: "40px", lineHeight: 1.6 }}>
             Diş tedavisinden saç ekimine, göz ameliyatından plastik cerrahiye kadar binlerce hastanın tercih ettiği platform.
