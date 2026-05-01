@@ -203,6 +203,23 @@ export default function KlinikPanel() {
     if (!yeniTeklif.talep_id || !yeniTeklif.fiyat) return;
     const { data: { user } } = await supabase.auth.getUser();
     await supabase.from("teklifler").insert({ talep_id: yeniTeklif.talep_id, klinik_id: user?.id, fiyat: parseFloat(yeniTeklif.fiyat), para_birimi: "EUR", aciklama: yeniTeklif.aciklama, durum: "beklemede" });
+    // Hastaya email gönder
+      const talep = talepler.find(t => t.id === yeniTeklif.talep_id);
+      if (talep?.profiles?.email) {
+        await fetch("/api/bildirim-gonder", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            tip: "teklif_gonderildi",
+            hasta_email: talep.profiles.email,
+            hasta_ad: talep.profiles.ad,
+            klinik_ad: `${kullanici?.ad} ${kullanici?.soyad}`,
+            tedavi: talep.tedavi_turu,
+            fiyat: yeniTeklif.fiyat,
+            para_birimi: "EUR",
+          }),
+        });
+      }
     setMesaj("Teklif gönderildi!");
     setYeniTeklif({ talep_id: "", fiyat: "", aciklama: "" });
     veriYukle();

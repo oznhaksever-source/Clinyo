@@ -70,6 +70,39 @@ async function fotografYukle(files: FileList) {
       setHata("Hata oluştu: " + error.message);
       setYukleniyor(false);
     } else {
+      // Kliniklere email gönder
+      await fetch("/api/bildirim-gonder", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          tip: "yeni_talep",
+          tedavi: tedavi,
+          hasta_ad: ad,
+          hasta_soyad: soyad,
+          hasta_email: email,
+          hasta_ulke: ulke,
+          aciklama: aciklama,
+        }),
+      });
+      setGonderildi(true);
+    }if (error) {
+      setHata("Hata oluştu: " + error.message);
+      setYukleniyor(false);
+    } else {
+      // Kliniklere email gönder
+      await fetch("/api/bildirim-gonder", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          tip: "yeni_talep",
+          tedavi: tedavi,
+          hasta_ad: ad,
+          hasta_soyad: soyad,
+          hasta_email: email,
+          hasta_ulke: ulke,
+          aciklama: aciklama,
+        }),
+      });
       setGonderildi(true);
     }
   }
