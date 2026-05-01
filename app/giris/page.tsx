@@ -48,6 +48,15 @@ export default function Giris() {
         email,
         hesap_turu: hesapTuru,
       });
+      await fetch("/api/send-email", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({
+    to: email,
+    subject: "Medoqa - Hos Geldiniz!",
+    html: `<h2>Merhaba ${ad}!</h2><p>Medoqa'ya hos geldiniz. Hesabiniz basariyla olusturuldu.</p><a href="https://clinyo-platform.vercel.app/giris">Giris Yap</a>`,
+  }),
+});
       setMesaj("Kayit basarili! Giris yapabilirsiniz.");
       setMod("giris");
     }
