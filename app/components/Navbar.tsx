@@ -28,6 +28,8 @@ export default function Navbar() {
     if (!kullanici) return "/giris";
     if (kullanici.hesap_turu === "admin") return "/admin";
     if (kullanici.hesap_turu === "klinik") return "/klinik-panel";
+    if (kullanici.hesap_turu === "otel") return "/otel-panel";
+    if (kullanici.hesap_turu === "transfer") return "/transfer-panel";
     return "/hasta-panel";
   }
 
