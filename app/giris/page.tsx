@@ -27,6 +27,10 @@ export default function Giris() {
         window.location.href = "/admin";
       } else if (profile?.hesap_turu === "klinik") {
         window.location.href = "/klinik-panel";
+      } else if (profile?.hesap_turu === "otel") {
+        window.location.href = "/otel-panel";
+      } else if (profile?.hesap_turu === "transfer") {
+        window.location.href = "/transfer-panel";
       } else {
         window.location.href = "/hasta-panel";
       }
