@@ -14,6 +14,7 @@ export default function OtelPanel() {
     fiyat: "",
     para_birimi: "EUR",
     kapasite: "2",
+    fotograf: "",
   });
 
   const supabase = createClient();
@@ -31,6 +32,14 @@ export default function OtelPanel() {
     setYukleniyor(false);
   }
 
+  async function fotografYukle(file: File, klasor: string) {
+    const { data: { user } } = await supabase.auth.getUser();
+    const dosyaAdi = `${user?.id}/${klasor}/${Date.now()}_${file.name}`;
+    const { data, error } = await supabase.storage.from("medoqa-images").upload(dosyaAdi, file);
+    if (error) return null;
+    const { data: url } = supabase.storage.from("medoqa-images").getPublicUrl(dosyaAdi);
+    return url.publicUrl;
+  }
   async function odaEkle() {
     if (!yeniOda.oda_adi || !yeniOda.fiyat) { setMesaj("Oda adı ve fiyat zorunludur!"); return; }
     const { data: { user } } = await supabase.auth.getUser();
@@ -41,6 +50,7 @@ export default function OtelPanel() {
       fiyat: parseFloat(yeniOda.fiyat),
       para_birimi: yeniOda.para_birimi,
       kapasite: parseInt(yeniOda.kapasite),
+      fotograf_url: yeniOda.fotograf,
     });
     if (error) { setMesaj("Hata: " + error.message); }
     else { setMesaj("Oda eklendi!"); setYeniOda({ oda_adi: "", aciklama: "", fiyat: "", para_birimi: "EUR", kapasite: "2" }); veriYukle(); }
@@ -169,6 +179,17 @@ export default function OtelPanel() {
                   <div style={{ marginBottom: "16px" }}>
                     <label style={{ fontSize: "12px", color: "#888", display: "block", marginBottom: "4px" }}>Açıklama</label>
                     <textarea rows={2} placeholder="Oda özellikleri, manzara, dahil olan hizmetler..." value={yeniOda.aciklama} onChange={(e) => setYeniOda({ ...yeniOda, aciklama: e.target.value })} style={{ width: "100%", border: "1px solid #e5e7eb", borderRadius: "8px", padding: "9px 12px", fontSize: "13px", outline: "none", resize: "none", boxSizing: "border-box" }} />
+                  </div>
+                  <div style={{ marginBottom: "16px" }}>
+                    <label style={{ fontSize: "12px", color: "#888", display: "block", marginBottom: "4px" }}>Oda Fotoğrafı</label>
+                    <input type="file" accept="image/*" onChange={async (e) => {
+                      const file = e.target.files?.[0];
+                      if (file) {
+                        const url = await fotografYukle(file, "odalar");
+                        if (url) setYeniOda({ ...yeniOda, fotograf: url });
+                      }
+                    }} style={{ width: "100%", border: "1px solid #e5e7eb", borderRadius: "8px", padding: "9px 12px", fontSize: "13px" }} />
+                    {yeniOda.fotograf && <img src={yeniOda.fotograf} alt="Oda" style={{ width: "100px", height: "70px", objectFit: "cover", borderRadius: "6px", marginTop: "8px" }} />}
                   </div>
                   <button onClick={odaEkle} style={{ background: "#534AB7", color: "#fff", border: "none", padding: "10px 24px", borderRadius: "8px", fontSize: "13px", cursor: "pointer", fontWeight: 600 }}>+ Oda Ekle</button>
                 </div>
