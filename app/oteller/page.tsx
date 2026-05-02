@@ -109,7 +109,7 @@ export default function Oteller() {
                     {o.kapak_fotograf ? (
                       <img src={o.kapak_fotograf} alt={o.ad} style={{ width: "100%", height: "160px", objectFit: "cover" }} />
                     ) : (
-                      <div style={{ width: "100%", height: "160px", background: "linear-gradient(135deg, #EEEDFE, #CECBF6)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "48px" }}>🏨</div>
+                      <div style={{ width: "100%", height: "160px", background: "linear-gradient(135deg, #EEEDFE, #CECBF6)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "48px" }}><img src="https://images.unsplash.com/photo-1566073771259-6a8506099945?w=400&h=160&fit=crop" alt="Otel" style={{ width: "100%", height: "100%", objectFit: "cover" }} /></div>
                     )}
                     <div style={{ padding: "16px" }}>
                       <h3 style={{ fontSize: "16px", fontWeight: 700, color: "#12103a", marginBottom: "6px" }}>{o.ad} {o.soyad}</h3>

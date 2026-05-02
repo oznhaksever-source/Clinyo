@@ -103,7 +103,7 @@ export default function Klinikler() {
                   {k.kapak_fotograf ? (
                     <img src={k.kapak_fotograf} alt={k.ad} style={{ width: "100%", height: "160px", objectFit: "cover" }} />
                   ) : (
-                    <div style={{ width: "100%", height: "160px", background: "linear-gradient(135deg, #EEEDFE, #CECBF6)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "48px" }}>🏥</div>
+                    <div style={{ width: "100%", height: "160px", background: "linear-gradient(135deg, #EEEDFE, #CECBF6)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "48px" }}><img src="https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?w=400&h=160&fit=crop" alt="Klinik" style={{ width: "100%", height: "100%", objectFit: "cover" }} /></div>
                   )}
                   <div style={{ padding: "16px" }}>
                     <h3 style={{ fontSize: "16px", fontWeight: 700, color: "#12103a", marginBottom: "6px" }}>{k.ad} {k.soyad}</h3>
