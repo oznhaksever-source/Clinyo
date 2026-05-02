@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
 import { createClient } from "../../utils/supabase/client";
+import { useDil } from "../locales/context";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 
@@ -16,12 +17,30 @@ export default function TeklifTalep() {
   const [gonderildi, setGonderildi] = useState(false);
   const [yukleniyor, setYukleniyor] = useState(false);
   const [hata, setHata] = useState("");
+  const [fotograflar, setFotograflar] = useState<string[]>([]);
+  const [fotografYukleniyor, setFotografYukleniyor] = useState(false);
 
+  const { t, dil } = useDil();
   const supabase = createClient();
-const [fotograflar, setFotograflar] = useState<string[]>([]);
-const [fotografYukleniyor, setFotografYukleniyor] = useState(false);
 
-async function fotografYukle(files: FileList) {
+  const tedaviler = [
+    { id: "implant", tr: "İmplant", en: "Implant", de: "Implantat", aciklamaTr: "Eksik diş yerine kalıcı implant", aciklamaEn: "Permanent implant for missing tooth", aciklamaDe: "Dauerhaftes Implantat für fehlende Zähne" },
+    { id: "zirkonyum", tr: "Zirkonyum Kaplama", en: "Zirconia Crown", de: "Zirkonkrone", aciklamaTr: "Estetik diş kaplama", aciklamaEn: "Aesthetic dental crown", aciklamaDe: "Ästhetische Zahnkrone" },
+    { id: "sac-ekimi", tr: "Saç Ekimi", en: "Hair Transplant", de: "Haartransplantation", aciklamaTr: "FUE / DHI yöntemi", aciklamaEn: "FUE / DHI method", aciklamaDe: "FUE / DHI Methode" },
+    { id: "goz", tr: "Göz Ameliyatı", en: "Eye Surgery", de: "Augenoperation", aciklamaTr: "Laser, Lasik, Lasek", aciklamaEn: "Laser, Lasik, Lasek", aciklamaDe: "Laser, Lasik, Lasek" },
+    { id: "burun", tr: "Burun Estetiği", en: "Rhinoplasty", de: "Rhinoplastik", aciklamaTr: "Rinoplasti", aciklamaEn: "Nose job", aciklamaDe: "Nasenkorrektur" },
+    { id: "dis-beyazlatma", tr: "Diş Beyazlatma", en: "Teeth Whitening", de: "Zahnaufhellung", aciklamaTr: "Profesyonel beyazlatma", aciklamaEn: "Professional whitening", aciklamaDe: "Professionelle Aufhellung" },
+    { id: "kanal", tr: "Kanal Tedavisi", en: "Root Canal", de: "Wurzelkanalbehandlung", aciklamaTr: "Kök kanal tedavisi", aciklamaEn: "Root canal treatment", aciklamaDe: "Wurzelkanalbehandlung" },
+    { id: "diger", tr: "Diğer", en: "Other", de: "Sonstiges", aciklamaTr: "Başka bir tedavi", aciklamaEn: "Other treatment", aciklamaDe: "Andere Behandlung" },
+  ];
+
+  const ulkeler = {
+    tr: ["Almanya", "İngiltere", "Hollanda", "Avusturya", "Fransa", "İsviçre", "Belçika", "Türkiye", "Diğer"],
+    en: ["Germany", "United Kingdom", "Netherlands", "Austria", "France", "Switzerland", "Belgium", "Turkey", "Other"],
+    de: ["Deutschland", "Vereinigtes Königreich", "Niederlande", "Österreich", "Frankreich", "Schweiz", "Belgien", "Türkei", "Sonstiges"],
+  };
+
+  async function fotografYukle(files: FileList) {
     setFotografYukleniyor(true);
     const urls: string[] = [];
     for (const file of Array.from(files)) {
@@ -36,23 +55,10 @@ async function fotografYukle(files: FileList) {
     setFotografYukleniyor(false);
   }
 
-  const tedaviler = [
-    { id: "implant", ad: "İmplant", aciklama: "Eksik diş yerine kalıcı implant" },
-    { id: "zirkonyum", ad: "Zirkonyum Kaplama", aciklama: "Estetik diş kaplama" },
-    { id: "sac-ekimi", ad: "Saç Ekimi", aciklama: "FUE / DHI yöntemi" },
-    { id: "goz", ad: "Göz Ameliyatı", aciklama: "Laser, Lasik, Lasek" },
-    { id: "burun", ad: "Burun Estetiği", aciklama: "Rinoplasti" },
-    { id: "dis-beyazlatma", ad: "Diş Beyazlatma", aciklama: "Profesyonel beyazlatma" },
-    { id: "kanal", ad: "Kanal Tedavisi", aciklama: "Kök kanal tedavisi" },
-    { id: "diger", ad: "Diğer", aciklama: "Başka bir tedavi" },
-  ];
-
   async function gonder() {
     setYukleniyor(true);
     setHata("");
-
     const { data: { user } } = await supabase.auth.getUser();
-
     const { error } = await supabase.from("talepler").insert({
       hasta_id: user?.id || null,
       tedavi_turu: tedavi,
@@ -67,41 +73,13 @@ async function fotografYukle(files: FileList) {
     });
 
     if (error) {
-      setHata("Hata oluştu: " + error.message);
+      setHata("Hata: " + error.message);
       setYukleniyor(false);
     } else {
-      // Kliniklere email gönder
       await fetch("/api/bildirim-gonder", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          tip: "yeni_talep",
-          tedavi: tedavi,
-          hasta_ad: ad,
-          hasta_soyad: soyad,
-          hasta_email: email,
-          hasta_ulke: ulke,
-          aciklama: aciklama,
-        }),
-      });
-      setGonderildi(true);
-    }if (error) {
-      setHata("Hata oluştu: " + error.message);
-      setYukleniyor(false);
-    } else {
-      // Kliniklere email gönder
-      await fetch("/api/bildirim-gonder", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          tip: "yeni_talep",
-          tedavi: tedavi,
-          hasta_ad: ad,
-          hasta_soyad: soyad,
-          hasta_email: email,
-          hasta_ulke: ulke,
-          aciklama: aciklama,
-        }),
+        body: JSON.stringify({ tip: "yeni_talep", tedavi, hasta_ad: ad, hasta_soyad: soyad, hasta_email: email, hasta_ulke: ulke, aciklama }),
       });
       setGonderildi(true);
     }
@@ -112,18 +90,16 @@ async function fotografYukle(files: FileList) {
       <main style={{ minHeight: "100vh", background: "#0d2144", fontFamily: "sans-serif", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
         <div style={{ background: "#fff", borderRadius: "16px", padding: "48px", textAlign: "center", maxWidth: "440px" }}>
           <div style={{ width: "64px", height: "64px", background: "#E6F1FB", borderRadius: "50%", margin: "0 auto 20px", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "28px" }}>✓</div>
-          <h2 style={{ fontSize: "22px", fontWeight: 500, color: "#1a1a1a", marginBottom: "12px" }}>Talebiniz Alındı!</h2>
-          <p style={{ fontSize: "14px", color: "#888", marginBottom: "24px", lineHeight: 1.6 }}>
-            Klinikler teklifinizi inceleyecek ve en kısa sürede size ulaşacak. Ortalama yanıt süresi 2-4 saattir.
-          </p>
+          <h2 style={{ fontSize: "22px", fontWeight: 500, color: "#1a1a1a", marginBottom: "12px" }}>{t.teklif.basarili}</h2>
+          <p style={{ fontSize: "14px", color: "#888", marginBottom: "24px", lineHeight: 1.6 }}>{t.teklif.basariliAciklama}</p>
           <div style={{ background: "#f9fafb", borderRadius: "10px", padding: "16px", marginBottom: "24px", textAlign: "left" }}>
-            <div style={{ fontSize: "13px", color: "#888", marginBottom: "4px" }}>Seçilen Tedavi</div>
+            <div style={{ fontSize: "13px", color: "#888", marginBottom: "4px" }}>{dil === "tr" ? "Seçilen Tedavi" : dil === "en" ? "Selected Treatment" : "Ausgewählte Behandlung"}</div>
             <div style={{ fontSize: "15px", fontWeight: 500, color: "#1a1a1a", marginBottom: "12px" }}>{tedavi}</div>
             <div style={{ fontSize: "13px", color: "#888", marginBottom: "4px" }}>Email</div>
             <div style={{ fontSize: "15px", fontWeight: 500, color: "#1a1a1a" }}>{email}</div>
           </div>
           <a href="/" style={{ display: "block", background: "#185FA5", color: "#fff", padding: "12px", borderRadius: "8px", fontSize: "14px", textDecoration: "none", fontWeight: 500 }}>
-            Ana Sayfaya Dön
+            {t.teklif.anaSayfayaDon}
           </a>
         </div>
       </main>
@@ -133,11 +109,10 @@ async function fotografYukle(files: FileList) {
   return (
     <main style={{ minHeight: "100vh", background: "#0d2144", fontFamily: "sans-serif" }}>
       <Navbar />
-
       <div style={{ maxWidth: "640px", margin: "0 auto", padding: "32px" }}>
         <div style={{ textAlign: "center", marginBottom: "32px" }}>
-          <h1 style={{ color: "#fff", fontSize: "28px", fontWeight: 500, marginBottom: "8px" }}>Ücretsiz Teklif Al</h1>
-          <p style={{ color: "#7a90b0", fontSize: "14px" }}>Birden fazla klinikten teklif al, karşılaştır, en iyisini seç</p>
+          <h1 style={{ color: "#fff", fontSize: "28px", fontWeight: 500, marginBottom: "8px" }}>{t.teklif.baslik}</h1>
+          <p style={{ color: "#7a90b0", fontSize: "14px" }}>{t.teklif.altBaslik}</p>
         </div>
 
         <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "0", marginBottom: "32px" }}>
@@ -152,61 +127,64 @@ async function fotografYukle(files: FileList) {
         </div>
 
         {hata && (
-          <div style={{ background: "#fff0f0", border: "1px solid #fcc", borderRadius: "8px", padding: "10px 16px", marginBottom: "16px", fontSize: "13px", color: "#c00" }}>
-            {hata}
-          </div>
+          <div style={{ background: "#fff0f0", border: "1px solid #fcc", borderRadius: "8px", padding: "10px 16px", marginBottom: "16px", fontSize: "13px", color: "#c00" }}>{hata}</div>
         )}
 
         <div style={{ background: "#fff", borderRadius: "16px", padding: "32px" }}>
-
           {adim === 1 && (
             <div>
-              <h2 style={{ fontSize: "18px", fontWeight: 500, color: "#1a1a1a", marginBottom: "6px" }}>Hangi tedaviyi istiyorsunuz?</h2>
-              <p style={{ fontSize: "13px", color: "#888", marginBottom: "20px" }}>Size uygun klinikleri bulabilmemiz için tedaviyi seçin</p>
+              <h2 style={{ fontSize: "18px", fontWeight: 500, color: "#1a1a1a", marginBottom: "6px" }}>{t.teklif.hangiTedavi}</h2>
+              <p style={{ fontSize: "13px", color: "#888", marginBottom: "20px" }}>{t.teklif.tedaviSec}</p>
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px", marginBottom: "20px" }}>
-                {tedaviler.map((t) => (
-                  <div key={t.id} onClick={() => setTedavi(t.ad)} style={{ border: tedavi === t.ad ? "2px solid #185FA5" : "1px solid #e5e7eb", borderRadius: "10px", padding: "14px", cursor: "pointer", background: tedavi === t.ad ? "#f0f4ff" : "#fff" }}>
-                    <div style={{ fontSize: "14px", fontWeight: 500, color: tedavi === t.ad ? "#185FA5" : "#1a1a1a", marginBottom: "2px" }}>{t.ad}</div>
-                    <div style={{ fontSize: "12px", color: "#888" }}>{t.aciklama}</div>
-                  </div>
-                ))}
+                {tedaviler.map((ted) => {
+                  const ad = dil === "tr" ? ted.tr : dil === "en" ? ted.en : ted.de;
+                  const acik = dil === "tr" ? ted.aciklamaTr : dil === "en" ? ted.aciklamaEn : ted.aciklamaDe;
+                  return (
+                    <div key={ted.id} onClick={() => setTedavi(ad)} style={{ border: tedavi === ad ? "2px solid #185FA5" : "1px solid #e5e7eb", borderRadius: "10px", padding: "14px", cursor: "pointer", background: tedavi === ad ? "#f0f4ff" : "#fff" }}>
+                      <div style={{ fontSize: "14px", fontWeight: 500, color: tedavi === ad ? "#185FA5" : "#1a1a1a", marginBottom: "2px" }}>{ad}</div>
+                      <div style={{ fontSize: "12px", color: "#888" }}>{acik}</div>
+                    </div>
+                  );
+                })}
               </div>
               <div style={{ marginBottom: "20px" }}>
-                <label style={{ fontSize: "13px", color: "#555", display: "block", marginBottom: "6px" }}>Durumunuzu açıklayın (opsiyonel)</label>
-                <textarea rows={3} placeholder="Örneğin: Sol alt çene implant, acım var..." value={aciklama} onChange={(e) => setAciklama(e.target.value)} style={{ width: "100%", border: "1px solid #e5e7eb", borderRadius: "8px", padding: "10px 12px", fontSize: "13px", boxSizing: "border-box", outline: "none", resize: "none" }} />
+                <label style={{ fontSize: "13px", color: "#555", display: "block", marginBottom: "6px" }}>{t.teklif.aciklamaLabel}</label>
+                <textarea rows={3} value={aciklama} onChange={(e) => setAciklama(e.target.value)} style={{ width: "100%", border: "1px solid #e5e7eb", borderRadius: "8px", padding: "10px 12px", fontSize: "13px", boxSizing: "border-box", outline: "none", resize: "none" }} />
               </div>
               <button onClick={() => { if (tedavi) setAdim(2); }} style={{ width: "100%", background: tedavi ? "#185FA5" : "#ccc", color: "#fff", border: "none", padding: "12px", borderRadius: "8px", fontSize: "14px", cursor: tedavi ? "pointer" : "not-allowed", fontWeight: 500 }}>
-                Devam Et
+                {t.teklif.devamEt}
               </button>
             </div>
           )}
 
           {adim === 2 && (
             <div>
-              <h2 style={{ fontSize: "18px", fontWeight: 500, color: "#1a1a1a", marginBottom: "6px" }}>İletişim Bilgileriniz</h2>
-              <p style={{ fontSize: "13px", color: "#888", marginBottom: "20px" }}>Klinikler size bu bilgilerle ulaşacak</p>
+              <h2 style={{ fontSize: "18px", fontWeight: 500, color: "#1a1a1a", marginBottom: "6px" }}>{t.teklif.iletisimBilgileri}</h2>
+              <p style={{ fontSize: "13px", color: "#888", marginBottom: "20px" }}>{t.teklif.iletisimAciklama}</p>
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px", marginBottom: "12px" }}>
                 <div>
-                  <label style={{ fontSize: "13px", color: "#555", display: "block", marginBottom: "6px" }}>Ad</label>
-                  <input type="text" placeholder="Adınız" value={ad} onChange={(e) => setAd(e.target.value)} style={{ width: "100%", border: "1px solid #e5e7eb", borderRadius: "8px", padding: "10px 12px", fontSize: "13px", boxSizing: "border-box", outline: "none" }} />
+                  <label style={{ fontSize: "13px", color: "#555", display: "block", marginBottom: "6px" }}>{t.teklif.ad}</label>
+                  <input type="text" value={ad} onChange={(e) => setAd(e.target.value)} style={{ width: "100%", border: "1px solid #e5e7eb", borderRadius: "8px", padding: "10px 12px", fontSize: "13px", boxSizing: "border-box", outline: "none" }} />
                 </div>
                 <div>
-                  <label style={{ fontSize: "13px", color: "#555", display: "block", marginBottom: "6px" }}>Soyad</label>
-                  <input type="text" placeholder="Soyadınız" value={soyad} onChange={(e) => setSoyad(e.target.value)} style={{ width: "100%", border: "1px solid #e5e7eb", borderRadius: "8px", padding: "10px 12px", fontSize: "13px", boxSizing: "border-box", outline: "none" }} />
+                  <label style={{ fontSize: "13px", color: "#555", display: "block", marginBottom: "6px" }}>{t.teklif.soyad}</label>
+                  <input type="text" value={soyad} onChange={(e) => setSoyad(e.target.value)} style={{ width: "100%", border: "1px solid #e5e7eb", borderRadius: "8px", padding: "10px 12px", fontSize: "13px", boxSizing: "border-box", outline: "none" }} />
                 </div>
               </div>
               <div style={{ marginBottom: "12px" }}>
-                <label style={{ fontSize: "13px", color: "#555", display: "block", marginBottom: "6px" }}>E-posta</label>
-                <input type="email" placeholder="ornek@email.com" value={email} onChange={(e) => setEmail(e.target.value)} style={{ width: "100%", border: "1px solid #e5e7eb", borderRadius: "8px", padding: "10px 12px", fontSize: "13px", boxSizing: "border-box", outline: "none" }} />
+                <label style={{ fontSize: "13px", color: "#555", display: "block", marginBottom: "6px" }}>{t.teklif.eposta}</label>
+                <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} style={{ width: "100%", border: "1px solid #e5e7eb", borderRadius: "8px", padding: "10px 12px", fontSize: "13px", boxSizing: "border-box", outline: "none" }} />
               </div>
               <div style={{ marginBottom: "12px" }}>
-                <label style={{ fontSize: "13px", color: "#555", display: "block", marginBottom: "6px" }}>Telefon</label>
-                <input type="tel" placeholder="+49 123 456 78" value={telefon} onChange={(e) => setTelefon(e.target.value)} style={{ width: "100%", border: "1px solid #e5e7eb", borderRadius: "8px", padding: "10px 12px", fontSize: "13px", boxSizing: "border-box", outline: "none" }} />
+                <label style={{ fontSize: "13px", color: "#555", display: "block", marginBottom: "6px" }}>{t.teklif.telefon}</label>
+                <input type="tel" value={telefon} onChange={(e) => setTelefon(e.target.value)} style={{ width: "100%", border: "1px solid #e5e7eb", borderRadius: "8px", padding: "10px 12px", fontSize: "13px", boxSizing: "border-box", outline: "none" }} />
               </div>
               <div style={{ marginBottom: "12px" }}>
-                <label style={{ fontSize: "13px", color: "#555", display: "block", marginBottom: "6px" }}>X-Ray / Fotoğraf Ekle (opsiyonel)</label>
+                <label style={{ fontSize: "13px", color: "#555", display: "block", marginBottom: "6px" }}>
+                  {dil === "tr" ? "X-Ray / Fotoğraf Ekle (opsiyonel)" : dil === "en" ? "Add X-Ray / Photo (optional)" : "X-Ray / Foto hinzufügen (optional)"}
+                </label>
                 <input type="file" accept="image/*" multiple onChange={(e) => { if (e.target.files) fotografYukle(e.target.files); }} style={{ width: "100%", border: "1px solid #e5e7eb", borderRadius: "8px", padding: "8px 12px", fontSize: "13px" }} />
-                {fotografYukleniyor && <div style={{ fontSize: "12px", color: "#888", marginTop: "4px" }}>Yükleniyor...</div>}
+                {fotografYukleniyor && <div style={{ fontSize: "12px", color: "#888", marginTop: "4px" }}>{dil === "tr" ? "Yükleniyor..." : dil === "en" ? "Uploading..." : "Wird hochgeladen..."}</div>}
                 {fotograflar.length > 0 && (
                   <div style={{ display: "flex", gap: "8px", flexWrap: "wrap", marginTop: "8px" }}>
                     {fotograflar.map((url, i) => (
@@ -216,24 +194,16 @@ async function fotografYukle(files: FileList) {
                 )}
               </div>
               <div style={{ marginBottom: "20px" }}>
-                <label style={{ fontSize: "13px", color: "#555", display: "block", marginBottom: "6px" }}>Ülkeniz</label>
+                <label style={{ fontSize: "13px", color: "#555", display: "block", marginBottom: "6px" }}>{t.teklif.ulke}</label>
                 <select value={ulke} onChange={(e) => setUlke(e.target.value)} style={{ width: "100%", border: "1px solid #e5e7eb", borderRadius: "8px", padding: "10px 12px", fontSize: "13px", boxSizing: "border-box", outline: "none", background: "#fff" }}>
-                  <option value="">Ülke seçin</option>
-                  <option>Almanya</option>
-                  <option>İngiltere</option>
-                  <option>Hollanda</option>
-                  <option>Avusturya</option>
-                  <option>Fransa</option>
-                  <option>İsviçre</option>
-                  <option>Belçika</option>
-                  <option>Türkiye</option>
-                  <option>Diğer</option>
+                  <option value="">{t.teklif.ulkeSec}</option>
+                  {ulkeler[dil].map((u) => <option key={u}>{u}</option>)}
                 </select>
               </div>
               <div style={{ display: "flex", gap: "10px" }}>
-                <button onClick={() => setAdim(1)} style={{ flex: 1, background: "#f9fafb", color: "#555", border: "1px solid #e5e7eb", padding: "12px", borderRadius: "8px", fontSize: "14px", cursor: "pointer" }}>Geri</button>
+                <button onClick={() => setAdim(1)} style={{ flex: 1, background: "#f9fafb", color: "#555", border: "1px solid #e5e7eb", padding: "12px", borderRadius: "8px", fontSize: "14px", cursor: "pointer" }}>{t.teklif.geri}</button>
                 <button onClick={() => { if (ad && email && ulke) setAdim(3); }} style={{ flex: 2, background: ad && email && ulke ? "#185FA5" : "#ccc", color: "#fff", border: "none", padding: "12px", borderRadius: "8px", fontSize: "14px", cursor: ad && email && ulke ? "pointer" : "not-allowed", fontWeight: 500 }}>
-                  Devam Et
+                  {t.teklif.devamEt}
                 </button>
               </div>
             </div>
@@ -241,40 +211,30 @@ async function fotografYukle(files: FileList) {
 
           {adim === 3 && (
             <div>
-              <h2 style={{ fontSize: "18px", fontWeight: 500, color: "#1a1a1a", marginBottom: "6px" }}>Talebinizi Onaylayın</h2>
-              <p style={{ fontSize: "13px", color: "#888", marginBottom: "20px" }}>Bilgilerinizi kontrol edin ve gönderin</p>
+              <h2 style={{ fontSize: "18px", fontWeight: 500, color: "#1a1a1a", marginBottom: "6px" }}>{t.teklif.onayla}</h2>
+              <p style={{ fontSize: "13px", color: "#888", marginBottom: "20px" }}>{t.teklif.onaylaAciklama}</p>
               <div style={{ background: "#f9fafb", borderRadius: "10px", padding: "20px", marginBottom: "20px" }}>
                 {[
-                  { etiket: "Tedavi", deger: tedavi },
-                  { etiket: "Ad Soyad", deger: `${ad} ${soyad}` },
+                  { etiket: dil === "tr" ? "Tedavi" : dil === "en" ? "Treatment" : "Behandlung", deger: tedavi },
+                  { etiket: `${t.teklif.ad} ${t.teklif.soyad}`, deger: `${ad} ${soyad}` },
                   { etiket: "Email", deger: email },
-                  { etiket: "Telefon", deger: telefon },
-                  { etiket: "Ülke", deger: ulke },
+                  { etiket: t.teklif.telefon, deger: telefon },
+                  { etiket: t.teklif.ulke, deger: ulke },
                 ].map((b) => (
                   <div key={b.etiket} style={{ display: "flex", justifyContent: "space-between", padding: "8px 0", borderBottom: "1px solid #efefef", fontSize: "13px" }}>
                     <span style={{ color: "#888" }}>{b.etiket}</span>
                     <span style={{ color: "#1a1a1a", fontWeight: 500 }}>{b.deger}</span>
                   </div>
                 ))}
-                {aciklama && (
-                  <div style={{ paddingTop: "8px", fontSize: "13px" }}>
-                    <span style={{ color: "#888" }}>Açıklama: </span>
-                    <span style={{ color: "#1a1a1a" }}>{aciklama}</span>
-                  </div>
-                )}
-              </div>
-              <div style={{ background: "#f0f4ff", borderRadius: "10px", padding: "14px", marginBottom: "20px", fontSize: "13px", color: "#185FA5" }}>
-                Talebiniz onaylanmış kliniklere iletilecek. Klinikler size 2-4 saat içinde yanıt verecek.
               </div>
               <div style={{ display: "flex", gap: "10px" }}>
-                <button onClick={() => setAdim(2)} style={{ flex: 1, background: "#f9fafb", color: "#555", border: "1px solid #e5e7eb", padding: "12px", borderRadius: "8px", fontSize: "14px", cursor: "pointer" }}>Geri</button>
+                <button onClick={() => setAdim(2)} style={{ flex: 1, background: "#f9fafb", color: "#555", border: "1px solid #e5e7eb", padding: "12px", borderRadius: "8px", fontSize: "14px", cursor: "pointer" }}>{t.teklif.geri}</button>
                 <button onClick={gonder} disabled={yukleniyor} style={{ flex: 2, background: "#185FA5", color: "#fff", border: "none", padding: "12px", borderRadius: "8px", fontSize: "14px", cursor: "pointer", fontWeight: 500, opacity: yukleniyor ? 0.7 : 1 }}>
-                  {yukleniyor ? "Gönderiliyor..." : "Teklif Talep Et"}
+                  {yukleniyor ? t.teklif.gonderiliyor : t.teklif.gonder}
                 </button>
               </div>
             </div>
           )}
-
         </div>
       </div>
       <Footer />
