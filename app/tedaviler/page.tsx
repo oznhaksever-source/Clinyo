@@ -1,170 +1,178 @@
 "use client";
+import { useDil } from "../locales/context";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
-import { useState } from "react";
-
-const tedaviKategorileri = [
-  {
-    id: "diş",
-    ad: "Diş Tedavisi",
-    aciklama: "Implant, zirkonyum, diş beyazlatma ve daha fazlasi",
-    klinikSayisi: 148,
-    tedaviler: [
-      { ad: "Implant", fiyat: "400-800", sure: "2-3 gün", popüler: true },
-      { ad: "Zirkonyum Kaplama", fiyat: "150-300", sure: "3-5 gün", popüler: true },
-      { ad: "Diş Beyazlatma", fiyat: "100-200", sure: "1 gün", popüler: false },
-      { ad: "Kanal Tedavisi", fiyat: "80-150", sure: "1-2 gün", popüler: false },
-      { ad: "Diş Eti Tedavisi", fiyat: "100-250", sure: "1-2 gün", popüler: false },
-      { ad: "Lamine Veneer", fiyat: "200-400", sure: "3-5 gün", popüler: true },
-      { ad: "Ortodonti (Braces)", fiyat: "800-1500", sure: "Uzun dönem", popüler: false },
-      { ad: "Diş Cekimi", fiyat: "50-150", sure: "1 gün", popüler: false },
-    ],
-  },
-  {
-    id: "saç",
-    ad: "Saç Ekimi",
-    aciklama: "FUE, DHI ve sapphire yöntemleri ile kalıcı saç ekimi",
-    klinikSayisi: 92,
-    tedaviler: [
-      { ad: "FUE Saç Ekimi", fiyat: "1000-2000", sure: "1 gün", popüler: true },
-      { ad: "DHI Saç Ekimi", fiyat: "1200-2500", sure: "1 gün", popüler: true },
-      { ad: "Sapphire FUE", fiyat: "1500-3000", sure: "1 gün", popüler: false },
-      { ad: "Saç Mezoterapisi", fiyat: "200-500", sure: "1 gün", popüler: false },
-      { ad: "PRP Tedavisi", fiyat: "150-300", sure: "1 gün", popüler: false },
-      { ad: "Sakal Ekimi", fiyat: "800-1500", sure: "1 gün", popüler: false },
-    ],
-  },
-  {
-    id: "göz",
-    ad: "Göz Ameliyati",
-    aciklama: "Laser, Lasik, Lasek ve lens ameliyatlari",
-    klinikSayisi: 64,
-    tedaviler: [
-      { ad: "Lasik", fiyat: "600-1200", sure: "1 gün", popüler: true },
-      { ad: "Lasek", fiyat: "700-1400", sure: "1 gün", popüler: false },
-      { ad: "Smile Pro", fiyat: "1200-2000", sure: "1 gün", popüler: true },
-      { ad: "Göz Tansiyonu (Glokom)", fiyat: "500-1000", sure: "1-2 gün", popüler: false },
-      { ad: "Katarakt Ameliyati", fiyat: "800-1500", sure: "1 gün", popüler: false },
-      { ad: "Lens Implantasyonu", fiyat: "1000-2000", sure: "1-2 gün", popüler: false },
-    ],
-  },
-  {
-    id: "plastik",
-    ad: "Plastik Cerrahi",
-    aciklama: "Burun, yuz, vucut estetik ameliyatlari",
-    klinikSayisi: 76,
-    tedaviler: [
-      { ad: "Burun Estetigi (Rinoplasti)", fiyat: "2000-4000", sure: "5-7 gün", popüler: true },
-      { ad: "Meme Buyutme", fiyat: "2500-5000", sure: "5-7 gün", popüler: true },
-      { ad: "Karin Germe", fiyat: "3000-5000", sure: "7-10 gün", popüler: false },
-      { ad: "Yuz Germe", fiyat: "3000-6000", sure: "7-10 gün", popüler: false },
-      { ad: "Lipo Emme", fiyat: "1500-3000", sure: "3-5 gün", popüler: false },
-      { ad: "Göz Kapagi Estetiği", fiyat: "1000-2000", sure: "3-5 gün", popüler: false },
-      { ad: "Kulak Estetiği", fiyat: "800-1500", sure: "3-5 gün", popüler: false },
-    ],
-  },
-  {
-    id: "genel",
-    ad: "Genel Sağlık",
-    aciklama: "Check-up, ortopedi, kardiyoloji ve daha fazlasi",
-    klinikSayisi: 110,
-    tedaviler: [
-      { ad: "Kapsamli Check-Up", fiyat: "300-600", sure: "1 gün", popüler: true },
-      { ad: "Ortopedi Ameliyati", fiyat: "2000-5000", sure: "5-10 gün", popüler: false },
-      { ad: "Kardiyoloji", fiyat: "500-1500", sure: "2-3 gün", popüler: false },
-      { ad: "Onkoloji Danismanligi", fiyat: "300-800", sure: "1-2 gün", popüler: false },
-      { ad: "Noroloji", fiyat: "400-1000", sure: "1-3 gün", popüler: false },
-      { ad: "Dermatoloji", fiyat: "200-500", sure: "1 gün", popüler: false },
-    ],
-  },
-];
 
 export default function Tedaviler() {
-  const [aktifKategori, setAktifKategori] = useState("dis");
-  const [aramaMetni, setAramaMetni] = useState("");
+  const { dil } = useDil();
 
-  const aktifKategoriData = tedaviKategorileri.find((k) => k.id === aktifKategori);
+  const icerik = {
+    tr: {
+      baslik: "Tedaviler",
+      altBaslik: "İhtiyacınıza uygun tedaviyi seçin ve kliniklerden teklif alın",
+      teklifAl: "Teklif Al",
+      kategoriler: [
+        {
+          icon: "🦷",
+          baslik: "Diş Tedavisi",
+          aciklama: "Diş implantından zirkonyum kaplamaya, diş beyazlatmadan ortodontiye kadar kapsamlı diş tedavileri.",
+          tedaviler: ["İmplant", "Zirkonyum Kaplama", "Lamine Veneer", "Diş Beyazlatma", "Kanal Tedavisi", "Ortodonti", "All-on-4 / All-on-6", "Gülüş Tasarımı"],
+        },
+        {
+          icon: "💇",
+          baslik: "Saç Ekimi",
+          aciklama: "FUE, DHI ve Safir yöntemleriyle kalıcı saç ekimi çözümleri.",
+          tedaviler: ["FUE Saç Ekimi", "DHI Saç Ekimi", "Safir FUE", "Sakal Ekimi", "Kaş Ekimi", "PRP Tedavisi"],
+        },
+        {
+          icon: "👁️",
+          baslik: "Göz Ameliyatı",
+          aciklama: "Lasik, Lasek ve lens tedavileriyle kalıcı görüş çözümleri.",
+          tedaviler: ["Lasik", "Lasek", "PRK", "Smile Pro", "Göz İçi Lens", "Katarakt Ameliyatı"],
+        },
+        {
+          icon: "👃",
+          baslik: "Plastik Cerrahi",
+          aciklama: "Yüz, burun ve vücut estetiğinde uzman klinikler.",
+          tedaviler: ["Burun Estetiği", "Yüz Germe", "Göz Kapağı Estetiği", "Meme Büyütme", "Liposuction", "Karın Germe", "Botoks", "Dolgu"],
+        },
+        {
+          icon: "❤️",
+          baslik: "Genel Sağlık",
+          aciklama: "Kapsamlı check-up ve genel sağlık hizmetleri.",
+          tedaviler: ["Temel Check-Up", "Kapsamlı Check-Up", "Kardiyoloji", "Onkoloji Taraması", "Dermatoloji", "Gastroloji"],
+        },
+        {
+          icon: "🦴",
+          baslik: "Ortopedi",
+          aciklama: "Diz, kalça ve omurga tedavilerinde uzman klinikler.",
+          tedaviler: ["Diz Protezi", "Kalça Protezi", "Omurga Cerrahisi", "Spor Yaralanmaları", "Artroskopi"],
+        },
+      ],
+    },
+    en: {
+      baslik: "Treatments",
+      altBaslik: "Choose the right treatment and get quotes from clinics",
+      teklifAl: "Get Quote",
+      kategoriler: [
+        {
+          icon: "🦷",
+          baslik: "Dental Treatment",
+          aciklama: "Comprehensive dental treatments from implants to zirconia crowns, teeth whitening to orthodontics.",
+          tedaviler: ["Implant", "Zirconia Crown", "Laminate Veneer", "Teeth Whitening", "Root Canal", "Orthodontics", "All-on-4 / All-on-6", "Smile Design"],
+        },
+        {
+          icon: "💇",
+          baslik: "Hair Transplant",
+          aciklama: "Permanent hair transplant solutions with FUE, DHI and Sapphire methods.",
+          tedaviler: ["FUE Hair Transplant", "DHI Hair Transplant", "Sapphire FUE", "Beard Transplant", "Eyebrow Transplant", "PRP Treatment"],
+        },
+        {
+          icon: "👁️",
+          baslik: "Eye Surgery",
+          aciklama: "Permanent vision solutions with Lasik, Lasek and lens treatments.",
+          tedaviler: ["Lasik", "Lasek", "PRK", "Smile Pro", "Intraocular Lens", "Cataract Surgery"],
+        },
+        {
+          icon: "👃",
+          baslik: "Plastic Surgery",
+          aciklama: "Expert clinics in facial, nose and body aesthetics.",
+          tedaviler: ["Rhinoplasty", "Face Lift", "Eyelid Surgery", "Breast Augmentation", "Liposuction", "Tummy Tuck", "Botox", "Filler"],
+        },
+        {
+          icon: "❤️",
+          baslik: "General Health",
+          aciklama: "Comprehensive check-up and general health services.",
+          tedaviler: ["Basic Check-Up", "Comprehensive Check-Up", "Cardiology", "Oncology Screening", "Dermatology", "Gastrology"],
+        },
+        {
+          icon: "🦴",
+          baslik: "Orthopedics",
+          aciklama: "Expert clinics in knee, hip and spine treatments.",
+          tedaviler: ["Knee Prosthesis", "Hip Prosthesis", "Spine Surgery", "Sports Injuries", "Arthroscopy"],
+        },
+      ],
+    },
+    de: {
+      baslik: "Behandlungen",
+      altBaslik: "Wählen Sie die richtige Behandlung und holen Sie Angebote von Kliniken ein",
+      teklifAl: "Angebot holen",
+      kategoriler: [
+        {
+          icon: "🦷",
+          baslik: "Zahnbehandlung",
+          aciklama: "Umfassende Zahnbehandlungen von Implantaten bis Zirkonkronen, Zahnaufhellung bis Kieferorthopädie.",
+          tedaviler: ["Implantat", "Zirkonkrone", "Laminat Veneer", "Zahnaufhellung", "Wurzelkanal", "Kieferorthopädie", "All-on-4 / All-on-6", "Lächeldesign"],
+        },
+        {
+          icon: "💇",
+          baslik: "Haartransplantation",
+          aciklama: "Dauerhafte Haartransplantationslösungen mit FUE, DHI und Saphir-Methoden.",
+          tedaviler: ["FUE Haartransplantation", "DHI Haartransplantation", "Saphir FUE", "Barttransplantation", "Augenbrauentransplantation", "PRP Behandlung"],
+        },
+        {
+          icon: "👁️",
+          baslik: "Augenoperation",
+          aciklama: "Dauerhafte Sehlösungen mit Lasik, Lasek und Linsenbehandlungen.",
+          tedaviler: ["Lasik", "Lasek", "PRK", "Smile Pro", "Intraokulare Linse", "Kataraktoperation"],
+        },
+        {
+          icon: "👃",
+          baslik: "Plastische Chirurgie",
+          aciklama: "Expertenkliniken für Gesichts-, Nasen- und Körperästhetik.",
+          tedaviler: ["Rhinoplastik", "Gesichtslifting", "Lidchirurgie", "Brustvergrößerung", "Liposuktion", "Bauchdeckenstraffung", "Botox", "Filler"],
+        },
+        {
+          icon: "❤️",
+          baslik: "Allgemeine Gesundheit",
+          aciklama: "Umfassende Check-up und allgemeine Gesundheitsdienstleistungen.",
+          tedaviler: ["Basis Check-Up", "Umfassender Check-Up", "Kardiologie", "Onkologie-Screening", "Dermatologie", "Gastrologie"],
+        },
+        {
+          icon: "🦴",
+          baslik: "Orthopädie",
+          aciklama: "Expertenkliniken für Knie-, Hüft- und Wirbelsäulenbehandlungen.",
+          tedaviler: ["Knieprothese", "Hüftprothese", "Wirbelsäulenchirurgie", "Sportverletzungen", "Arthroskopie"],
+        },
+      ],
+    },
+  };
 
-  const filtreliTedaviler = aktifKategoriData?.tedaviler.filter((t) =>
-    t.ad.toLowerCase().includes(aramaMetni.toLowerCase())
-  );
+  const ic = icerik[dil];
 
   return (
     <main style={{ minHeight: "100vh", background: "#f9fafb", fontFamily: "sans-serif" }}>
-
       <Navbar />
 
-      <section style={{ background: "linear-gradient(135deg, #12103a 0%, #1e1b4b 100%)", padding: "40px 32px" }}>
-        <h1 style={{ color: "#fff", fontSize: "32px", fontWeight: 700, marginBottom: "8px" }}>Tedaviler</h1>
-        <p style={{ color: "#8b8fc8", fontSize: "15px", marginBottom: "24px" }}>Ihtiyacin olan tedaviyi bul, en iyi klinikleri karşılaştır</p>
-        <div style={{ background: "#fff", borderRadius: "12px", padding: "8px", display: "flex", gap: "8px", maxWidth: "500px" }}>
-          <input type="text" placeholder="Tedavi ara..." value={aramaMetni} onChange={(e) => setAramaMetni(e.target.value)} style={{ flex: 1, border: "none", outline: "none", padding: "10px 14px", fontSize: "14px", background: "transparent" }} />
-          <button style={{ background: "#534AB7", color: "#fff", border: "none", padding: "10px 24px", borderRadius: "8px", fontSize: "14px", cursor: "pointer" }}>Ara</button>
-        </div>
+      <section style={{ background: "linear-gradient(135deg, #12103a 0%, #1e1b4b 100%)", padding: "64px 32px", textAlign: "center" }}>
+        <h1 style={{ color: "#fff", fontSize: "42px", fontWeight: 700, marginBottom: "16px" }}>{ic.baslik}</h1>
+        <p style={{ color: "#8b8fc8", fontSize: "16px", maxWidth: "600px", margin: "0 auto" }}>{ic.altBaslik}</p>
       </section>
 
-      <div style={{ maxWidth: "1200px", margin: "0 auto", padding: "32px", display: "grid", gridTemplateColumns: "240px 1fr", gap: "24px" }}>
-
-        <div>
-          <div style={{ background: "#fff", border: "1px solid #EEEDFE", borderRadius: "12px", padding: "12px" }}>
-            {tedaviKategorileri.map((k) => (
-              <div key={k.id} onClick={() => setAktifKategori(k.id)} style={{ padding: "12px", borderRadius: "8px", cursor: "pointer", marginBottom: "4px", background: aktifKategori === k.id ? "#EEEDFE" : "transparent" }}>
-                <div style={{ fontSize: "13px", fontWeight: 600, color: aktifKategori === k.id ? "#534AB7" : "#12103a", marginBottom: "2px" }}>{k.ad}</div>
-                <div style={{ fontSize: "11px", color: "#888" }}>{k.klinikSayisi} klinik</div>
+      <section style={{ maxWidth: "1100px", margin: "0 auto", padding: "64px 32px" }}>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: "24px" }}>
+          {ic.kategoriler.map((kat) => (
+            <div key={kat.baslik} style={{ background: "#fff", border: "1px solid #EEEDFE", borderRadius: "16px", padding: "28px" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: "16px", marginBottom: "16px" }}>
+                <div style={{ fontSize: "40px" }}>{kat.icon}</div>
+                <div>
+                  <h2 style={{ fontSize: "20px", fontWeight: 700, color: "#12103a", margin: 0 }}>{kat.baslik}</h2>
+                </div>
               </div>
-            ))}
-          </div>
-        </div>
-
-        <div>
-          {aktifKategoriData && (
-            <>
-              <div style={{ marginBottom: "24px" }}>
-                <h2 style={{ fontSize: "22px", fontWeight: 700, color: "#12103a", marginBottom: "6px" }}>{aktifKategoriData.ad}</h2>
-                <p style={{ fontSize: "14px", color: "#888" }}>{aktifKategoriData.aciklama}</p>
-              </div>
-
-              <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: "14px" }}>
-                {filtreliTedaviler?.map((t) => (
-                  <div key={t.ad} style={{ background: "#fff", border: t.popüler ? "2px solid #534AB7" : "1px solid #EEEDFE", borderRadius: "12px", padding: "20px" }}>
-                    {t.popüler && (
-                      <div style={{ fontSize: "10px", background: "#534AB7", color: "#fff", padding: "2px 10px", borderRadius: "20px", display: "inline-block", marginBottom: "10px" }}>popüler</div>
-                    )}
-                    <h3 style={{ fontSize: "15px", fontWeight: 700, color: "#12103a", marginBottom: "10px" }}>{t.ad}</h3>
-                    <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "14px" }}>
-                      <div>
-                        <div style={{ fontSize: "11px", color: "#888", marginBottom: "2px" }}>Fiyat Araligi</div>
-                        <div style={{ fontSize: "14px", fontWeight: 700, color: "#534AB7" }}>{t.fiyat} EUR</div>
-                      </div>
-                      <div>
-                        <div style={{ fontSize: "11px", color: "#888", marginBottom: "2px" }}>Tedavi Suresi</div>
-                        <div style={{ fontSize: "14px", fontWeight: 600, color: "#12103a" }}>{t.sure}</div>
-                      </div>
-                    </div>
-                    <div style={{ display: "flex", gap: "8px" }}>
-                      <a href="/klinikler" style={{ flex: 1, textAlign: "center", background: "#EEEDFE", color: "#534AB7", padding: "8px", borderRadius: "8px", fontSize: "12px", textDecoration: "none", fontWeight: 600 }}>
-                        Klinikleri Gor
-                      </a>
-                      <a href="/teklif" style={{ flex: 1, textAlign: "center", background: "#534AB7", color: "#fff", padding: "8px", borderRadius: "8px", fontSize: "12px", textDecoration: "none", fontWeight: 600 }}>
-                        Teklif Al
-                      </a>
-                    </div>
-                  </div>
+              <p style={{ fontSize: "13px", color: "#666", lineHeight: "1.6", marginBottom: "16px" }}>{kat.aciklama}</p>
+              <div style={{ display: "flex", flexWrap: "wrap", gap: "8px", marginBottom: "20px" }}>
+                {kat.tedaviler.map((t) => (
+                  <span key={t} style={{ background: "#EEEDFE", color: "#534AB7", padding: "4px 12px", borderRadius: "20px", fontSize: "12px", fontWeight: 500 }}>{t}</span>
                 ))}
               </div>
-
-              {filtreliTedaviler?.length === 0 && (
-                <div style={{ textAlign: "center", padding: "48px", background: "#fff", borderRadius: "12px", border: "1px solid #EEEDFE" }}>
-                  <div style={{ fontSize: "13px", color: "#888" }}>Tedavi bulunamadi</div>
-                </div>
-              )}
-            </>
-          )}
+              <a href="/teklif" style={{ display: "inline-block", background: "#534AB7", color: "#fff", padding: "10px 20px", borderRadius: "8px", fontSize: "13px", textDecoration: "none", fontWeight: 600 }}>
+                {ic.teklifAl} →
+              </a>
+            </div>
+          ))}
         </div>
-      </div>
-
+      </section>
       <Footer />
-
     </main>
   );
 }
