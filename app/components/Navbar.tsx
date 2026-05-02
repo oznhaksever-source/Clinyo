@@ -1,10 +1,12 @@
 "use client";
 import { useState, useEffect } from "react";
 import { createClient } from "../../utils/supabase/client";
+import { useDil } from "../locales/context";
 
 export default function Navbar() {
   const [kullanici, setKullanici] = useState<any>(null);
   const [menuAcik, setMenuAcik] = useState(false);
+  const { dil, t, dilDegistir } = useDil();
 
   const supabase = createClient();
 
@@ -40,17 +42,19 @@ export default function Navbar() {
       </a>
 
       <div style={{ display: "flex", gap: "20px", alignItems: "center" }}>
-        <a href="/klinikler" style={{ color: "#aab4c8", fontSize: "13px", textDecoration: "none" }}>Klinikler</a>
-        <a href="/tedaviler" style={{ color: "#aab4c8", fontSize: "13px", textDecoration: "none" }}>Tedaviler</a>
-        <a href="/oteller" style={{ color: "#aab4c8", fontSize: "13px", textDecoration: "none" }}>Oteller</a>
-        <a href="/transfer" style={{ color: "#aab4c8", fontSize: "13px", textDecoration: "none" }}>Transfer</a>
-        <a href="/harita" style={{ color: "#aab4c8", fontSize: "13px", textDecoration: "none" }}>Harita</a>
-          <a href="/nasil-calisir" style={{ color: "#aab4c8", fontSize: "13px", textDecoration: "none" }}>Nasil Calisir</a>
+        <a href="/klinikler" style={{ color: "#aab4c8", fontSize: "13px", textDecoration: "none" }}>{t.nav.klinikler}</a>
+        <a href="/tedaviler" style={{ color: "#aab4c8", fontSize: "13px", textDecoration: "none" }}>{t.nav.tedaviler}</a>
+        <a href="/oteller" style={{ color: "#aab4c8", fontSize: "13px", textDecoration: "none" }}>{t.nav.oteller}</a>
+        <a href="/transfer" style={{ color: "#aab4c8", fontSize: "13px", textDecoration: "none" }}>{t.nav.transfer}</a>
+        <a href="/harita" style={{ color: "#aab4c8", fontSize: "13px", textDecoration: "none" }}>{t.nav.harita}</a>
+        <a href="/nasil-calisir" style={{ color: "#aab4c8", fontSize: "13px", textDecoration: "none" }}>{t.nav.nasilCalisir}</a>
         <div style={{ width: "1px", height: "16px", background: "#2a2a4e" }} />
         <div style={{ display: "flex", gap: "6px" }}>
-          <span style={{ fontSize: "11px", padding: "3px 8px", border: "1px solid #534AB7", borderRadius: "4px", color: "#7F77DD", cursor: "pointer" }}>TR</span>
-          <span style={{ fontSize: "11px", padding: "3px 8px", border: "1px solid #2a2a4e", borderRadius: "4px", color: "#aab4c8", cursor: "pointer" }}>EN</span>
-          <span style={{ fontSize: "11px", padding: "3px 8px", border: "1px solid #2a2a4e", borderRadius: "4px", color: "#aab4c8", cursor: "pointer" }}>DE</span>
+          {(["tr", "en", "de"] as const).map((d) => (
+            <span key={d} onClick={() => dilDegistir(d)} style={{ fontSize: "11px", padding: "3px 8px", border: `1px solid ${dil === d ? "#534AB7" : "#2a2a4e"}`, borderRadius: "4px", color: dil === d ? "#7F77DD" : "#aab4c8", cursor: "pointer", textTransform: "uppercase" }}>
+              {d}
+            </span>
+          ))}
         </div>
 
         {kullanici ? (
@@ -70,20 +74,20 @@ export default function Navbar() {
                   <div style={{ fontSize: "11px", color: "#888", marginTop: "2px" }}>{kullanici.hesap_turu}</div>
                 </div>
                 <a href={panelLinki()} style={{ display: "block", padding: "10px 16px", fontSize: "13px", color: "#534AB7", textDecoration: "none", borderBottom: "1px solid #f0f0f0" }}>
-                  Panelim
+                  {t.nav.panelim}
                 </a>
                 <a href="/teklif" style={{ display: "block", padding: "10px 16px", fontSize: "13px", color: "#555", textDecoration: "none", borderBottom: "1px solid #f0f0f0" }}>
-                  Teklif Al
+                  {t.nav.teklifAl}
                 </a>
                 <button onClick={cikisYap} style={{ display: "block", width: "100%", textAlign: "left", padding: "10px 16px", fontSize: "13px", color: "#c00", background: "none", border: "none", cursor: "pointer" }}>
-                  Cikis Yap
+                  {t.nav.cikisYap}
                 </button>
               </div>
             )}
           </div>
         ) : (
           <a href="/giris" style={{ background: "#534AB7", color: "#fff", padding: "8px 16px", borderRadius: "8px", fontSize: "13px", textDecoration: "none", fontWeight: 600 }}>
-            Giris Yap
+            {t.nav.girisYap}
           </a>
         )}
       </div>

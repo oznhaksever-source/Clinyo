@@ -1,32 +1,37 @@
 import { NextResponse, type NextRequest } from "next/server";
 
 export async function middleware(request: NextRequest) {
-  const { pathname, searchParams } = request.nextUrl;
+  const { pathname } = request.nextUrl;
 
-  // Admin ve API rotalarını atla
-  if (pathname.startsWith("/api") || pathname.startsWith("/_next") || pathname.startsWith("/giris")) {
+  // Statik dosyalar ve API'yi atla
+  if (
+    pathname.startsWith("/api") ||
+    pathname.startsWith("/_next") ||
+    pathname.startsWith("/yakinda") ||
+    pathname.includes(".")
+  ) {
     return NextResponse.next();
   }
 
-  // Bypass kodu kontrolü
+  // Bypass cookie kontrolü
   const bypass = request.cookies.get("bypass")?.value;
   if (bypass === "medoqa2024") {
     return NextResponse.next();
   }
 
-  // URL'de bypass kodu varsa cookie yaz
-  if (searchParams.get("bypass") === "medoqa2024") {
+  // URL'de bypass kodu varsa cookie yaz ve devam et
+  const bypassParam = request.nextUrl.searchParams.get("bypass");
+  if (bypassParam === "medoqa2024") {
     const response = NextResponse.next();
-    response.cookies.set("bypass", "medoqa2024", { maxAge: 60 * 60 * 24 * 30 });
+    response.cookies.set("bypass", "medoqa2024", {
+      maxAge: 60 * 60 * 24 * 30,
+      path: "/",
+    });
     return response;
   }
 
   // Yakında sayfasına yönlendir
-  if (pathname !== "/yakinda") {
-    return NextResponse.redirect(new URL("/yakinda", request.url));
-  }
-
-  return NextResponse.next();
+  return NextResponse.redirect(new URL("/yakinda", request.url));
 }
 
 export const config = {

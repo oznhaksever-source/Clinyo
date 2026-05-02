@@ -1,6 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import { createClient } from "../utils/supabase/client";
+import { useDil } from "./locales/context";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 
@@ -9,6 +10,7 @@ export default function AnaSayfa() {
   const [oteller, setOteller] = useState<any[]>([]);
   const [istatistik, setIstatistik] = useState({ klinik: 0, hasta: 0, otel: 0, transfer: 0 });
   const [yukleniyor, setYukleniyor] = useState(true);
+  const { t } = useDil();
 
   const supabase = createClient();
 
@@ -20,7 +22,6 @@ export default function AnaSayfa() {
       const { count: hastaCount } = await supabase.from("profiles").select("*", { count: "exact", head: true }).eq("hesap_turu", "hasta");
       const { count: otelCount } = await supabase.from("profiles").select("*", { count: "exact", head: true }).eq("hesap_turu", "otel").eq("onaylandi", true);
       const { count: transferCount } = await supabase.from("profiles").select("*", { count: "exact", head: true }).eq("hesap_turu", "transfer").eq("onaylandi", true);
-
       setKlinikler(klinikData || []);
       setOteller(otelData || []);
       setIstatistik({ klinik: klinikCount || 0, hasta: hastaCount || 0, otel: otelCount || 0, transfer: transferCount || 0 });
@@ -30,13 +31,15 @@ export default function AnaSayfa() {
   }, []);
 
   const tedaviler = [
-    { icon: "🦷", ad: "Diş Tedavisi", aciklama: "İmplant, zirkonyum, estetik diş" },
-    { icon: "💇", ad: "Saç Ekimi", aciklama: "FUE, DHI, Safir yöntemleri" },
-    { icon: "👁️", ad: "Göz Ameliyatı", aciklama: "Lasik, Laser, lens tedavileri" },
-    { icon: "👃", ad: "Plastik Cerrahi", aciklama: "Burun, yüz ve vücut estetiği" },
-    { icon: "❤️", ad: "Check-Up", aciklama: "Kapsamlı sağlık taraması" },
-    { icon: "🦴", ad: "Ortopedi", aciklama: "Diz, kalça ve omurga tedavisi" },
+    { icon: "🦷", ad: "Diş Tedavisi", adEn: "Dental Treatment", adDe: "Zahnbehandlung", aciklama: "İmplant, zirkonyum, estetik diş", aciklamaEn: "Implant, zirconia, aesthetic dental", aciklamaDe: "Implantat, Zirkon, ästhetische Zähne" },
+    { icon: "💇", ad: "Saç Ekimi", adEn: "Hair Transplant", adDe: "Haartransplantation", aciklama: "FUE, DHI, Safir yöntemleri", aciklamaEn: "FUE, DHI, Sapphire methods", aciklamaDe: "FUE, DHI, Saphir-Methoden" },
+    { icon: "👁️", ad: "Göz Ameliyatı", adEn: "Eye Surgery", adDe: "Augenoperation", aciklama: "Lasik, Laser, lens tedavileri", aciklamaEn: "Lasik, Laser, lens treatments", aciklamaDe: "Lasik, Laser, Linsenbehandlungen" },
+    { icon: "👃", ad: "Plastik Cerrahi", adEn: "Plastic Surgery", adDe: "Plastische Chirurgie", aciklama: "Burun, yüz ve vücut estetiği", aciklamaEn: "Nose, face and body aesthetics", aciklamaDe: "Nasen-, Gesichts- und Körperästhetik" },
+    { icon: "❤️", ad: "Check-Up", adEn: "Check-Up", adDe: "Check-Up", aciklama: "Kapsamlı sağlık taraması", aciklamaEn: "Comprehensive health screening", aciklamaDe: "Umfassende Gesundheitsuntersuchung" },
+    { icon: "🦴", ad: "Ortopedi", adEn: "Orthopedics", adDe: "Orthopädie", aciklama: "Diz, kalça ve omurga tedavisi", aciklamaEn: "Knee, hip and spine treatment", aciklamaDe: "Knie-, Hüft- und Wirbelsäulenbehandlung" },
   ];
+
+  const { dil } = useDil();
 
   return (
     <main style={{ minHeight: "100vh", fontFamily: "sans-serif" }}>
@@ -45,19 +48,19 @@ export default function AnaSayfa() {
       {/* Hero */}
       <section style={{ background: "linear-gradient(135deg, #12103a 0%, #1e1b4b 60%, #2d1b69 100%)", padding: "80px 32px", textAlign: "center" }}>
         <div style={{ maxWidth: "700px", margin: "0 auto" }}>
-          <div style={{ fontSize: "13px", color: "#7F77DD", fontWeight: 600, marginBottom: "16px", letterSpacing: "2px" }}>SAĞLIK TURİZMİ PLATFORMU</div>
+          <div style={{ fontSize: "13px", color: "#7F77DD", fontWeight: 600, marginBottom: "16px", letterSpacing: "2px" }}>{t.home.badge}</div>
           <h1 style={{ fontSize: "48px", fontWeight: 800, color: "#fff", marginBottom: "20px", lineHeight: 1.2 }}>
-            En İyi <span style={{ color: "#7F77DD" }}>Sağlık</span> Teklifleri
+            {t.home.title} <span style={{ color: "#7F77DD" }}>{t.home.titleHighlight}</span> {t.home.titleEnd}
           </h1>
           <p style={{ fontSize: "18px", color: "#8b8fc8", marginBottom: "40px", lineHeight: 1.6 }}>
-            Diş tedavisinden saç ekimine, göz ameliyatından plastik cerrahiye kadar binlerce hastanın tercih ettiği platform.
+            {t.home.subtitle}
           </p>
           <div style={{ display: "flex", gap: "12px", justifyContent: "center", flexWrap: "wrap" }}>
             <a href="/teklif" style={{ background: "#534AB7", color: "#fff", padding: "14px 32px", borderRadius: "10px", fontSize: "15px", textDecoration: "none", fontWeight: 700 }}>
-              Ücretsiz Teklif Al
+              {t.home.teklifAl}
             </a>
             <a href="/klinikler" style={{ background: "rgba(255,255,255,0.1)", color: "#fff", padding: "14px 32px", borderRadius: "10px", fontSize: "15px", textDecoration: "none", fontWeight: 600, border: "1px solid rgba(255,255,255,0.2)" }}>
-              Klinikleri Keşfet
+              {t.home.klinikleriKesf}
             </a>
           </div>
         </div>
@@ -67,10 +70,10 @@ export default function AnaSayfa() {
       <section style={{ background: "#534AB7", padding: "32px" }}>
         <div style={{ maxWidth: "900px", margin: "0 auto", display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "24px", textAlign: "center" }}>
           {[
-            { sayi: istatistik.klinik, etiket: "Onaylı Klinik" },
-            { sayi: istatistik.hasta, etiket: "Kayıtlı Hasta" },
-            { sayi: istatistik.otel, etiket: "Partner Otel" },
-            { sayi: istatistik.transfer, etiket: "Transfer Firması" },
+            { sayi: istatistik.klinik, etiket: t.home.onayliKlinik },
+            { sayi: istatistik.hasta, etiket: t.home.kayitliHasta },
+            { sayi: istatistik.otel, etiket: t.home.partnerOtel },
+            { sayi: istatistik.transfer, etiket: t.home.transferFirma },
           ].map((s) => (
             <div key={s.etiket}>
               <div style={{ fontSize: "36px", fontWeight: 800, color: "#fff", marginBottom: "4px" }}>{s.sayi}+</div>
@@ -84,16 +87,20 @@ export default function AnaSayfa() {
       <section style={{ padding: "64px 32px", background: "#f9fafb" }}>
         <div style={{ maxWidth: "1100px", margin: "0 auto" }}>
           <div style={{ textAlign: "center", marginBottom: "40px" }}>
-            <h2 style={{ fontSize: "32px", fontWeight: 700, color: "#12103a", marginBottom: "12px" }}>Tedavi Kategorileri</h2>
-            <p style={{ fontSize: "15px", color: "#888" }}>İhtiyacınıza uygun tedaviyi seçin ve kliniklerden teklif alın</p>
+            <h2 style={{ fontSize: "32px", fontWeight: 700, color: "#12103a", marginBottom: "12px" }}>{t.home.tedaviKategorileri}</h2>
+            <p style={{ fontSize: "15px", color: "#888" }}>{t.home.tedaviAciklama}</p>
           </div>
           <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "16px" }}>
-            {tedaviler.map((t) => (
-              <a key={t.ad} href="/teklif" style={{ background: "#fff", border: "1px solid #EEEDFE", borderRadius: "12px", padding: "24px", textDecoration: "none", display: "flex", alignItems: "center", gap: "16px", transition: "box-shadow 0.2s" }}>
-                <div style={{ fontSize: "36px" }}>{t.icon}</div>
+            {tedaviler.map((tedavi) => (
+              <a key={tedavi.ad} href="/teklif" style={{ background: "#fff", border: "1px solid #EEEDFE", borderRadius: "12px", padding: "24px", textDecoration: "none", display: "flex", alignItems: "center", gap: "16px" }}>
+                <div style={{ fontSize: "36px" }}>{tedavi.icon}</div>
                 <div>
-                  <div style={{ fontSize: "15px", fontWeight: 700, color: "#12103a", marginBottom: "4px" }}>{t.ad}</div>
-                  <div style={{ fontSize: "12px", color: "#888" }}>{t.aciklama}</div>
+                  <div style={{ fontSize: "15px", fontWeight: 700, color: "#12103a", marginBottom: "4px" }}>
+                    {dil === "tr" ? tedavi.ad : dil === "en" ? tedavi.adEn : tedavi.adDe}
+                  </div>
+                  <div style={{ fontSize: "12px", color: "#888" }}>
+                    {dil === "tr" ? tedavi.aciklama : dil === "en" ? tedavi.aciklamaEn : tedavi.aciklamaDe}
+                  </div>
                 </div>
               </a>
             ))}
@@ -106,15 +113,15 @@ export default function AnaSayfa() {
         <div style={{ maxWidth: "1100px", margin: "0 auto" }}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "32px" }}>
             <div>
-              <h2 style={{ fontSize: "28px", fontWeight: 700, color: "#12103a", marginBottom: "8px" }}>Öne Çıkan Klinikler</h2>
-              <p style={{ fontSize: "14px", color: "#888" }}>Admin tarafından onaylanmış güvenilir klinikler</p>
+              <h2 style={{ fontSize: "28px", fontWeight: 700, color: "#12103a", marginBottom: "8px" }}>{t.home.oneCikanKlinikler}</h2>
+              <p style={{ fontSize: "14px", color: "#888" }}>{t.home.oneCikanAciklama}</p>
             </div>
-            <a href="/klinikler" style={{ color: "#534AB7", fontSize: "14px", textDecoration: "none", fontWeight: 600 }}>Tümünü Gör →</a>
+            <a href="/klinikler" style={{ color: "#534AB7", fontSize: "14px", textDecoration: "none", fontWeight: 600 }}>{t.home.tumunuGor}</a>
           </div>
           {yukleniyor ? (
-            <div style={{ textAlign: "center", padding: "32px", color: "#888" }}>Yükleniyor...</div>
+            <div style={{ textAlign: "center", padding: "32px", color: "#888" }}>...</div>
           ) : klinikler.length === 0 ? (
-            <div style={{ textAlign: "center", padding: "32px", color: "#888", background: "#f9fafb", borderRadius: "12px" }}>Henüz onaylı klinik bulunmuyor</div>
+            <div style={{ textAlign: "center", padding: "32px", color: "#888", background: "#f9fafb", borderRadius: "12px" }}>-</div>
           ) : (
             <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "20px" }}>
               {klinikler.map((k) => (
@@ -144,10 +151,10 @@ export default function AnaSayfa() {
           <div style={{ maxWidth: "1100px", margin: "0 auto" }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "32px" }}>
               <div>
-                <h2 style={{ fontSize: "28px", fontWeight: 700, color: "#12103a", marginBottom: "8px" }}>Partner Oteller</h2>
-                <p style={{ fontSize: "14px", color: "#888" }}>Tedaviniz süresince konaklamak için en iyi oteller</p>
+                <h2 style={{ fontSize: "28px", fontWeight: 700, color: "#12103a", marginBottom: "8px" }}>{t.home.partnerOteller}</h2>
+                <p style={{ fontSize: "14px", color: "#888" }}>{t.home.partnerOtelAciklama}</p>
               </div>
-              <a href="/oteller" style={{ color: "#534AB7", fontSize: "14px", textDecoration: "none", fontWeight: 600 }}>Tümünü Gör →</a>
+              <a href="/oteller" style={{ color: "#534AB7", fontSize: "14px", textDecoration: "none", fontWeight: 600 }}>{t.home.tumunuGor}</a>
             </div>
             <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "20px" }}>
               {oteller.map((o) => (
@@ -173,13 +180,13 @@ export default function AnaSayfa() {
       {/* Nasıl Çalışır */}
       <section style={{ padding: "64px 32px", background: "#12103a" }}>
         <div style={{ maxWidth: "900px", margin: "0 auto", textAlign: "center" }}>
-          <h2 style={{ fontSize: "32px", fontWeight: 700, color: "#fff", marginBottom: "12px" }}>Nasıl Çalışır?</h2>
-          <p style={{ fontSize: "15px", color: "#8b8fc8", marginBottom: "48px" }}>3 adımda tedavinizi planlayın</p>
+          <h2 style={{ fontSize: "32px", fontWeight: 700, color: "#fff", marginBottom: "12px" }}>{t.home.nasilCalisir}</h2>
+          <p style={{ fontSize: "15px", color: "#8b8fc8", marginBottom: "48px" }}>{t.home.nasilCalisirAciklama}</p>
           <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "24px" }}>
             {[
-              { adim: "1", baslik: "Teklif Talebi Oluştur", aciklama: "Tedavinizi seçin ve ücretsiz teklif talebinizi gönderin", icon: "📋" },
-              { adim: "2", baslik: "Teklifleri Karşılaştır", aciklama: "Onaylı kliniklerden gelen teklifleri inceleyin", icon: "⚖️" },
-              { adim: "3", baslik: "Tedavinizi Planlayın", aciklama: "Kliniği seçin, otel ve transfer ayarlayın", icon: "✈️" },
+              { adim: "1", baslik: t.home.adim1, aciklama: t.home.adim1Aciklama, icon: "📋" },
+              { adim: "2", baslik: t.home.adim2, aciklama: t.home.adim2Aciklama, icon: "⚖️" },
+              { adim: "3", baslik: t.home.adim3, aciklama: t.home.adim3Aciklama, icon: "✈️" },
             ].map((a) => (
               <div key={a.adim} style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "12px", padding: "28px" }}>
                 <div style={{ fontSize: "36px", marginBottom: "12px" }}>{a.icon}</div>
@@ -190,7 +197,7 @@ export default function AnaSayfa() {
             ))}
           </div>
           <a href="/teklif" style={{ display: "inline-block", background: "#534AB7", color: "#fff", padding: "14px 40px", borderRadius: "10px", fontSize: "15px", textDecoration: "none", fontWeight: 700, marginTop: "40px" }}>
-            Hemen Başla →
+            {t.home.hemenBasla}
           </a>
         </div>
       </section>
