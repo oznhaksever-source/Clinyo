@@ -1,6 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import { createClient } from "../../utils/supabase/client";
+import { useDil } from "../locales/context";
 import dynamic from "next/dynamic";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
@@ -19,23 +20,26 @@ export default function Klinikler() {
   const [arama, setArama] = useState("");
   const [secilenSehir, setSecilenSehir] = useState("");
   const [secilenKategori, setSecilenKategori] = useState("");
+  const { dil } = useDil();
 
   const supabase = createClient();
 
+  const metinler = {
+    tr: { baslik: "Klinikler", altBaslik: "Onaylı kliniklerimizi keşfedin", aramaPlaceholder: "Klinik adı veya şehir ara...", tumSehirler: "Tüm Şehirler", tumKategoriler: "Tüm Kategoriler", liste: "Liste", haritadaGor: "Haritada Gör", incele: "İncele", yukleniyor: "Yükleniyor...", bulunamadi: "Klinik bulunamadı" },
+    en: { baslik: "Clinics", altBaslik: "Discover our verified clinics", aramaPlaceholder: "Search clinic name or city...", tumSehirler: "All Cities", tumKategoriler: "All Categories", liste: "List", haritadaGor: "View on Map", incele: "View", yukleniyor: "Loading...", bulunamadi: "No clinics found" },
+    de: { baslik: "Kliniken", altBaslik: "Entdecken Sie unsere verifizierten Kliniken", aramaPlaceholder: "Klinikname oder Stadt suchen...", tumSehirler: "Alle Städte", tumKategoriler: "Alle Kategorien", liste: "Liste", haritadaGor: "Auf Karte anzeigen", incele: "Ansehen", yukleniyor: "Wird geladen...", bulunamadi: "Keine Kliniken gefunden" },
+  };
+
+  const m = metinler[dil];
+
   useEffect(() => {
     async function veriYukle() {
-      const { data } = await supabase
-        .from("profiles")
-        .select("*, klinik_hizmetler(kategori)")
-        .eq("hesap_turu", "klinik")
-        .eq("onaylandi", true)
-        .eq("askida", false);
+      const { data } = await supabase.from("profiles").select("*, klinik_hizmetler(kategori)").eq("hesap_turu", "klinik").eq("onaylandi", true).eq("askida", false);
       setKlinikler(data || []);
       setFiltrelenmis(data || []);
       setYukleniyor(false);
     }
     veriYukle();
-
     if (typeof window !== "undefined") {
       import("leaflet").then(L => {
         delete (L.Icon.Default.prototype as any)._getIconUrl;
@@ -62,29 +66,26 @@ export default function Klinikler() {
   return (
     <main style={{ minHeight: "100vh", background: "#f9fafb", fontFamily: "sans-serif" }}>
       <Navbar />
-
       <section style={{ background: "linear-gradient(135deg, #12103a 0%, #1e1b4b 100%)", padding: "32px" }}>
-        <h1 style={{ color: "#fff", fontSize: "28px", fontWeight: 700, marginBottom: "8px" }}>Klinikler</h1>
-        <p style={{ color: "#8b8fc8", fontSize: "14px", marginBottom: "20px" }}>Onaylı kliniklerimizi keşfedin</p>
-
+        <h1 style={{ color: "#fff", fontSize: "28px", fontWeight: 700, marginBottom: "8px" }}>{m.baslik}</h1>
+        <p style={{ color: "#8b8fc8", fontSize: "14px", marginBottom: "20px" }}>{m.altBaslik}</p>
         <div style={{ display: "flex", gap: "10px", flexWrap: "wrap", marginBottom: "16px" }}>
-          <input type="text" placeholder="Klinik adı veya şehir ara..." value={arama} onChange={(e) => setArama(e.target.value)} style={{ flex: 1, minWidth: "200px", border: "none", borderRadius: "8px", padding: "10px 16px", fontSize: "13px", outline: "none" }} />
+          <input type="text" placeholder={m.aramaPlaceholder} value={arama} onChange={(e) => setArama(e.target.value)} style={{ flex: 1, minWidth: "200px", border: "none", borderRadius: "8px", padding: "10px 16px", fontSize: "13px", outline: "none" }} />
           <select value={secilenSehir} onChange={(e) => setSecilenSehir(e.target.value)} style={{ border: "none", borderRadius: "8px", padding: "10px 16px", fontSize: "13px", outline: "none", background: "#fff" }}>
-            <option value="">Tüm Şehirler</option>
+            <option value="">{m.tumSehirler}</option>
             {sehirler.map(s => <option key={s}>{s}</option>)}
           </select>
           <select value={secilenKategori} onChange={(e) => setSecilenKategori(e.target.value)} style={{ border: "none", borderRadius: "8px", padding: "10px 16px", fontSize: "13px", outline: "none", background: "#fff" }}>
-            <option value="">Tüm Kategoriler</option>
+            <option value="">{m.tumKategoriler}</option>
             {kategoriler.map(k => <option key={k}>{k}</option>)}
           </select>
         </div>
-
         <div style={{ display: "flex", gap: "8px" }}>
           <button onClick={() => setGorunum("liste")} style={{ padding: "8px 20px", borderRadius: "20px", border: "none", fontSize: "13px", cursor: "pointer", background: gorunum === "liste" ? "#534AB7" : "rgba(255,255,255,0.1)", color: "#fff", fontWeight: gorunum === "liste" ? 700 : 400 }}>
-            📋 Liste ({filtrelenmis.length})
+            📋 {m.liste} ({filtrelenmis.length})
           </button>
           <button onClick={() => setGorunum("harita")} style={{ padding: "8px 20px", borderRadius: "20px", border: "none", fontSize: "13px", cursor: "pointer", background: gorunum === "harita" ? "#534AB7" : "rgba(255,255,255,0.1)", color: "#fff", fontWeight: gorunum === "harita" ? 700 : 400 }}>
-            🗺️ Haritada Gör
+            🗺️ {m.haritadaGor}
           </button>
         </div>
       </section>
@@ -92,13 +93,13 @@ export default function Klinikler() {
       {gorunum === "liste" ? (
         <section style={{ maxWidth: "1200px", margin: "0 auto", padding: "32px" }}>
           {yukleniyor ? (
-            <div style={{ textAlign: "center", padding: "64px", color: "#888" }}>Yükleniyor...</div>
+            <div style={{ textAlign: "center", padding: "64px", color: "#888" }}>{m.yukleniyor}</div>
           ) : filtrelenmis.length === 0 ? (
-            <div style={{ textAlign: "center", padding: "64px", color: "#888" }}>Klinik bulunamadı</div>
+            <div style={{ textAlign: "center", padding: "64px", color: "#888" }}>{m.bulunamadi}</div>
           ) : (
             <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "20px" }}>
               {filtrelenmis.map((k) => (
-                <div key={k.id} style={{ background: "#fff", borderRadius: "12px", overflow: "hidden", border: "1px solid #EEEDFE", transition: "box-shadow 0.2s" }}>
+                <div key={k.id} style={{ background: "#fff", borderRadius: "12px", overflow: "hidden", border: "1px solid #EEEDFE" }}>
                   {k.kapak_fotograf ? (
                     <img src={k.kapak_fotograf} alt={k.ad} style={{ width: "100%", height: "160px", objectFit: "cover" }} />
                   ) : (
@@ -109,9 +110,9 @@ export default function Klinikler() {
                     {k.konum_adres && <p style={{ fontSize: "12px", color: "#888", marginBottom: "8px" }}>📍 {k.konum_adres}</p>}
                     {k.tanitim_yazisi && <p style={{ fontSize: "12px", color: "#666", marginBottom: "12px", lineHeight: "1.5" }}>{k.tanitim_yazisi.slice(0, 80)}...</p>}
                     <div style={{ display: "flex", gap: "8px" }}>
-                      <a href={`/klinik/${k.id}`} style={{ flex: 1, background: "#534AB7", color: "#fff", padding: "8px", borderRadius: "8px", fontSize: "12px", textDecoration: "none", textAlign: "center", fontWeight: 600 }}>İncele</a>
+                      <a href={`/klinik/${k.id}`} style={{ flex: 1, background: "#534AB7", color: "#fff", padding: "8px", borderRadius: "8px", fontSize: "12px", textDecoration: "none", textAlign: "center", fontWeight: 600 }}>{m.incele}</a>
                       {k.konum_lat && k.konum_lng && (
-                        <button onClick={() => { setSeciliKlinik(k); setGorunum("harita"); }} style={{ flex: 1, background: "#fff", color: "#534AB7", border: "1px solid #534AB7", padding: "8px", borderRadius: "8px", fontSize: "12px", cursor: "pointer" }}>🗺️ Haritada Gör</button>
+                        <button onClick={() => { setSeciliKlinik(k); setGorunum("harita"); }} style={{ flex: 1, background: "#fff", color: "#534AB7", border: "1px solid #534AB7", padding: "8px", borderRadius: "8px", fontSize: "12px", cursor: "pointer" }}>🗺️ {m.haritadaGor}</button>
                       )}
                     </div>
                   </div>
@@ -124,7 +125,7 @@ export default function Klinikler() {
         <div style={{ display: "grid", gridTemplateColumns: "320px 1fr", height: "calc(100vh - 200px)" }}>
           <div style={{ background: "#fff", borderRight: "1px solid #EEEDFE", overflow: "auto" }}>
             <div style={{ padding: "16px", borderBottom: "1px solid #EEEDFE" }}>
-              <h3 style={{ fontSize: "14px", fontWeight: 700, color: "#12103a", margin: 0 }}>Klinikler ({filtrelenmis.length})</h3>
+              <h3 style={{ fontSize: "14px", fontWeight: 700, color: "#12103a", margin: 0 }}>{m.baslik} ({filtrelenmis.length})</h3>
             </div>
             {filtrelenmis.map((k) => (
               <div key={k.id} onClick={() => setSeciliKlinik(k)} style={{ padding: "12px 16px", borderBottom: "1px solid #EEEDFE", cursor: "pointer", background: seciliKlinik?.id === k.id ? "#EEEDFE" : "#fff" }}>
@@ -142,7 +143,6 @@ export default function Klinikler() {
               </div>
             ))}
           </div>
-
           <div style={{ position: "relative" }}>
             {typeof window !== "undefined" && (
               <>
@@ -156,7 +156,7 @@ export default function Klinikler() {
                           {k.kapak_fotograf && <img src={k.kapak_fotograf} alt={k.ad} style={{ width: "100%", height: "80px", objectFit: "cover", borderRadius: "6px", marginBottom: "8px" }} />}
                           <div style={{ fontWeight: 700, fontSize: "14px", marginBottom: "4px" }}>{k.ad} {k.soyad}</div>
                           {k.konum_adres && <div style={{ fontSize: "12px", color: "#888", marginBottom: "8px" }}>📍 {k.konum_adres}</div>}
-                          <a href={`/klinik/${k.id}`} style={{ background: "#534AB7", color: "#fff", padding: "6px 12px", borderRadius: "6px", fontSize: "12px", textDecoration: "none", display: "inline-block" }}>İncele</a>
+                          <a href={`/klinik/${k.id}`} style={{ background: "#534AB7", color: "#fff", padding: "6px 12px", borderRadius: "6px", fontSize: "12px", textDecoration: "none", display: "inline-block" }}>{m.incele}</a>
                         </div>
                       </Popup>
                     </Marker>
@@ -167,7 +167,6 @@ export default function Klinikler() {
           </div>
         </div>
       )}
-
       <Footer />
     </main>
   );
