@@ -1,109 +1,94 @@
 "use client";
+import { useState } from "react";
+import { useDil } from "../locales/context";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
-import { useState } from "react";
-
-const kategoriler = [
-  { id: "genel", ad: "Genel" },
-  { id: "klinik", ad: "Klinikler" },
-  { id: "odeme", ad: "Ödeme" },
-  { id: "otel", ad: "Otel & Transfer" },
-  { id: "tedavi", ad: "Tedavi" },
-];
-
-const sorular = [
-  { id: 1, kategori: "genel", soru: "Medoqa ücretsiz mi?", cevap: "Evet! Hastalar için Medoqa tamamen ücretsizdir. Teklif almak, karşılaştırmak ve kliniklerle iletişim kurmak için hiçbir ücret ödemezsiniz. Platform gelirini kliniklerden aldığı komisyon ile elde eder." },
-  { id: 2, kategori: "genel", soru: "Hangi ülkelerden hasta kabul ediyorsunuz?", cevap: "Platformumuz uluslararası hastalar için tasarlanmıştır. Almanya, İngiltere, Hollanda, Avusturya ve diğer Avrupa ülkelerinden hastalarımız var. Türkiye içinden de hizmet veriyoruz." },
-  { id: 3, kategori: "genel", soru: "Dil desteği var mı?", cevap: "Evet! Platform Türkçe, İngilizce ve Almanca olarak kullanılabilir. Müşteri hizmetlerimiz bu üç dilde 7/24 destek sağlar." },
-  { id: 4, kategori: "genel", soru: "Medoqa'ya nasıl kayıt olabilirim?", cevap: "Sağ üstteki 'Giriş Yap' butonuna tıklayarak 'Kayıt Ol' sekmesini seçin. E-posta adresiniz ve şifrenizle kolayca kayıt olabilirsiniz." },
-  { id: 5, kategori: "klinik", soru: "Klinikler nasıl doğrulanır?", cevap: "Tüm klinikler platformumuza katılmadan önce belgelerini sunar. Sağlık Bakanlığı lisansları, doktor sertifikaları ve sigorta belgeleri kontrol edilir. Onaylanan klinikler 'Doğrulanmış' rozetini alır." },
-  { id: 6, kategori: "klinik", soru: "Klinik puanları nasıl hesaplanır?", cevap: "Puanlar yalnızca tedavisini tamamlamış gerçek hastalar tarafından verilir. Her hasta tedavi sonrası bir değerlendirme formu doldurur ve bu değerlendirmeler şeffaf biçimde profilde görünür." },
-  { id: 7, kategori: "klinik", soru: "Klinikle doğrudan iletişim kurabilir miyim?", cevap: "Evet! Teklif aldıktan sonra klinikle mesajlaşabilir, sorularınızı sorabilirsiniz. Ancak ödeme ve anlaşmaların platform üzerinden yapılmasını öneririz — bu sizin güvencenizdir." },
-  { id: 8, kategori: "odeme", soru: "Blokeli ödeme sistemi nasıl çalışır?", cevap: "Ödemeniz platformumuzda güvenle tutulur. Tedaviniz tamamlanıp siz onaylayana kadar kliniğe geçmez. Sorun yaşarsanız itiraz mekanizmamızı kullanabilirsiniz." },
-  { id: 9, kategori: "odeme", soru: "Ek işlemler için ekstra ücret ödemek zorunda mıyım?", cevap: "Hayır! Klinik ek işlem önerecekse öncelikle sizden onay almak zorundadır. Siz onaylamadan fiyata eklenemez. Bu sistemimizin temel güvencelerinden biridir." },
-  { id: 10, kategori: "odeme", soru: "Hangi ödeme yöntemlerini kabul ediyorsunuz?", cevap: "Kredi kartı, banka kartı ve banka havalesi ile ödeme yapabilirsiniz. Tüm ödemeler SSL şifrelemesi ile güvence altındadır." },
-  { id: 11, kategori: "odeme", soru: "İptal veya iade politikası nedir?", cevap: "Tedaviniz başlamadan önce iptal ederseniz ödemeniz iade edilir. Tedavi başladıktan sonraki iptallerde klinik ile görüşmeniz gerekebilir. Detaylar için iletişim sayfamızdan bize ulaşabilirsiniz." },
-  { id: 12, kategori: "otel", soru: "Otel rezervasyonu platform üzerinden mi yapılıyor?", cevap: "Evet! Kliniğinize yakın otelleri platform üzerinden inceleyip rezervasyon yapabilirsiniz. Böylece klinik ve otel koordinasyonunu kolayca sağlarsınız." },
-  { id: 13, kategori: "otel", soru: "Transfer hizmeti nasıl işliyor?", cevap: "Havalimanından kliniğe, kliniğe otele tüm transferlerinizi platform üzerinden organize edebilirsiniz. Transfer şirketleri uçuşunuzu takip eder ve sizi karşılar." },
-  { id: 14, kategori: "otel", soru: "Klinik transfer hizmeti sunuyor mu?", cevap: "Bazı klinikler transfer hizmeti sunmaktadır. Klinik profilinde bu bilgiyi görebilirsiniz. Transfer dahil değilse platformumuzun transfer sayfasından kolayca ayarlayabilirsiniz." },
-  { id: 15, kategori: "tedavi", soru: "Tedavi öncesi online konsültasyon yapılıyor mu?", cevap: "Evet! Birçok klinik video görüşme ile ön konsültasyon sunmaktadır. Teklif aldıktan sonra klinikten video konsültasyon talep edebilirsiniz." },
-  { id: 16, kategori: "tedavi", soru: "Tedavi sonrası takip nasıl yapılıyor?", cevap: "Klinikler tedavi sonrası kontrol randevusu için sizinle iletişime geçer. Yurtdışındaysanız uzaktan takip veya yerel doktorunuzla koordinasyon sağlanabilir." },
-  { id: 17, kategori: "tedavi", soru: "Tedavim beklendiği gibi sonuçlanmazsa ne olur?", cevap: "Platform üzerinden itiraz mekanizması başlatabilirsiniz. Ekibimiz durumu inceler ve çözüm üretir. Ödemeniz itiraz süreci boyunca blokeli tutulur." },
-];
 
 export default function SSS() {
-  const [aktifKategori, setAktifKategori] = useState("genel");
-  const [aramaMetni, setAramaMetni] = useState("");
   const [acikSoru, setAcikSoru] = useState<number | null>(null);
+  const [arama, setArama] = useState("");
+  const { dil } = useDil();
 
-  const filtreliSorular = sorular.filter((s) => {
-    const kategoriUygun = s.kategori === aktifKategori;
-    const aramaUygun = aramaMetni === "" || s.soru.toLowerCase().includes(aramaMetni.toLowerCase()) || s.cevap.toLowerCase().includes(aramaMetni.toLowerCase());
-    return aramaMetni !== "" ? aramaUygun : kategoriUygun;
-  });
+  const icerik = {
+    tr: {
+      baslik: "Sıkça Sorulan Sorular",
+      altBaslik: "Aklınızdaki soruların cevaplarını burada bulabilirsiniz",
+      aramaPlaceholder: "Soru ara...",
+      sorular: [
+        { soru: "Medoqa ücretsiz mi?", cevap: "Evet! Hastalar için Medoqa tamamen ücretsizdir. Teklif almak, karşılaştırmak ve kliniklerle iletişim kurmak için hiçbir ücret ödemezsiniz." },
+        { soru: "Klinikler nasıl doğrulanır?", cevap: "Tüm klinikler platformumuza katılmadan önce belgelerini sunar. Sağlık Bakanlığı lisansları, doktor sertifikaları ve sigorta belgeleri kontrol edilir. Admin onayı olmadan klinikler aktif olamaz." },
+        { soru: "Blokeli ödeme sistemi nasıl çalışır?", cevap: "Ödemeniz platformumuzda güvenle tutulur. Tedaviniz tamamlanıp siz onaylayana kadar kliniğe geçmez. Bu sistemi sayesinde tedaviden memnun kalmazsanız paranız güvende." },
+        { soru: "Ek işlemler için ekstra ücret ödemek zorunda mıyım?", cevap: "Hayır! Klinik ek işlem önerecekse öncelikle sizden onay almak zorundadır. Siz onaylamadan fiyata eklenemez." },
+        { soru: "Hangi ülkelerden hasta kabul ediyorsunuz?", cevap: "Almanya, İngiltere, Hollanda, Avusturya, Fransa, İsviçre ve diğer Avrupa ülkelerinden hastalarımız var. Türkiye içinden de hizmet veriyoruz." },
+        { soru: "Dil desteği var mı?", cevap: "Evet! Platform Türkçe, İngilizce ve Almanca olarak kullanılabilir." },
+        { soru: "Nasıl teklif alabilirim?", cevap: "Ana sayfadan veya herhangi bir sayfadan 'Teklif Al' butonuna tıklayın. 3 adımda tedavinizi ve iletişim bilgilerinizi girin, klinikler size 2-4 saat içinde yanıt verir." },
+        { soru: "Otel ve transfer hizmetleri de var mı?", cevap: "Evet! Partner otellerimiz ve transfer firmalarımız ile tedavi sürecinizi baştan sona planlayabilirsiniz." },
+      ],
+    },
+    en: {
+      baslik: "Frequently Asked Questions",
+      altBaslik: "Find answers to your questions here",
+      aramaPlaceholder: "Search questions...",
+      sorular: [
+        { soru: "Is Medoqa free?", cevap: "Yes! Medoqa is completely free for patients. You pay nothing to receive quotes, compare, and communicate with clinics." },
+        { soru: "How are clinics verified?", cevap: "All clinics submit their documents before joining our platform. Ministry of Health licenses, doctor certificates, and insurance documents are checked. Clinics cannot be active without admin approval." },
+        { soru: "How does the escrow payment system work?", cevap: "Your payment is safely held on our platform. It doesn't go to the clinic until your treatment is complete and you approve. This ensures your money is safe if you're not satisfied." },
+        { soru: "Do I have to pay extra for additional procedures?", cevap: "No! The clinic must get your approval before proposing any additional procedures. Nothing can be added to the price without your approval." },
+        { soru: "Which countries do you accept patients from?", cevap: "We have patients from Germany, UK, Netherlands, Austria, France, Switzerland and other European countries. We also serve within Turkey." },
+        { soru: "Is there language support?", cevap: "Yes! The platform is available in Turkish, English and German." },
+        { soru: "How can I get a quote?", cevap: "Click the 'Get Quote' button from the homepage or any page. Enter your treatment and contact details in 3 steps, and clinics will respond within 2-4 hours." },
+        { soru: "Are hotel and transfer services available?", cevap: "Yes! With our partner hotels and transfer companies, you can plan your entire treatment process from start to finish." },
+      ],
+    },
+    de: {
+      baslik: "Häufig gestellte Fragen",
+      altBaslik: "Hier finden Sie Antworten auf Ihre Fragen",
+      aramaPlaceholder: "Fragen suchen...",
+      sorular: [
+        { soru: "Ist Medoqa kostenlos?", cevap: "Ja! Medoqa ist für Patienten völlig kostenlos. Sie zahlen nichts, um Angebote zu erhalten, zu vergleichen und mit Kliniken zu kommunizieren." },
+        { soru: "Wie werden Kliniken verifiziert?", cevap: "Alle Kliniken reichen ihre Dokumente ein, bevor sie unserer Plattform beitreten. Gesundheitsministerium-Lizenzen, Arztzertifikate und Versicherungsdokumente werden geprüft." },
+        { soru: "Wie funktioniert das Treuhandzahlungssystem?", cevap: "Ihre Zahlung wird sicher auf unserer Plattform gehalten. Sie geht erst dann an die Klinik, wenn Ihre Behandlung abgeschlossen ist und Sie genehmigen." },
+        { soru: "Muss ich für zusätzliche Eingriffe extra bezahlen?", cevap: "Nein! Die Klinik muss Ihre Genehmigung einholen, bevor sie zusätzliche Eingriffe vorschlägt." },
+        { soru: "Aus welchen Ländern nehmen Sie Patienten auf?", cevap: "Wir haben Patienten aus Deutschland, UK, Niederlande, Österreich, Frankreich, Schweiz und anderen europäischen Ländern." },
+        { soru: "Gibt es Sprachunterstützung?", cevap: "Ja! Die Plattform ist auf Türkisch, Englisch und Deutsch verfügbar." },
+        { soru: "Wie kann ich ein Angebot erhalten?", cevap: "Klicken Sie auf der Startseite oder einer beliebigen Seite auf 'Angebot holen'. Geben Sie Ihre Behandlung und Kontaktdaten in 3 Schritten ein." },
+        { soru: "Sind Hotel- und Transferdienste verfügbar?", cevap: "Ja! Mit unseren Partnerhotels und Transferunternehmen können Sie Ihren gesamten Behandlungsprozess planen." },
+      ],
+    },
+  };
+
+  const ic = icerik[dil];
+  const filtrelenmis = ic.sorular.filter(s => s.soru.toLowerCase().includes(arama.toLowerCase()) || s.cevap.toLowerCase().includes(arama.toLowerCase()));
 
   return (
     <main style={{ minHeight: "100vh", background: "#f9fafb", fontFamily: "sans-serif" }}>
-
       <Navbar />
-
-      <section style={{ background: "linear-gradient(135deg, #12103a 0%, #1e1b4b 100%)", padding: "48px 32px", textAlign: "center" }}>
-        <h1 style={{ color: "#fff", fontSize: "36px", fontWeight: 700, marginBottom: "12px" }}>Sıkça Sorulan Sorular</h1>
-        <p style={{ color: "#8b8fc8", fontSize: "15px", marginBottom: "28px" }}>Aklınızdaki soruların cevaplarını burada bulabilirsiniz</p>
-        <div style={{ background: "#fff", borderRadius: "12px", padding: "8px", display: "flex", gap: "8px", maxWidth: "500px", margin: "0 auto" }}>
-          <input type="text" placeholder="Soru ara..." value={aramaMetni} onChange={(e) => setAramaMetni(e.target.value)} style={{ flex: 1, border: "none", outline: "none", padding: "10px 14px", fontSize: "14px", background: "transparent" }} />
-          <button style={{ background: "#534AB7", color: "#fff", border: "none", padding: "10px 24px", borderRadius: "8px", fontSize: "14px", cursor: "pointer" }}>Ara</button>
-        </div>
+      <section style={{ background: "linear-gradient(135deg, #12103a 0%, #1e1b4b 100%)", padding: "64px 32px", textAlign: "center" }}>
+        <h1 style={{ color: "#fff", fontSize: "42px", fontWeight: 700, marginBottom: "16px" }}>{ic.baslik}</h1>
+        <p style={{ color: "#8b8fc8", fontSize: "16px", maxWidth: "600px", margin: "0 auto 32px" }}>{ic.altBaslik}</p>
+        <input type="text" placeholder={ic.aramaPlaceholder} value={arama} onChange={(e) => setArama(e.target.value)} style={{ maxWidth: "400px", width: "100%", border: "none", borderRadius: "8px", padding: "12px 20px", fontSize: "14px", outline: "none" }} />
       </section>
 
-      <div style={{ maxWidth: "900px", margin: "0 auto", padding: "40px 32px" }}>
-
-        {aramaMetni === "" && (
-          <div style={{ display: "flex", gap: "8px", marginBottom: "28px", flexWrap: "wrap" }}>
-            {kategoriler.map((k) => (
-              <button key={k.id} onClick={() => setAktifKategori(k.id)} style={{ padding: "8px 18px", borderRadius: "20px", border: "1px solid", fontSize: "13px", cursor: "pointer", fontWeight: 500, background: aktifKategori === k.id ? "#534AB7" : "#fff", color: aktifKategori === k.id ? "#fff" : "#534AB7", borderColor: "#534AB7" }}>
-                {k.ad}
-              </button>
-            ))}
-          </div>
-        )}
-
-        {aramaMetni !== "" && (
-          <p style={{ fontSize: "14px", color: "#888", marginBottom: "20px" }}>
-            "<strong>{aramaMetni}</strong>" için {filtreliSorular.length} sonuç bulundu
-          </p>
-        )}
-
-        <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
-          {filtreliSorular.map((s) => (
-            <div key={s.id} style={{ background: "#fff", border: "1px solid", borderColor: acikSoru === s.id ? "#534AB7" : "#EEEDFE", borderRadius: "12px", overflow: "hidden", transition: "all 0.2s" }}>
-              <div onClick={() => setAcikSoru(acikSoru === s.id ? null : s.id)} style={{ padding: "18px 20px", display: "flex", justifyContent: "space-between", alignItems: "center", cursor: "pointer" }}>
-                <span style={{ fontSize: "14px", fontWeight: 600, color: "#12103a", paddingRight: "16px" }}>{s.soru}</span>
-                <span style={{ color: "#534AB7", fontSize: "20px", fontWeight: 300, flexShrink: 0 }}>{acikSoru === s.id ? "−" : "+"}</span>
+      <section style={{ maxWidth: "800px", margin: "0 auto", padding: "64px 32px" }}>
+        <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+          {filtrelenmis.map((s, i) => (
+            <div key={i} style={{ background: "#fff", border: "1px solid #EEEDFE", borderRadius: "12px", overflow: "hidden" }}>
+              <div onClick={() => setAcikSoru(acikSoru === i ? null : i)} style={{ padding: "20px", cursor: "pointer", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                <div style={{ fontSize: "15px", fontWeight: 700, color: "#12103a" }}>
+                  <span style={{ color: "#534AB7", marginRight: "8px" }}>?</span>{s.soru}
+                </div>
+                <span style={{ color: "#534AB7", fontSize: "18px" }}>{acikSoru === i ? "−" : "+"}</span>
               </div>
-              {acikSoru === s.id && (
-                <div style={{ padding: "0 20px 18px", borderTop: "1px solid #EEEDFE" }}>
-                  <p style={{ fontSize: "13px", color: "#666", lineHeight: 1.7, margin: "14px 0 0" }}>{s.cevap}</p>
+              {acikSoru === i && (
+                <div style={{ padding: "0 20px 20px" }}>
+                  <p style={{ fontSize: "13px", color: "#666", lineHeight: 1.6, margin: 0 }}>{s.cevap}</p>
                 </div>
               )}
             </div>
           ))}
-          {filtreliSorular.length === 0 && (
-            <div style={{ textAlign: "center", padding: "48px", background: "#fff", borderRadius: "12px", border: "1px solid #EEEDFE" }}>
-              <div style={{ fontSize: "13px", color: "#888" }}>Sonuç bulunamadı. Farklı bir arama deneyin.</div>
-            </div>
-          )}
         </div>
-
-        <div style={{ background: "linear-gradient(135deg, #1e1b4b, #12103a)", borderRadius: "16px", padding: "32px", textAlign: "center", marginTop: "40px" }}>
-          <h3 style={{ fontSize: "18px", fontWeight: 700, color: "#fff", marginBottom: "10px" }}>Sorunuzun cevabını bulamadınız mı?</h3>
-          <p style={{ fontSize: "13px", color: "#8b8fc8", marginBottom: "20px" }}>Ekibimiz size yardımcı olmaktan mutluluk duyar</p>
-          <a href="/iletisim" style={{ background: "#534AB7", color: "#fff", padding: "12px 28px", borderRadius: "8px", fontSize: "14px", textDecoration: "none", fontWeight: 600 }}>Bize Ulaşın</a>
-        </div>
-      </div>
-
+      </section>
       <Footer />
-
     </main>
   );
 }
