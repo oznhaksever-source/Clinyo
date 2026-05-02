@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { createClient } from "../utils/supabase/client";
 import { useDil } from "./locales/context";
 import Navbar from "./components/Navbar";
@@ -186,7 +186,7 @@ export default function AnaSayfa() {
   ];
 
   const ic = icerik[dil];
-  const ikonMap: Record<string, () => JSX.Element> = {
+  const ikonMap: Record<string, () => React.ReactElement> = {
     Lock: Icons.Lock, CheckCircle: Icons.CheckCircle, Scale: Icons.Scale,
     Shield: Icons.Shield, Globe: Icons.Globe, Layers: Icons.Layers,
   };
