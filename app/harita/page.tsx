@@ -1,23 +1,31 @@
 "use client";
 import { useState, useEffect } from "react";
 import { createClient } from "../../utils/supabase/client";
+import { useDil } from "../locales/context";
 import dynamic from "next/dynamic";
+import Navbar from "../components/Navbar";
+import Footer from "../components/Footer";
 
 const MapContainer = dynamic(() => import("react-leaflet").then(m => m.MapContainer), { ssr: false });
 const TileLayer = dynamic(() => import("react-leaflet").then(m => m.TileLayer), { ssr: false });
 const Marker = dynamic(() => import("react-leaflet").then(m => m.Marker), { ssr: false });
 const Popup = dynamic(() => import("react-leaflet").then(m => m.Popup), { ssr: false });
 
-import Navbar from "../components/Navbar";
-import Footer from "../components/Footer";
-
 export default function Harita() {
   const [oteller, setOteller] = useState<any[]>([]);
   const [klinikler, setKlinikler] = useState<any[]>([]);
-  const [gosterilen, setGosterilen] = useState<"oteller" | "klinikler">("oteller");
+  const [gosterilen, setGosterilen] = useState<"oteller" | "klinikler">("klinikler");
   const [yukleniyor, setYukleniyor] = useState(true);
-
+  const { dil } = useDil();
   const supabase = createClient();
+
+  const metinler = {
+    tr: { baslik: "Harita", altBaslik: "Oteller ve kliniklerin konumlarını harita üzerinde görüntüleyin", oteller: "Oteller", klinikler: "Klinikler", yukleniyor: "Harita yükleniyor...", konumYok: "Konum bilgisi olan kayıt bulunamadı", incele: "İncele" },
+    en: { baslik: "Map", altBaslik: "View locations of hotels and clinics on the map", oteller: "Hotels", klinikler: "Clinics", yukleniyor: "Loading map...", konumYok: "No records with location found", incele: "View" },
+    de: { baslik: "Karte", altBaslik: "Sehen Sie Standorte von Hotels und Kliniken auf der Karte", oteller: "Hotels", klinikler: "Kliniken", yukleniyor: "Karte wird geladen...", konumYok: "Keine Einträge mit Standort gefunden", incele: "Ansehen" },
+  };
+
+  const m = metinler[dil];
 
   useEffect(() => {
     async function veriYukle() {
@@ -28,7 +36,6 @@ export default function Harita() {
       setYukleniyor(false);
     }
     veriYukle();
-
     if (typeof window !== "undefined") {
       import("leaflet").then(L => {
         delete (L.Icon.Default.prototype as any)._getIconUrl;
@@ -46,16 +53,15 @@ export default function Harita() {
   return (
     <main style={{ minHeight: "100vh", background: "#f9fafb", fontFamily: "sans-serif" }}>
       <Navbar />
-
       <section style={{ background: "linear-gradient(135deg, #12103a 0%, #1e1b4b 100%)", padding: "32px" }}>
-        <h1 style={{ color: "#fff", fontSize: "28px", fontWeight: 700, marginBottom: "8px" }}>Harita</h1>
-        <p style={{ color: "#8b8fc8", fontSize: "14px", marginBottom: "20px" }}>Oteller ve kliniklerin konumlarını harita üzerinde görüntüleyin</p>
+        <h1 style={{ color: "#fff", fontSize: "28px", fontWeight: 700, marginBottom: "8px" }}>{m.baslik}</h1>
+        <p style={{ color: "#8b8fc8", fontSize: "14px", marginBottom: "20px" }}>{m.altBaslik}</p>
         <div style={{ display: "flex", gap: "8px" }}>
-          <button onClick={() => setGosterilen("oteller")} style={{ padding: "8px 20px", borderRadius: "20px", border: "none", fontSize: "13px", cursor: "pointer", background: gosterilen === "oteller" ? "#534AB7" : "rgba(255,255,255,0.1)", color: "#fff", fontWeight: gosterilen === "oteller" ? 700 : 400 }}>
-            🏨 Oteller ({oteller.length})
-          </button>
           <button onClick={() => setGosterilen("klinikler")} style={{ padding: "8px 20px", borderRadius: "20px", border: "none", fontSize: "13px", cursor: "pointer", background: gosterilen === "klinikler" ? "#534AB7" : "rgba(255,255,255,0.1)", color: "#fff", fontWeight: gosterilen === "klinikler" ? 700 : 400 }}>
-            🏥 Klinikler ({klinikler.length})
+            🏥 {m.klinikler} ({klinikler.length})
+          </button>
+          <button onClick={() => setGosterilen("oteller")} style={{ padding: "8px 20px", borderRadius: "20px", border: "none", fontSize: "13px", cursor: "pointer", background: gosterilen === "oteller" ? "#534AB7" : "rgba(255,255,255,0.1)", color: "#fff", fontWeight: gosterilen === "oteller" ? 700 : 400 }}>
+            🏨 {m.oteller} ({oteller.length})
           </button>
         </div>
       </section>
@@ -66,10 +72,7 @@ export default function Harita() {
             <>
               <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
               <MapContainer center={[41.0082, 28.9784]} zoom={11} style={{ height: "100%", width: "100%" }}>
-                <TileLayer
-                  attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-                  url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                />
+                <TileLayer attribution='&copy; OpenStreetMap' url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
                 {liste.map((item) => (
                   item.konum_lat && item.konum_lng ? (
                     <Marker key={item.id} position={[item.konum_lat, item.konum_lng]}>
@@ -79,7 +82,7 @@ export default function Harita() {
                           <div style={{ fontWeight: 700, fontSize: "14px", marginBottom: "4px" }}>{item.ad} {item.soyad}</div>
                           {item.konum_adres && <div style={{ fontSize: "12px", color: "#888", marginBottom: "8px" }}>{item.konum_adres}</div>}
                           <a href={`/${gosterilen === "oteller" ? "otel" : "klinik"}/${item.id}`} style={{ background: "#534AB7", color: "#fff", padding: "6px 12px", borderRadius: "6px", fontSize: "12px", textDecoration: "none", display: "inline-block" }}>
-                            İncele
+                            {m.incele}
                           </a>
                         </div>
                       </Popup>
@@ -91,7 +94,7 @@ export default function Harita() {
           )}
           {yukleniyor && (
             <div style={{ height: "100%", display: "flex", alignItems: "center", justifyContent: "center", background: "#f0f0f0", color: "#888" }}>
-              Harita yükleniyor...
+              {m.yukleniyor}
             </div>
           )}
         </div>
@@ -99,12 +102,12 @@ export default function Harita() {
         <div style={{ background: "#fff", borderLeft: "1px solid #EEEDFE", overflow: "auto" }}>
           <div style={{ padding: "16px", borderBottom: "1px solid #EEEDFE" }}>
             <h3 style={{ fontSize: "14px", fontWeight: 700, color: "#12103a", margin: 0 }}>
-              {gosterilen === "oteller" ? "Oteller" : "Klinikler"} ({liste.length})
+              {gosterilen === "oteller" ? m.oteller : m.klinikler} ({liste.length})
             </h3>
           </div>
           {liste.length === 0 ? (
             <div style={{ padding: "32px", textAlign: "center", color: "#888", fontSize: "13px" }}>
-              {yukleniyor ? "Yükleniyor..." : "Konum bilgisi olan kayıt bulunamadı"}
+              {yukleniyor ? m.yukleniyor : m.konumYok}
             </div>
           ) : (
             liste.map((item) => (
@@ -127,7 +130,6 @@ export default function Harita() {
           )}
         </div>
       </div>
-
       <Footer />
     </main>
   );
