@@ -1,19 +1,82 @@
 "use client";
 import { useState } from "react";
 import { createClient } from "../../utils/supabase/client";
-import Footer from "../components/Footer";
+import { useDil } from "../locales/context";
 
 export default function Giris() {
-  const [mod, setMod] = useState("giris");
-  const [ad, setAd] = useState("");
-  const [soyad, setSoyad] = useState("");
+  const [mod, setMod] = useState<"giris" | "kayit">("giris");
   const [email, setEmail] = useState("");
   const [sifre, setSifre] = useState("");
+  const [ad, setAd] = useState("");
+  const [soyad, setSoyad] = useState("");
   const [hesapTuru, setHesapTuru] = useState("hasta");
   const [mesaj, setMesaj] = useState("");
   const [yukleniyor, setYukleniyor] = useState(false);
+  const { dil, dilDegistir } = useDil();
 
   const supabase = createClient();
+
+  const metinler = {
+    tr: {
+      hosGeldiniz: "Hesabınıza giriş yapın",
+      yeniHesap: "Yeni hesap oluşturun",
+      girisYap: "Giriş Yap",
+      kayitOl: "Kayıt Ol",
+      eposta: "E-posta",
+      sifre: "Şifre",
+      ad: "Ad",
+      soyad: "Soyad",
+      hesapTuru: "Hesap Türü",
+      hasta: "Hasta olarak kayıt ol",
+      klinik: "Klinik olarak kayıt ol",
+      otel: "Otel olarak kayıt ol",
+      transfer: "Transfer şirketi olarak kayıt ol",
+      girisYapBtn: "Giriş Yap",
+      hesapOlustur: "Hesap Oluştur",
+      kayitBasarili: "Kayıt başarılı! Giriş yapabilirsiniz.",
+      anaSayfayaDon: "Ana Sayfaya Dön",
+    },
+    en: {
+      hosGeldiniz: "Sign in to your account",
+      yeniHesap: "Create a new account",
+      girisYap: "Sign In",
+      kayitOl: "Sign Up",
+      eposta: "Email",
+      sifre: "Password",
+      ad: "First Name",
+      soyad: "Last Name",
+      hesapTuru: "Account Type",
+      hasta: "Register as Patient",
+      klinik: "Register as Clinic",
+      otel: "Register as Hotel",
+      transfer: "Register as Transfer Company",
+      girisYapBtn: "Sign In",
+      hesapOlustur: "Create Account",
+      kayitBasarili: "Registration successful! You can now sign in.",
+      anaSayfayaDon: "Back to Home",
+    },
+    de: {
+      hosGeldiniz: "Melden Sie sich in Ihrem Konto an",
+      yeniHesap: "Neues Konto erstellen",
+      girisYap: "Anmelden",
+      kayitOl: "Registrieren",
+      eposta: "E-Mail",
+      sifre: "Passwort",
+      ad: "Vorname",
+      soyad: "Nachname",
+      hesapTuru: "Kontotyp",
+      hasta: "Als Patient registrieren",
+      klinik: "Als Klinik registrieren",
+      otel: "Als Hotel registrieren",
+      transfer: "Als Transferunternehmen registrieren",
+      girisYapBtn: "Anmelden",
+      hesapOlustur: "Konto erstellen",
+      kayitBasarili: "Registrierung erfolgreich! Sie können sich jetzt anmelden.",
+      anaSayfayaDon: "Zurück zur Startseite",
+    },
+  };
+
+  const m = metinler[dil];
 
   async function girisYap() {
     setYukleniyor(true);
@@ -23,17 +86,11 @@ export default function Giris() {
       setMesaj("Hata: " + error.message);
     } else if (data.user) {
       const { data: profile } = await supabase.from("profiles").select("hesap_turu").eq("id", data.user.id).single();
-      if (profile?.hesap_turu === "admin") {
-        window.location.href = "/admin";
-      } else if (profile?.hesap_turu === "klinik") {
-        window.location.href = "/klinik-panel";
-      } else if (profile?.hesap_turu === "otel") {
-        window.location.href = "/otel-panel";
-      } else if (profile?.hesap_turu === "transfer") {
-        window.location.href = "/transfer-panel";
-      } else {
-        window.location.href = "/hasta-panel";
-      }
+      if (profile?.hesap_turu === "admin") window.location.href = "/admin";
+      else if (profile?.hesap_turu === "klinik") window.location.href = "/klinik-panel";
+      else if (profile?.hesap_turu === "otel") window.location.href = "/otel-panel";
+      else if (profile?.hesap_turu === "transfer") window.location.href = "/transfer-panel";
+      else window.location.href = "/hasta-panel";
     }
     setYukleniyor(false);
   }
@@ -45,23 +102,17 @@ export default function Giris() {
     if (error) {
       setMesaj("Hata: " + error.message);
     } else if (data.user) {
-      await supabase.from("profiles").upsert({
-        id: data.user.id,
-        ad,
-        soyad,
-        email,
-        hesap_turu: hesapTuru,
-      });
+      await supabase.from("profiles").upsert({ id: data.user.id, ad, soyad, email, hesap_turu: hesapTuru });
       await fetch("/api/send-email", {
-  method: "POST",
-  headers: { "Content-Type": "application/json" },
-  body: JSON.stringify({
-    to: email,
-    subject: "Medoqa - Hos Geldiniz!",
-    html: `<h2>Merhaba ${ad}!</h2><p>Medoqa'ya hos geldiniz. Hesabiniz basariyla olusturuldu.</p><a href="https://clinyo-platform.vercel.app/giris">Giris Yap</a>`,
-  }),
-});
-      setMesaj("Kayit basarili! Giris yapabilirsiniz.");
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          to: email,
+          subject: dil === "tr" ? "Medoqa - Hoş Geldiniz!" : dil === "en" ? "Medoqa - Welcome!" : "Medoqa - Willkommen!",
+          html: `<h2>${dil === "tr" ? `Merhaba ${ad}!` : dil === "en" ? `Hello ${ad}!` : `Hallo ${ad}!`}</h2><p>${dil === "tr" ? "Medoqa'ya hoş geldiniz." : dil === "en" ? "Welcome to Medoqa." : "Willkommen bei Medoqa."}</p>`,
+        }),
+      });
+      setMesaj(m.kayitBasarili);
       setMod("giris");
     }
     setYukleniyor(false);
@@ -73,7 +124,14 @@ export default function Giris() {
         <a href="/" style={{ fontSize: "22px", fontWeight: 700, color: "#fff", textDecoration: "none" }}>
           med<span style={{ color: "#7F77DD", fontWeight: 300 }}>oqa</span>
         </a>
-        <a href="/" style={{ color: "#aab4c8", fontSize: "13px", textDecoration: "none" }}>Ana Sayfaya Don</a>
+        <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+          <div style={{ display: "flex", gap: "6px" }}>
+            {(["tr", "en", "de"] as const).map((d) => (
+              <span key={d} onClick={() => dilDegistir(d)} style={{ fontSize: "11px", padding: "3px 8px", border: `1px solid ${dil === d ? "#534AB7" : "#2a2a4e"}`, borderRadius: "4px", color: dil === d ? "#7F77DD" : "#aab4c8", cursor: "pointer", textTransform: "uppercase" }}>{d}</span>
+            ))}
+          </div>
+          <a href="/" style={{ color: "#aab4c8", fontSize: "13px", textDecoration: "none" }}>{m.anaSayfayaDon}</a>
+        </div>
       </nav>
 
       <div style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", padding: "32px" }}>
@@ -83,16 +141,16 @@ export default function Giris() {
               med<span style={{ color: "#7F77DD", fontWeight: 300 }}>oqa</span>
             </div>
             <p style={{ fontSize: "14px", color: "#888", margin: 0 }}>
-              {mod === "giris" ? "Hesabiniza giris yapin" : "Yeni hesap olusturun"}
+              {mod === "giris" ? m.hosGeldiniz : m.yeniHesap}
             </p>
           </div>
 
           <div style={{ display: "flex", background: "#f9fafb", borderRadius: "10px", padding: "4px", marginBottom: "24px" }}>
             <button onClick={() => setMod("giris")} style={{ flex: 1, padding: "8px", border: "none", borderRadius: "8px", fontSize: "13px", cursor: "pointer", fontWeight: 500, background: mod === "giris" ? "#fff" : "transparent", color: mod === "giris" ? "#534AB7" : "#888" }}>
-              Giris Yap
+              {m.girisYap}
             </button>
             <button onClick={() => setMod("kayit")} style={{ flex: 1, padding: "8px", border: "none", borderRadius: "8px", fontSize: "13px", cursor: "pointer", fontWeight: 500, background: mod === "kayit" ? "#fff" : "transparent", color: mod === "kayit" ? "#534AB7" : "#888" }}>
-              Kayit Ol
+              {m.kayitOl}
             </button>
           </div>
 
@@ -105,52 +163,53 @@ export default function Giris() {
           {mod === "giris" ? (
             <div>
               <div style={{ marginBottom: "14px" }}>
-                <label style={{ fontSize: "13px", color: "#555", display: "block", marginBottom: "6px" }}>E-posta</label>
-                <input type="email" placeholder="ornek@email.com" value={email} onChange={(e) => setEmail(e.target.value)} style={{ width: "100%", border: "1px solid #e5e7eb", borderRadius: "8px", padding: "10px 12px", fontSize: "13px", boxSizing: "border-box", outline: "none" }} />
+                <label style={{ fontSize: "13px", color: "#555", display: "block", marginBottom: "6px" }}>{m.eposta}</label>
+                <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} style={{ width: "100%", border: "1px solid #e5e7eb", borderRadius: "8px", padding: "10px 12px", fontSize: "13px", boxSizing: "border-box", outline: "none" }} />
               </div>
               <div style={{ marginBottom: "20px" }}>
-                <label style={{ fontSize: "13px", color: "#555", display: "block", marginBottom: "6px" }}>Sifre</label>
-                <input type="password" placeholder="Sifreniz" value={sifre} onChange={(e) => setSifre(e.target.value)} style={{ width: "100%", border: "1px solid #e5e7eb", borderRadius: "8px", padding: "10px 12px", fontSize: "13px", boxSizing: "border-box", outline: "none" }} />
+                <label style={{ fontSize: "13px", color: "#555", display: "block", marginBottom: "6px" }}>{m.sifre}</label>
+                <input type="password" value={sifre} onChange={(e) => setSifre(e.target.value)} style={{ width: "100%", border: "1px solid #e5e7eb", borderRadius: "8px", padding: "10px 12px", fontSize: "13px", boxSizing: "border-box", outline: "none" }} />
               </div>
               <button onClick={girisYap} disabled={yukleniyor} style={{ width: "100%", background: "#534AB7", color: "#fff", border: "none", padding: "12px", borderRadius: "8px", fontSize: "14px", cursor: "pointer", fontWeight: 500, opacity: yukleniyor ? 0.7 : 1 }}>
-                {yukleniyor ? "Giris yapiliyor..." : "Giris Yap"}
+                {yukleniyor ? "..." : m.girisYapBtn}
               </button>
             </div>
           ) : (
             <div>
               <div style={{ display: "flex", gap: "10px", marginBottom: "14px" }}>
                 <div style={{ flex: 1 }}>
-                  <label style={{ fontSize: "13px", color: "#555", display: "block", marginBottom: "6px" }}>Ad</label>
-                  <input type="text" placeholder="Adiniz" value={ad} onChange={(e) => setAd(e.target.value)} style={{ width: "100%", border: "1px solid #e5e7eb", borderRadius: "8px", padding: "10px 12px", fontSize: "13px", boxSizing: "border-box", outline: "none" }} />
+                  <label style={{ fontSize: "13px", color: "#555", display: "block", marginBottom: "6px" }}>{m.ad}</label>
+                  <input type="text" value={ad} onChange={(e) => setAd(e.target.value)} style={{ width: "100%", border: "1px solid #e5e7eb", borderRadius: "8px", padding: "10px 12px", fontSize: "13px", boxSizing: "border-box", outline: "none" }} />
                 </div>
                 <div style={{ flex: 1 }}>
-                  <label style={{ fontSize: "13px", color: "#555", display: "block", marginBottom: "6px" }}>Soyad</label>
-                  <input type="text" placeholder="Soyadiniz" value={soyad} onChange={(e) => setSoyad(e.target.value)} style={{ width: "100%", border: "1px solid #e5e7eb", borderRadius: "8px", padding: "10px 12px", fontSize: "13px", boxSizing: "border-box", outline: "none" }} />
+                  <label style={{ fontSize: "13px", color: "#555", display: "block", marginBottom: "6px" }}>{m.soyad}</label>
+                  <input type="text" value={soyad} onChange={(e) => setSoyad(e.target.value)} style={{ width: "100%", border: "1px solid #e5e7eb", borderRadius: "8px", padding: "10px 12px", fontSize: "13px", boxSizing: "border-box", outline: "none" }} />
                 </div>
               </div>
               <div style={{ marginBottom: "14px" }}>
-                <label style={{ fontSize: "13px", color: "#555", display: "block", marginBottom: "6px" }}>E-posta</label>
-                <input type="email" placeholder="ornek@email.com" value={email} onChange={(e) => setEmail(e.target.value)} style={{ width: "100%", border: "1px solid #e5e7eb", borderRadius: "8px", padding: "10px 12px", fontSize: "13px", boxSizing: "border-box", outline: "none" }} />
+                <label style={{ fontSize: "13px", color: "#555", display: "block", marginBottom: "6px" }}>{m.eposta}</label>
+                <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} style={{ width: "100%", border: "1px solid #e5e7eb", borderRadius: "8px", padding: "10px 12px", fontSize: "13px", boxSizing: "border-box", outline: "none" }} />
               </div>
               <div style={{ marginBottom: "14px" }}>
-                <label style={{ fontSize: "13px", color: "#555", display: "block", marginBottom: "6px" }}>Sifre</label>
-                <input type="password" placeholder="En az 6 karakter" value={sifre} onChange={(e) => setSifre(e.target.value)} style={{ width: "100%", border: "1px solid #e5e7eb", borderRadius: "8px", padding: "10px 12px", fontSize: "13px", boxSizing: "border-box", outline: "none" }} />
+                <label style={{ fontSize: "13px", color: "#555", display: "block", marginBottom: "6px" }}>{m.sifre}</label>
+                <input type="password" value={sifre} onChange={(e) => setSifre(e.target.value)} style={{ width: "100%", border: "1px solid #e5e7eb", borderRadius: "8px", padding: "10px 12px", fontSize: "13px", boxSizing: "border-box", outline: "none" }} />
               </div>
               <div style={{ marginBottom: "20px" }}>
-                <label style={{ fontSize: "13px", color: "#555", display: "block", marginBottom: "6px" }}>Hesap Turu</label>
+                <label style={{ fontSize: "13px", color: "#555", display: "block", marginBottom: "6px" }}>{m.hesapTuru}</label>
                 <select value={hesapTuru} onChange={(e) => setHesapTuru(e.target.value)} style={{ width: "100%", border: "1px solid #e5e7eb", borderRadius: "8px", padding: "10px 12px", fontSize: "13px", boxSizing: "border-box", outline: "none", background: "#fff" }}>
-                  <option value="hasta">Hasta olarak kayit ol</option>
-                  <option value="klinik">Klinik olarak kayit ol</option>
+                  <option value="hasta">{m.hasta}</option>
+                  <option value="klinik">{m.klinik}</option>
+                  <option value="otel">{m.otel}</option>
+                  <option value="transfer">{m.transfer}</option>
                 </select>
               </div>
               <button onClick={kayitOl} disabled={yukleniyor} style={{ width: "100%", background: "#534AB7", color: "#fff", border: "none", padding: "12px", borderRadius: "8px", fontSize: "14px", cursor: "pointer", fontWeight: 500, opacity: yukleniyor ? 0.7 : 1 }}>
-                {yukleniyor ? "Kayit yapiliyor..." : "Hesap Olustur"}
+                {yukleniyor ? "..." : m.hesapOlustur}
               </button>
             </div>
           )}
         </div>
       </div>
-      <Footer />
     </main>
   );
 }
