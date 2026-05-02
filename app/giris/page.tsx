@@ -168,7 +168,7 @@ export default function Giris() {
               </div>
               <div style={{ marginBottom: "20px" }}>
                 <label style={{ fontSize: "13px", color: "#555", display: "block", marginBottom: "6px" }}>{m.sifre}</label>
-                <input type="password" value={sifre} onChange={(e) => setSifre(e.target.value)} style={{ width: "100%", border: "1px solid #e5e7eb", borderRadius: "8px", padding: "10px 12px", fontSize: "13px", boxSizing: "border-box", outline: "none" }} />
+                <input type="password" value={sifre} onChange={(e) => setSifre(e.target.value)} onKeyDown={(e) => { if (e.key === "Enter") girisYap(); }} style={{ width: "100%", border: "1px solid #e5e7eb", borderRadius: "8px", padding: "10px 12px", fontSize: "13px", boxSizing: "border-box", outline: "none" }} />
               </div>
               <button onClick={girisYap} disabled={yukleniyor} style={{ width: "100%", background: "#534AB7", color: "#fff", border: "none", padding: "12px", borderRadius: "8px", fontSize: "14px", cursor: "pointer", fontWeight: 500, opacity: yukleniyor ? 0.7 : 1 }}>
                 {yukleniyor ? "..." : m.girisYapBtn}
@@ -192,7 +192,7 @@ export default function Giris() {
               </div>
               <div style={{ marginBottom: "14px" }}>
                 <label style={{ fontSize: "13px", color: "#555", display: "block", marginBottom: "6px" }}>{m.sifre}</label>
-                <input type="password" value={sifre} onChange={(e) => setSifre(e.target.value)} style={{ width: "100%", border: "1px solid #e5e7eb", borderRadius: "8px", padding: "10px 12px", fontSize: "13px", boxSizing: "border-box", outline: "none" }} />
+                <input type="password" value={sifre} onChange={(e) => setSifre(e.target.value)} onKeyDown={(e) => { if (e.key === "Enter") girisYap(); }} style={{ width: "100%", border: "1px solid #e5e7eb", borderRadius: "8px", padding: "10px 12px", fontSize: "13px", boxSizing: "border-box", outline: "none" }} />
               </div>
               <div style={{ marginBottom: "20px" }}>
                 <label style={{ fontSize: "13px", color: "#555", display: "block", marginBottom: "6px" }}>{m.hesapTuru}</label>
