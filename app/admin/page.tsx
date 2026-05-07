@@ -30,8 +30,11 @@ export default function Admin() {
   }
 
   async function kullaniciyiSil(id: string) {
-    if (!confirm("Bu kullaniciyi silmek istediginize emin misiniz?")) return;
+    if (!confirm("Bu kullaniciyi silmek istediginize emin misiniz? Bu islem geri alinamaz.")) return;
+    // Hem profiles hem auth.users'dan sil
+    await supabase.rpc("delete_user", { user_id: id });
     await supabase.from("profiles").delete().eq("id", id);
+    setOnayMesaj("Kullanici basariyla silindi!");
     veriYukle();
   }
 
