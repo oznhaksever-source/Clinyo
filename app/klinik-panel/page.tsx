@@ -6,14 +6,34 @@ function BelgeYukle({ kullanici, supabase, onMesaj }: any) {
   const [belgeler, setBelgeler] = useState<any[]>([]);
   const [yukleniyor, setYukleniyor] = useState(false);
 
-  const zorunluBelgeler = [
-    { id: "saglik_bakanligi", ad: "Sağlık Bakanlığı Yetki Belgesi", aciklama: "Uluslararası Sağlık Turizmi Yetki Belgesi" },
-    { id: "faaliyet_ruhsati", ad: "Faaliyet Ruhsatı", aciklama: "Sağlık tesisi açma ve çalışma ruhsatı" },
-    { id: "hekim_sertifikasi", ad: "Sorumlu Hekim Sertifikası", aciklama: "Uzman doktor sertifikası ve diploması" },
-    { id: "sigorta_policesi", ad: "Sigorta Poliçesi", aciklama: "Zorunlu mesleki sorumluluk sigortası" },
-    { id: "vergi_levhasi", ad: "Vergi Levhası", aciklama: "Güncel vergi levhası" },
-    { id: "ticaret_sicil", ad: "Ticaret Sicil Belgesi", aciklama: "Güncel ticaret sicil gazetesi" },
-  ];
+  const belgeTurleri: Record<string, { id: string; ad: string; aciklama: string }[]> = {
+    klinik: [
+      { id: "saglik_bakanligi", ad: "Sağlık Bakanlığı Yetki Belgesi", aciklama: "Uluslararası Sağlık Turizmi Yetki Belgesi" },
+      { id: "faaliyet_ruhsati", ad: "Faaliyet Ruhsatı", aciklama: "Sağlık tesisi açma ve çalışma ruhsatı" },
+      { id: "hekim_sertifikasi", ad: "Sorumlu Hekim Sertifikası", aciklama: "Uzman doktor sertifikası ve diploması" },
+      { id: "sigorta_policesi", ad: "Sigorta Poliçesi", aciklama: "Zorunlu mesleki sorumluluk sigortası" },
+      { id: "vergi_levhasi", ad: "Vergi Levhası", aciklama: "Güncel vergi levhası" },
+      { id: "ticaret_sicil", ad: "Ticaret Sicil Belgesi", aciklama: "Güncel ticaret sicil gazetesi" },
+    ],
+    otel: [
+      { id: "turizm_isletme", ad: "Turizm İşletmesi Belgesi", aciklama: "Kültür ve Turizm Bakanlığı onaylı turizm işletme belgesi" },
+      { id: "isyeri_ruhsati", ad: "İşyeri Açma ve Çalışma Ruhsatı", aciklama: "Belediye onaylı işyeri açma ruhsatı" },
+      { id: "yangin_belgesi", ad: "Yangın Güvenlik Belgesi", aciklama: "İtfaiye onaylı, güncel yangın güvenlik raporu" },
+      { id: "vergi_levhasi", ad: "Vergi Levhası", aciklama: "Güncel vergi levhası" },
+      { id: "ticaret_sicil", ad: "Ticaret Sicil Belgesi", aciklama: "Güncel ticaret sicil gazetesi" },
+    ],
+    transfer: [
+      { id: "tursab_belgesi", ad: "TURSAB A Grubu Seyahat Acentası Belgesi", aciklama: "Türkiye Seyahat Acentaları Birliği A grubu işletme belgesi" },
+      { id: "saglik_turizmi_yetki", ad: "Sağlık Turizmi Yetki Belgesi", aciklama: "Sağlık Bakanlığı Uluslararası Sağlık Turizmi Aracı Kuruluş Yetki Belgesi" },
+      { id: "arac_ruhsatlari", ad: "Ticari Araç Ruhsatları", aciklama: "Tüm araçların güncel ruhsat ve muayene belgeleri" },
+      { id: "psikoteknik", ad: "Şoför Psikoteknik Belgeleri", aciklama: "Her şoför için geçerli psikoteknik belgesi" },
+      { id: "trafik_sigorta", ad: "Trafik Sigortası ve Kasko", aciklama: "Tüm araçlar için güncel zorunlu trafik sigortası ve kasko poliçeleri" },
+      { id: "vergi_levhasi", ad: "Vergi Levhası", aciklama: "Güncel vergi levhası" },
+      { id: "ticaret_sicil", ad: "Ticaret Sicil Belgesi", aciklama: "Güncel ticaret sicil gazetesi" },
+    ],
+  };
+
+  const zorunluBelgeler = belgeTurleri[kullanici?.hesap_turu] || belgeTurleri.klinik;
 
   useEffect(() => { belgeleriGetir(); }, []);
 
