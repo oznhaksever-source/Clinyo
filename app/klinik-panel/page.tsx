@@ -1,6 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import { createClient } from "../../utils/supabase/client";
+import DisSemasi from "../components/DisSemasi";
 
 function BelgeYukle({ kullanici, supabase, onMesaj }: any) {
   const [belgeler, setBelgeler] = useState<any[]>([]);
@@ -783,6 +784,14 @@ export default function KlinikPanel() {
                               <input type="number" placeholder="Tedavi Fiyatı (EUR)" value={yeniTeklif.talep_id === t.id ? yeniTeklif.fiyat : ""} onChange={(e) => setYeniTeklif(prev => ({ ...prev, talep_id: t.id, fiyat: e.target.value }))} style={{ width: "160px", border: "1px solid #e5e7eb", borderRadius: "8px", padding: "8px 12px", fontSize: "13px", outline: "none" }} />
                               <input type="text" placeholder="Açıklama" value={yeniTeklif.talep_id === t.id ? yeniTeklif.aciklama : ""} onChange={(e) => setYeniTeklif(prev => ({ ...prev, talep_id: t.id, aciklama: e.target.value }))} style={{ flex: 1, border: "1px solid #e5e7eb", borderRadius: "8px", padding: "8px 12px", fontSize: "13px", outline: "none" }} />
                             </div>
+
+                            {/* Diş şeması — sadece diş tedavisi için */}
+                            {(yeniTeklif.talep_id === t.id && t.tedavi_turu?.toLowerCase().includes("diş")) || yeniTeklif.talep_id === t.id ? (
+                              <div style={{ background: "#f8f9ff", borderRadius: "10px", padding: "16px", border: "1px solid #EEEDFE" }}>
+                                <div style={{ fontSize: "13px", fontWeight: 600, color: "#0f0d2e", marginBottom: "12px" }}>🦷 Diş Şeması (İsteğe Bağlı)</div>
+                                <DisSemasi onDegistir={(plan) => setYeniTeklif(prev => ({ ...prev, dis_plani: JSON.stringify(plan) }))} />
+                              </div>
+                            ) : null}
 
                             {/* Otel dahil mi? */}
                             <div style={{ background: "#f8f9ff", borderRadius: "8px", padding: "10px 14px" }}>
