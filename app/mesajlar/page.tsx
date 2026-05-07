@@ -140,17 +140,16 @@ export default function Mesajlar() {
             <div style={{ display: "flex", flexDirection: "column", gap: "10px", maxHeight: "300px", overflowY: "auto" }}>
               {klinikler.map(k => (
                 <div key={k.id} onClick={async () => {
-                  const { data: { user } } = await supabase.auth.getUser();
-                  if (user) {
-                    await supabase.from("mesajlar").insert({
-                      gonderen_id: user.id,
-                      alici_id: k.id,
-                      mesaj: "Merhaba, bilgi almak istiyorum.",
-                      okundu: false,
-                    });
-                    setYeniKonusmaAcik(false);
-                    window.location.reload();
-                  }
+                  if (!kullanici?.id) { alert("Oturum bulunamadı!"); return; }
+                  const { error } = await supabase.from("mesajlar").insert({
+                    gonderen_id: kullanici.id,
+                    alici_id: k.id,
+                    mesaj: "Merhaba, bilgi almak istiyorum.",
+                    okundu: false,
+                  });
+                  if (error) { alert("Hata: " + error.message); return; }
+                  setYeniKonusmaAcik(false);
+                  window.location.reload();
                 }} style={{ padding: "14px 16px", border: "1px solid #EEEDFE", borderRadius: "12px", cursor: "pointer", display: "flex", alignItems: "center", gap: "12px", background: "#f8f9ff" }}>
                   <div style={{ width: "40px", height: "40px", borderRadius: "50%", background: "#534AB7", display: "flex", alignItems: "center", justifyContent: "center", color: "#fff", fontWeight: 700, flexShrink: 0 }}>
                     {k.ad?.[0]?.toUpperCase()}
