@@ -36,7 +36,7 @@ export default function Giris() {
       hasta: "Hasta olarak kayıt ol", klinik: "Klinik olarak kayıt ol",
       otel: "Otel olarak kayıt ol", transfer: "Transfer şirketi olarak kayıt ol",
       girisYapBtn: "Giriş Yap", hesapOlustur: "Hesap Oluştur",
-      kayitBasarili: "Kayıt başarılı! Giriş yapabilirsiniz.",
+      kayitBasarili: "Kayıt başarılı! E-posta adresinize onay maili gönderdik. Lütfen e-postanızı onaylayın.",
       anaSayfayaDon: "Ana Sayfaya Dön",
     },
     en: {
@@ -48,7 +48,7 @@ export default function Giris() {
       hasta: "Register as Patient", klinik: "Register as Clinic",
       otel: "Register as Hotel", transfer: "Register as Transfer Company",
       girisYapBtn: "Sign In", hesapOlustur: "Create Account",
-      kayitBasarili: "Registration successful! You can now sign in.",
+      kayitBasarili: "Registration successful! We sent a confirmation email. Please confirm your email address.",
       anaSayfayaDon: "Back to Home",
     },
     de: {
@@ -60,7 +60,7 @@ export default function Giris() {
       hasta: "Als Patient registrieren", klinik: "Als Klinik registrieren",
       otel: "Als Hotel registrieren", transfer: "Als Transferunternehmen registrieren",
       girisYapBtn: "Anmelden", hesapOlustur: "Konto erstellen",
-      kayitBasarili: "Registrierung erfolgreich! Sie können sich jetzt anmelden.",
+      kayitBasarili: "Registrierung erfolgreich! Wir haben eine Bestätigungs-E-Mail gesendet. Bitte bestätigen Sie Ihre E-Mail-Adresse.",
       anaSayfayaDon: "Zurück zur Startseite",
     },
   };
