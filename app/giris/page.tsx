@@ -69,11 +69,52 @@ export default function Giris() {
   const inputStyle = { width: "100%", border: "1px solid #e5e7eb", borderRadius: "10px", padding: "12px 14px", fontSize: "14px", boxSizing: "border-box" as const, outline: "none", fontFamily: "inherit" };
   const labelStyle = { fontSize: "13px", color: "#555", display: "block" as const, marginBottom: "6px", fontWeight: 500 as const };
 
+  const hataMesajlari = {
+    tr: {
+      "Invalid login credentials": "E-posta veya şifre hatalı.",
+      "Email not confirmed": "E-posta adresiniz doğrulanmamış.",
+      "User already registered": "Bu e-posta adresi zaten kayıtlı.",
+      "Password should be at least 6 characters": "Şifre en az 6 karakter olmalıdır.",
+      "Unable to validate email address: invalid format": "Geçersiz e-posta adresi formatı.",
+      "Signup requires a valid password": "Geçerli bir şifre giriniz.",
+      "User not found": "Kullanıcı bulunamadı.",
+      "Too many requests": "Çok fazla deneme yaptınız. Lütfen bekleyin.",
+    },
+    en: {
+      "Invalid login credentials": "Invalid email or password.",
+      "Email not confirmed": "Your email address has not been confirmed.",
+      "User already registered": "This email address is already registered.",
+      "Password should be at least 6 characters": "Password must be at least 6 characters.",
+      "Unable to validate email address: invalid format": "Invalid email address format.",
+      "Signup requires a valid password": "Please enter a valid password.",
+      "User not found": "User not found.",
+      "Too many requests": "Too many attempts. Please wait.",
+    },
+    de: {
+      "Invalid login credentials": "Ungültige E-Mail oder ungültiges Passwort.",
+      "Email not confirmed": "Ihre E-Mail-Adresse wurde nicht bestätigt.",
+      "User already registered": "Diese E-Mail-Adresse ist bereits registriert.",
+      "Password should be at least 6 characters": "Das Passwort muss mindestens 6 Zeichen lang sein.",
+      "Unable to validate email address: invalid format": "Ungültiges E-Mail-Format.",
+      "Signup requires a valid password": "Bitte geben Sie ein gültiges Passwort ein.",
+      "User not found": "Benutzer nicht gefunden.",
+      "Too many requests": "Zu viele Versuche. Bitte warten.",
+    },
+  };
+
+  function hataMetniCevir(mesaj: string) {
+    const sozluk = hataMesajlari[dil];
+    for (const [ing, cevirisi] of Object.entries(sozluk)) {
+      if (mesaj.includes(ing)) return cevirisi;
+    }
+    return mesaj;
+  }
+
   async function girisYap() {
     setYukleniyor(true);
     setMesaj("");
     const { data, error } = await supabase.auth.signInWithPassword({ email, password: sifre });
-    if (error) { setMesaj("Hata: " + error.message); }
+    if (error) { setMesaj(hataMetniCevir(error.message)); }
     else if (data.user) {
       const { data: profile } = await supabase.from("profiles").select("hesap_turu").eq("id", data.user.id).single();
       if (profile?.hesap_turu === "admin") window.location.href = "/admin";
@@ -89,7 +130,7 @@ export default function Giris() {
     setYukleniyor(true);
     setMesaj("");
     const { data, error } = await supabase.auth.signUp({ email, password: sifre });
-    if (error) { setMesaj("Hata: " + error.message); }
+    if (error) { setMesaj(hataMetniCevir(error.message)); }
     else if (data.user) {
       await supabase.from("profiles").upsert({ id: data.user.id, ad, soyad, email, hesap_turu: hesapTuru });
       setMesaj(m.kayitBasarili);
