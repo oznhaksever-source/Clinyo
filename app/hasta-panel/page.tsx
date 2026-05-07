@@ -28,7 +28,10 @@ export default function HastaPanel() {
 
     if (talepData && talepData.length > 0) {
       const talepIdleri = talepData.map((t: any) => t.id);
-      const { data: teklifData } = await supabase.from("teklifler").select("*").in("talep_id", talepIdleri);
+      const { data: teklifData } = await supabase.from("teklifler")
+        .select("*, profiles!teklifler_klinik_id_fkey(ad, soyad, konum_adres)")
+        .in("talep_id", talepIdleri)
+        .order("olusturma_tarihi", { ascending: false });
       setTeklifler(teklifData || []);
     }
 
@@ -166,14 +169,26 @@ export default function HastaPanel() {
                   <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
                     {teklifler.map((t) => (
                       <div key={t.id} style={{ background: "#fff", border: "1px solid #EEEDFE", borderRadius: "12px", padding: "20px" }}>
-                        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                          <div>
-                            <div style={{ fontSize: "15px", fontWeight: 700, color: "#12103a", marginBottom: "4px" }}>{t.aciklama}</div>
-                            <div style={{ fontSize: "12px", color: "#888" }}>{new Date(t.olusturma_tarihi).toLocaleDateString("tr-TR")}</div>
+                        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
+                          <div style={{ flex: 1 }}>
+                            <div style={{ fontSize: "15px", fontWeight: 700, color: "#12103a", marginBottom: "4px" }}>
+                              🏥 {t.profiles?.ad} {t.profiles?.soyad}
+                            </div>
+                            {t.profiles?.konum_adres && <div style={{ fontSize: "12px", color: "#94a3b8", marginBottom: "6px" }}>📍 {t.profiles.konum_adres}</div>}
+                            <div style={{ fontSize: "13px", color: "#64748b", marginBottom: "8px" }}>{t.aciklama}</div>
+                            {t.otel_dahil && <div style={{ fontSize: "12px", color: "#059669", marginBottom: "4px" }}>🏨 Otel dahil: {t.otel_aciklama} — {t.otel_fiyat} EUR</div>}
+                            {t.transfer_dahil && <div style={{ fontSize: "12px", color: "#059669", marginBottom: "4px" }}>🚗 Transfer dahil: {t.transfer_aciklama} — {t.transfer_fiyat} EUR</div>}
+                            <div style={{ fontSize: "11px", color: "#94a3b8" }}>{new Date(t.olusturma_tarihi).toLocaleDateString("tr-TR")}</div>
                           </div>
-                          <div style={{ textAlign: "right" }}>
-                            <div style={{ fontSize: "22px", fontWeight: 700, color: "#534AB7" }}>{t.fiyat} {t.para_birimi}</div>
-                            <span style={{ fontSize: "11px", padding: "3px 10px", borderRadius: "20px", background: "#fff8e1", color: "#BA7517" }}>{t.durum}</span>
+                          <div style={{ textAlign: "right", flexShrink: 0, marginLeft: "16px" }}>
+                            <div style={{ fontSize: "11px", color: "#94a3b8", marginBottom: "4px" }}>Tedavi</div>
+                            <div style={{ fontSize: "20px", fontWeight: 700, color: "#534AB7" }}>{t.fiyat} EUR</div>
+                            {(t.otel_dahil || t.transfer_dahil) && (
+                              <div style={{ fontSize: "13px", fontWeight: 700, color: "#059669", marginTop: "4px" }}>
+                                Toplam: {t.toplam_fiyat || t.fiyat} EUR
+                              </div>
+                            )}
+                            <span style={{ fontSize: "11px", padding: "3px 10px", borderRadius: "20px", background: "#fff8e1", color: "#BA7517", display: "inline-block", marginTop: "6px" }}>{t.durum}</span>
                           </div>
                         </div>
                       </div>
