@@ -41,17 +41,24 @@ export default function HastaPanel() {
 
   async function teklifOnayla(teklifId: string, klinikId: string) {
     if (!confirm("Bu teklifi onaylamak istediğinize emin misiniz? Ödeme süreci başlayacaktır.")) return;
-    await supabase.from("teklifler").update({ durum: "onaylandi" }).eq("id", teklifId);
-    // Mesajlaşma başlat
+    
+    const { error: teklifError } = await supabase.from("teklifler").update({ durum: "onaylandi" }).eq("id", teklifId);
+    if (teklifError) { setMesaj("Hata: " + teklifError.message); return; }
+
     const { data: { user } } = await supabase.auth.getUser();
-    if (user) {
+    if (user && klinikId) {
       const { error: mesajError } = await supabase.from("mesajlar").insert({
         gonderen_id: user.id,
         alici_id: klinikId,
         mesaj: "Merhaba, teklifinizi onayladım. Tedavi süreci hakkında bilgi almak istiyorum.",
         okundu: false,
       });
-      if (mesajError) console.error("Mesaj hatası:", mesajError);
+      if (mesajError) { 
+        setMesaj("Teklif onaylandı fakat mesaj gönderilemedi: " + mesajError.message); 
+        setTimeout(() => setMesaj(""), 6000);
+        veriYukle();
+        return;
+      }
     }
     setMesaj("✅ Teklif onaylandı! Klinik ile mesajlaşma başlatıldı.");
     setTimeout(() => setMesaj(""), 4000);
