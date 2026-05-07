@@ -8,6 +8,7 @@ export async function middleware(request: NextRequest) {
     pathname.startsWith("/_next") ||
     pathname.startsWith("/yakinda") ||
     pathname.startsWith("/giris") ||
+    pathname.startsWith("/mesajlar") ||
     pathname.includes(".")
   ) {
     return NextResponse.next();
