@@ -8,6 +8,8 @@ export default function Admin() {
   const [talepler, setTalepler] = useState<any[]>([]);
   const [yukleniyor, setYukleniyor] = useState(true);
   const [onayMesaj, setOnayMesaj] = useState("");
+  const [tumMesajlar, setTumMesajlar] = useState<any[]>([]);
+  const [seciliKonusma, setSeciliKonusma] = useState<string | null>(null);
 
   const supabase = createClient();
 
@@ -17,8 +19,10 @@ export default function Admin() {
     setYukleniyor(true);
     const { data: k } = await supabase.from("profiles").select("*").order("olusturma_tarihi", { ascending: false });
     const { data: t } = await supabase.from("talepler").select("*, profiles(ad, soyad, email)").order("olusturma_tarihi", { ascending: false });
+    const { data: m } = await supabase.from("mesajlar").select("*, gonderen:profiles!mesajlar_gonderen_id_fkey(id, ad, soyad, hesap_turu), alici:profiles!mesajlar_alici_id_fkey(id, ad, soyad, hesap_turu)").order("created_at", { ascending: false });
     setKullanicilar(k || []);
     setTalepler(t || []);
+    setTumMesajlar(m || []);
     setYukleniyor(false);
   }
 
@@ -256,6 +260,7 @@ export default function Admin() {
             { id: "transferler", ad: "Transfer Sirketleri", badge: transferler.filter(k => !k.onaylandi).length },
             { id: "hastalar", ad: "Hastalar", badge: 0 },
             { id: "talepler", ad: "Teklif Talepleri", badge: 0 },
+{ id: "mesajlar", ad: "💬 Mesajlar", badge: 0 },
           ].map((m) => (
             <div key={m.id} onClick={() => setAktifMenu(m.id)} style={{ padding: "10px 12px", borderRadius: "8px", cursor: "pointer", marginBottom: "4px", background: aktifMenu === m.id ? "#534AB7" : "transparent", color: aktifMenu === m.id ? "#fff" : "#8b8fc8", fontSize: "13px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
               <span>{m.ad}</span>
@@ -369,6 +374,97 @@ export default function Admin() {
                     <div style={{ textAlign: "center", padding: "32px", color: "#888", fontSize: "13px" }}>Henuz teklif talebi yok</div>
                   )}
                 </div>
+              </div>
+            )}
+          {aktifMenu === "mesajlar" && (
+              <div>
+                <h1 style={{ fontSize: "24px", fontWeight: 700, color: "#12103a", marginBottom: "24px" }}>💬 Tüm Mesajlaşmalar</h1>
+                
+                {/* Konuşmaları grupla */}
+                {(() => {
+                  const konusmalar: Record<string, any[]> = {};
+                  tumMesajlar.forEach(msg => {
+                    const key = [msg.gonderen_id, msg.alici_id].sort().join("_");
+                    if (!konusmalar[key]) konusmalar[key] = [];
+                    konusmalar[key].push(msg);
+                  });
+
+                  return (
+                    <div style={{ display: "grid", gridTemplateColumns: seciliKonusma ? "300px 1fr" : "1fr", gap: "20px" }}>
+                      {/* Konuşma listesi */}
+                      <div style={{ background: "#fff", borderRadius: "16px", border: "1px solid #EEEDFE", overflow: "hidden" }}>
+                        <div style={{ padding: "16px 20px", borderBottom: "1px solid #EEEDFE", fontSize: "14px", fontWeight: 700, color: "#12103a" }}>
+                          {Object.keys(konusmalar).length} konuşma
+                        </div>
+                        {Object.entries(konusmalar).map(([key, msgs]) => {
+                          const sonMesaj = msgs[0];
+                          const kisi1 = sonMesaj.gonderen;
+                          const kisi2 = sonMesaj.alici;
+                          return (
+                            <div key={key} onClick={() => setSeciliKonusma(seciliKonusma === key ? null : key)} style={{ padding: "14px 20px", cursor: "pointer", borderBottom: "1px solid #f8f9ff", background: seciliKonusma === key ? "#f0eeff" : "#fff" }}>
+                              <div style={{ display: "flex", gap: "10px", alignItems: "center", marginBottom: "6px" }}>
+                                <div style={{ width: "32px", height: "32px", borderRadius: "50%", background: "#534AB7", display: "flex", alignItems: "center", justifyContent: "center", color: "#fff", fontSize: "12px", fontWeight: 700, flexShrink: 0 }}>
+                                  {kisi1?.ad?.[0]}
+                                </div>
+                                <div style={{ flex: 1, minWidth: 0 }}>
+                                  <div style={{ fontSize: "13px", fontWeight: 700, color: "#0f0d2e" }}>
+                                    {kisi1?.ad} {kisi1?.soyad}
+                                    <span style={{ fontSize: "10px", color: "#94a3b8", marginLeft: "6px" }}>↔</span>
+                                    {kisi2?.ad} {kisi2?.soyad}
+                                  </div>
+                                  <div style={{ display: "flex", gap: "4px", marginTop: "2px" }}>
+                                    <span style={{ fontSize: "10px", background: "#f0eeff", color: "#534AB7", padding: "1px 6px", borderRadius: "8px" }}>{kisi1?.hesap_turu}</span>
+                                    <span style={{ fontSize: "10px", background: "#f0eeff", color: "#534AB7", padding: "1px 6px", borderRadius: "8px" }}>{kisi2?.hesap_turu}</span>
+                                  </div>
+                                </div>
+                                <span style={{ fontSize: "11px", color: "#94a3b8", flexShrink: 0 }}>{msgs.length} mesaj</span>
+                              </div>
+                              <div style={{ fontSize: "12px", color: "#64748b", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", paddingLeft: "42px" }}>
+                                {sonMesaj.mesaj}
+                              </div>
+                            </div>
+                          );
+                        })}
+                        {Object.keys(konusmalar).length === 0 && (
+                          <div style={{ textAlign: "center", padding: "48px", color: "#888", fontSize: "13px" }}>Henüz mesajlaşma yok</div>
+                        )}
+                      </div>
+
+                      {/* Seçili konuşma detayı */}
+                      {seciliKonusma && konusmalar[seciliKonusma] && (
+                        <div style={{ background: "#fff", borderRadius: "16px", border: "1px solid #EEEDFE", display: "flex", flexDirection: "column", overflow: "hidden", maxHeight: "600px" }}>
+                          <div style={{ padding: "16px 20px", borderBottom: "1px solid #EEEDFE", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                            <div style={{ fontSize: "14px", fontWeight: 700, color: "#12103a" }}>
+                              {konusmalar[seciliKonusma][0].gonderen?.ad} ↔ {konusmalar[seciliKonusma][0].alici?.ad}
+                            </div>
+                            <button onClick={() => setSeciliKonusma(null)} style={{ background: "none", border: "none", cursor: "pointer", color: "#94a3b8", fontSize: "18px" }}>×</button>
+                          </div>
+                          <div style={{ flex: 1, overflowY: "auto", padding: "16px", display: "flex", flexDirection: "column", gap: "10px" }}>
+                            {[...konusmalar[seciliKonusma]].reverse().map(msg => (
+                              <div key={msg.id}>
+                                <div style={{ display: "flex", gap: "8px", alignItems: "flex-start" }}>
+                                  <div style={{ width: "28px", height: "28px", borderRadius: "50%", background: "#534AB7", display: "flex", alignItems: "center", justifyContent: "center", color: "#fff", fontSize: "11px", fontWeight: 700, flexShrink: 0 }}>
+                                    {msg.gonderen?.ad?.[0]}
+                                  </div>
+                                  <div style={{ flex: 1 }}>
+                                    <div style={{ display: "flex", gap: "8px", alignItems: "center", marginBottom: "4px" }}>
+                                      <span style={{ fontSize: "12px", fontWeight: 700, color: "#0f0d2e" }}>{msg.gonderen?.ad} {msg.gonderen?.soyad}</span>
+                                      <span style={{ fontSize: "10px", background: "#f0eeff", color: "#534AB7", padding: "1px 6px", borderRadius: "8px" }}>{msg.gonderen?.hesap_turu}</span>
+                                      <span style={{ fontSize: "11px", color: "#94a3b8" }}>{new Date(msg.created_at).toLocaleString("tr-TR")}</span>
+                                    </div>
+                                    <div style={{ background: "#f8f9ff", border: "1px solid #eeecff", borderRadius: "10px", padding: "10px 14px", fontSize: "13px", color: "#374151", lineHeight: 1.6 }}>
+                                      {msg.mesaj}
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  );
+                })()}
               </div>
             )}
           </>
