@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import React, { useState } from "react";
 
 const RENKLER: Record<string, string> = {
   implant: "#534AB7", kaplama: "#1D9E75", kanal: "#D85A30",
@@ -74,7 +74,7 @@ export default function DisSemasi({ onDegistir }: DisSemasiProps) {
         : `M4,32 Q3,19 6,10 Q10,3 14,4 Q18,3 22,10 Q25,19 24,32 Q16,37 4,32Z`;
     }
 
-    const tumpaths: JSX.Element[] = [];
+    const tumpaths: React.ReactElement[] = [];
     if (tip === "K2") {
       const y = alt ? 28 : 10;
       tumpaths.push(
