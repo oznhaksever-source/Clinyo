@@ -263,6 +263,7 @@ export default function KlinikPanel() {
             { id: "once-sonra", ad: "Önce/Sonra" },
             { id: "talepler", ad: "Teklif Talepleri" },
             { id: "tekliflerim", ad: "Gönderilen Teklifler" },
+{ id: "mesajlar", ad: "💬 Mesajlar" },
           ].map((m) => (
             <div key={m.id} onClick={() => setAktifMenu(m.id)} style={{ padding: "10px 12px", borderRadius: "8px", cursor: "pointer", marginBottom: "4px", background: aktifMenu === m.id ? "#534AB7" : "transparent", color: aktifMenu === m.id ? "#fff" : "#8b8fc8", fontSize: "13px" }}>
               {m.ad}
@@ -622,6 +623,15 @@ export default function KlinikPanel() {
                   ))}
                   {teklifler.length === 0 && <div style={{ textAlign: "center", padding: "48px", background: "#fff", borderRadius: "12px", border: "1px solid #EEEDFE", color: "#888" }}>Henüz teklif gönderilmedi</div>}
                 </div>
+              </div>
+            )}
+          {aktifMenu === "mesajlar" && (
+              <div>
+                <h1 style={{ fontSize: "24px", fontWeight: 700, color: "#12103a", marginBottom: "8px" }}>💬 Mesajlar</h1>
+                <p style={{ fontSize: "14px", color: "#888", marginBottom: "24px" }}>Hastalarla mesajlaşmak için mesajlar sayfasını kullanın.</p>
+                <a href="/mesajlar" style={{ display: "inline-flex", alignItems: "center", gap: "8px", background: "#534AB7", color: "#fff", padding: "12px 24px", borderRadius: "10px", fontSize: "14px", textDecoration: "none", fontWeight: 600 }}>
+                  💬 Mesajlar Sayfasına Git →
+                </a>
               </div>
             )}
           </>
