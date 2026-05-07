@@ -13,6 +13,8 @@ export default function Mesajlar() {
   const [yukleniyor, setYukleniyor] = useState(true);
   const [mobil, setMobil] = useState(false);
   const [mobilPanel, setMobilPanel] = useState<"liste" | "mesaj">("liste");
+  const [yeniKonusmaAcik, setYeniKonusmaAcik] = useState(false);
+  const [klinikler, setKlinikler] = useState<any[]>([]);
   const altRef = useRef<HTMLDivElement>(null);
   const { dil } = useDil();
   const supabase = createClient();
@@ -59,6 +61,13 @@ export default function Mesajlar() {
         }
         setKonusmalar(Object.values(gruplar));
       }
+      // Onaylı klinikleri getir
+      const { data: klinikData } = await supabase.from("profiles")
+        .select("id, ad, soyad, hesap_turu")
+        .eq("hesap_turu", "klinik")
+        .eq("onaylandi", true);
+      setKlinikler(klinikData || []);
+
       setYukleniyor(false);
     }
     yukle();
@@ -118,6 +127,48 @@ export default function Mesajlar() {
   return (
     <main style={{ minHeight: "100vh", background: "#f8f9ff", fontFamily: "'Segoe UI', sans-serif" }}>
       <Navbar />
+
+      {/* Yeni Konuşma Modalı */}
+      {yeniKonusmaAcik && (
+        <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.5)", zIndex: 999, display: "flex", alignItems: "center", justifyContent: "center", padding: "24px" }}>
+          <div style={{ background: "#fff", borderRadius: "20px", padding: "32px", width: "100%", maxWidth: "480px" }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "24px" }}>
+              <h2 style={{ fontSize: "18px", fontWeight: 700, color: "#0f0d2e", margin: 0 }}>Yeni Konuşma Başlat</h2>
+              <button onClick={() => setYeniKonusmaAcik(false)} style={{ background: "none", border: "none", fontSize: "22px", cursor: "pointer", color: "#888" }}>×</button>
+            </div>
+            <p style={{ fontSize: "13px", color: "#888", marginBottom: "16px" }}>Mesaj göndermek istediğiniz kliniği seçin:</p>
+            <div style={{ display: "flex", flexDirection: "column", gap: "10px", maxHeight: "300px", overflowY: "auto" }}>
+              {klinikler.map(k => (
+                <div key={k.id} onClick={async () => {
+                  const { data: { user } } = await supabase.auth.getUser();
+                  if (user) {
+                    await supabase.from("mesajlar").insert({
+                      gonderen_id: user.id,
+                      alici_id: k.id,
+                      mesaj: "Merhaba, bilgi almak istiyorum.",
+                      okundu: false,
+                    });
+                    setYeniKonusmaAcik(false);
+                    window.location.reload();
+                  }
+                }} style={{ padding: "14px 16px", border: "1px solid #EEEDFE", borderRadius: "12px", cursor: "pointer", display: "flex", alignItems: "center", gap: "12px", background: "#f8f9ff" }}>
+                  <div style={{ width: "40px", height: "40px", borderRadius: "50%", background: "#534AB7", display: "flex", alignItems: "center", justifyContent: "center", color: "#fff", fontWeight: 700, flexShrink: 0 }}>
+                    {k.ad?.[0]?.toUpperCase()}
+                  </div>
+                  <div>
+                    <div style={{ fontSize: "14px", fontWeight: 700, color: "#0f0d2e" }}>🏥 {k.ad} {k.soyad}</div>
+                    <div style={{ fontSize: "12px", color: "#94a3b8" }}>Klinik</div>
+                  </div>
+                </div>
+              ))}
+              {klinikler.length === 0 && (
+                <div style={{ textAlign: "center", padding: "32px", color: "#94a3b8", fontSize: "13px" }}>Onaylı klinik bulunamadı.</div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
       <div style={{ maxWidth: "1100px", margin: "0 auto", padding: mobil ? "16px" : "32px" }}>
         <h1 style={{ fontSize: mobil ? "22px" : "28px", fontWeight: 800, color: "#0f0d2e", marginBottom: "24px" }}>{m.baslik}</h1>
 
@@ -126,8 +177,13 @@ export default function Mesajlar() {
           {/* Sol: Konuşma listesi */}
           {(!mobil || mobilPanel === "liste") && (
             <div style={{ background: "#fff", borderRadius: "20px", border: "1px solid #eeecff", overflow: "hidden", display: "flex", flexDirection: "column" }}>
-              <div style={{ padding: "20px", borderBottom: "1px solid #f0eeff" }}>
+              <div style={{ padding: "20px", borderBottom: "1px solid #f0eeff", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                 <h2 style={{ fontSize: "15px", fontWeight: 700, color: "#0f0d2e", margin: 0 }}>{m.baslik}</h2>
+                {kullanici?.hesap_turu === "hasta" && (
+                  <button onClick={() => setYeniKonusmaAcik(true)} style={{ background: "#534AB7", color: "#fff", border: "none", padding: "6px 12px", borderRadius: "8px", fontSize: "12px", cursor: "pointer", fontWeight: 600 }}>
+                    + Yeni
+                  </button>
+                )}
               </div>
               <div style={{ flex: 1, overflowY: "auto" }}>
                 {konusmalar.length === 0 ? (
