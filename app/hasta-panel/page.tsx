@@ -45,11 +45,13 @@ export default function HastaPanel() {
     // Mesajlaşma başlat
     const { data: { user } } = await supabase.auth.getUser();
     if (user) {
-      await supabase.from("mesajlar").insert({
+      const { error: mesajError } = await supabase.from("mesajlar").insert({
         gonderen_id: user.id,
         alici_id: klinikId,
-        mesaj: "Teklifinizi onayladım. Tedavi süreci hakkında bilgi almak istiyorum.",
+        mesaj: "Merhaba, teklifinizi onayladım. Tedavi süreci hakkında bilgi almak istiyorum.",
+        okundu: false,
       });
+      if (mesajError) console.error("Mesaj hatası:", mesajError);
     }
     setMesaj("✅ Teklif onaylandı! Klinik ile mesajlaşma başlatıldı.");
     setTimeout(() => setMesaj(""), 4000);
