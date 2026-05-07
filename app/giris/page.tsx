@@ -13,6 +13,8 @@ export default function Giris() {
   const [mesaj, setMesaj] = useState("");
   const [yukleniyor, setYukleniyor] = useState(false);
   const [mobil, setMobil] = useState(false);
+  const [sifreGoster, setSifreGoster] = useState(false);
+  const [sifreGoster2, setSifreGoster2] = useState(false);
   const { dil, dilDegistir } = useDil();
 
   const supabase = createClient();
@@ -148,7 +150,12 @@ export default function Giris() {
               </div>
               <div style={{ marginBottom: "20px" }}>
                 <label style={labelStyle}>{m.sifre}</label>
-                <input type="password" value={sifre} onChange={e => setSifre(e.target.value)} onKeyDown={e => { if (e.key === "Enter") girisYap(); }} style={inputStyle} />
+                <div style={{ position: "relative" }}>
+                  <input type={sifreGoster ? "text" : "password"} value={sifre} onChange={e => setSifre(e.target.value)} onKeyDown={e => { if (e.key === "Enter") girisYap(); }} style={{ ...inputStyle, paddingRight: "44px" }} />
+                  <button onClick={() => setSifreGoster(!sifreGoster)} type="button" style={{ position: "absolute", right: "12px", top: "50%", transform: "translateY(-50%)", background: "none", border: "none", cursor: "pointer", color: "#94a3b8", fontSize: "18px" }}>
+                    {sifreGoster ? "🙈" : "👁"}
+                  </button>
+                </div>
               </div>
               <button onClick={girisYap} disabled={yukleniyor} style={{ width: "100%", background: "#534AB7", color: "#fff", border: "none", padding: "13px", borderRadius: "10px", fontSize: "15px", cursor: "pointer", fontWeight: 600, opacity: yukleniyor ? 0.7 : 1 }}>
                 {yukleniyor ? "..." : m.girisYapBtn}
@@ -172,7 +179,12 @@ export default function Giris() {
               </div>
               <div style={{ marginBottom: "12px" }}>
                 <label style={labelStyle}>{m.sifre}</label>
-                <input type="password" value={sifre} onChange={e => setSifre(e.target.value)} onKeyDown={e => { if (e.key === "Enter") kayitOl(); }} style={inputStyle} />
+                <div style={{ position: "relative" }}>
+                  <input type={sifreGoster2 ? "text" : "password"} value={sifre} onChange={e => setSifre(e.target.value)} onKeyDown={e => { if (e.key === "Enter") kayitOl(); }} style={{ ...inputStyle, paddingRight: "44px" }} />
+                  <button onClick={() => setSifreGoster2(!sifreGoster2)} type="button" style={{ position: "absolute", right: "12px", top: "50%", transform: "translateY(-50%)", background: "none", border: "none", cursor: "pointer", color: "#94a3b8", fontSize: "18px" }}>
+                    {sifreGoster2 ? "🙈" : "👁"}
+                  </button>
+                </div>
               </div>
               <div style={{ marginBottom: "20px" }}>
                 <label style={labelStyle}>{m.hesapTuru}</label>
