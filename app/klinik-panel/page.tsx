@@ -840,17 +840,147 @@ export default function KlinikPanel() {
             {aktifMenu === "tekliflerim" && (
               <div>
                 <h1 style={{ fontSize: "24px", fontWeight: 700, color: "#12103a", marginBottom: "24px" }}>Gönderilen Teklifler ({teklifler.length})</h1>
-                <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+                <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
                   {teklifler.map((t) => (
-                    <div key={t.id} style={{ background: "#fff", border: "1px solid #EEEDFE", borderRadius: "12px", padding: "20px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                      <div>
-                        <div style={{ fontSize: "15px", fontWeight: 700, color: "#12103a", marginBottom: "4px" }}>{t.talepler?.tedavi_turu}</div>
-                        <div style={{ fontSize: "12px", color: "#888" }}>{t.aciklama}</div>
+                    <div key={t.id} style={{ background: "#fff", border: `2px solid ${t.durum === "onaylandi" ? "#059669" : t.durum === "reddedildi" ? "#fcc" : "#EEEDFE"}`, borderRadius: "16px", padding: "24px" }}>
+                      
+                      {/* Üst başlık */}
+                      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "16px" }}>
+                        <div>
+                          <div style={{ fontSize: "16px", fontWeight: 700, color: "#12103a", marginBottom: "4px" }}>
+                            💊 {t.talepler?.tedavi_turu}
+                          </div>
+                          <div style={{ fontSize: "12px", color: "#94a3b8" }}>
+                            {new Date(t.olusturma_tarihi).toLocaleDateString("tr-TR")}
+                          </div>
+                        </div>
+                        <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
+                          <span style={{ fontSize: "12px", padding: "4px 12px", borderRadius: "20px", fontWeight: 600,
+                            background: t.durum === "onaylandi" ? "#f0fff4" : t.durum === "reddedildi" ? "#fff0f0" : "#fff8e1",
+                            color: t.durum === "onaylandi" ? "#059669" : t.durum === "reddedildi" ? "#c00" : "#BA7517"
+                          }}>
+                            {t.durum === "onaylandi" ? "✅ Onaylandı" : t.durum === "reddedildi" ? "❌ Reddedildi" : "⏳ Beklemede"}
+                          </span>
+                          <button onClick={() => {
+                            const icerik = `
+MEDOQA - TEKLİF DETAYI
+======================
+Tarih: ${new Date(t.olusturma_tarihi).toLocaleDateString("tr-TR")}
+Durum: ${t.durum}
+
+TEDAVİ BİLGİLERİ
+----------------
+Tedavi: ${t.talepler?.tedavi_turu || "-"}
+Açıklama: ${t.aciklama || "-"}
+Tedavi Ücreti: ${t.fiyat} EUR
+
+${t.otel_dahil ? `OTEL BİLGİLERİ\n--------------\nOtel: ${t.otel_aciklama || "-"}\nOtel Ücreti: ${t.otel_fiyat} EUR\n` : ""}
+${t.transfer_dahil ? `TRANSFER BİLGİLERİ\n------------------\nTransfer: ${t.transfer_aciklama || "-"}\nTransfer Ücreti: ${t.transfer_fiyat} EUR\n` : ""}
+${(t.otel_dahil || t.transfer_dahil) ? `TOPLAM: ${t.toplam_fiyat} EUR` : ""}
+
+======================
+medoqa.com
+                            `;
+                            const yeniPencere = window.open("", "_blank");
+                            if (yeniPencere) {
+                              yeniPencere.document.write(`
+                                <html><head><title>Teklif Detayı - Medoqa</title>
+                                <style>
+                                  body { font-family: Arial, sans-serif; max-width: 600px; margin: 40px auto; padding: 20px; }
+                                  h1 { color: #534AB7; }
+                                  .section { background: #f8f9ff; padding: 16px; border-radius: 8px; margin: 16px 0; }
+                                  .row { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #eee; }
+                                  .total { font-size: 20px; font-weight: bold; color: #534AB7; }
+                                  .status { padding: 4px 12px; border-radius: 20px; font-size: 13px; font-weight: 600; background: ${t.durum === "onaylandi" ? "#f0fff4" : "#fff8e1"}; color: ${t.durum === "onaylandi" ? "#059669" : "#BA7517"}; }
+                                  @media print { button { display: none; } }
+                                </style>
+                                </head><body>
+                                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;">
+                                  <h1 style="margin:0;">med<span style="color:#7F77DD;font-weight:300;">oqa</span></h1>
+                                  <span class="status">${t.durum === "onaylandi" ? "✅ Onaylandı" : t.durum === "reddedildi" ? "❌ Reddedildi" : "⏳ Beklemede"}</span>
+                                </div>
+                                <h2 style="color:#12103a;">Teklif Detayı</h2>
+                                <p style="color:#888;">Tarih: ${new Date(t.olusturma_tarihi).toLocaleDateString("tr-TR")}</p>
+                                
+                                <div class="section">
+                                  <h3 style="margin:0 0 12px;color:#534AB7;">💊 Tedavi Bilgileri</h3>
+                                  <div class="row"><span>Tedavi</span><strong>${t.talepler?.tedavi_turu || "-"}</strong></div>
+                                  <div class="row"><span>Açıklama</span><strong>${t.aciklama || "-"}</strong></div>
+                                  <div class="row"><span>Tedavi Ücreti</span><strong>${t.fiyat} EUR</strong></div>
+                                </div>
+                                
+                                ${t.otel_dahil ? `
+                                <div class="section">
+                                  <h3 style="margin:0 0 12px;color:#534AB7;">🏨 Otel Bilgileri</h3>
+                                  <div class="row"><span>Otel</span><strong>${t.otel_aciklama || "-"}</strong></div>
+                                  <div class="row"><span>Otel Ücreti</span><strong>${t.otel_fiyat} EUR</strong></div>
+                                </div>` : ""}
+                                
+                                ${t.transfer_dahil ? `
+                                <div class="section">
+                                  <h3 style="margin:0 0 12px;color:#534AB7;">🚗 Transfer Bilgileri</h3>
+                                  <div class="row"><span>Transfer</span><strong>${t.transfer_aciklama || "-"}</strong></div>
+                                  <div class="row"><span>Transfer Ücreti</span><strong>${t.transfer_fiyat} EUR</strong></div>
+                                </div>` : ""}
+                                
+                                ${(t.otel_dahil || t.transfer_dahil) ? `
+                                <div class="section">
+                                  <div class="row total"><span>💰 Toplam</span><span>${t.toplam_fiyat} EUR</span></div>
+                                </div>` : ""}
+                                
+                                <div style="text-align:center;margin-top:32px;color:#888;font-size:12px;">
+                                  <p>medoqa.com | Global Health Tourism Platform</p>
+                                </div>
+                                <div style="text-align:center;margin-top:16px;">
+                                  <button onclick="window.print()" style="background:#534AB7;color:#fff;border:none;padding:12px 32px;border-radius:8px;font-size:14px;cursor:pointer;">🖨️ Yazdır</button>
+                                </div>
+                                </body></html>
+                              `);
+                              yeniPencere.document.close();
+                            }
+                          }} style={{ background: "#f0eeff", color: "#534AB7", border: "1px solid #EEEDFE", padding: "6px 14px", borderRadius: "8px", fontSize: "12px", cursor: "pointer", fontWeight: 600 }}>
+                            🖨️ Yazdır
+                          </button>
+                        </div>
                       </div>
-                      <div style={{ textAlign: "right" }}>
-                        <div style={{ fontSize: "22px", fontWeight: 700, color: "#534AB7" }}>{t.fiyat} {t.para_birimi}</div>
-                        <span style={{ fontSize: "11px", padding: "3px 10px", borderRadius: "20px", background: "#fff8e1", color: "#BA7517" }}>{t.durum}</span>
+
+                      {/* Fiyat detayları */}
+                      <div style={{ background: "#f8f9ff", borderRadius: "10px", padding: "16px" }}>
+                        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "8px" }}>
+                          <span style={{ fontSize: "13px", color: "#64748b" }}>💊 Tedavi Ücreti</span>
+                          <span style={{ fontSize: "15px", fontWeight: 700, color: "#534AB7" }}>{t.fiyat} EUR</span>
+                        </div>
+                        {t.otel_dahil && (
+                          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "8px" }}>
+                            <span style={{ fontSize: "13px", color: "#64748b" }}>🏨 Otel — {t.otel_aciklama}</span>
+                            <span style={{ fontSize: "14px", fontWeight: 600, color: "#059669" }}>{t.otel_fiyat} EUR</span>
+                          </div>
+                        )}
+                        {t.transfer_dahil && (
+                          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "8px" }}>
+                            <span style={{ fontSize: "13px", color: "#64748b" }}>🚗 Transfer — {t.transfer_aciklama}</span>
+                            <span style={{ fontSize: "14px", fontWeight: 600, color: "#059669" }}>{t.transfer_fiyat} EUR</span>
+                          </div>
+                        )}
+                        {(t.otel_dahil || t.transfer_dahil) && (
+                          <>
+                            <div style={{ borderTop: "1px solid #EEEDFE", margin: "8px 0" }} />
+                            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                              <span style={{ fontSize: "14px", fontWeight: 700, color: "#0f0d2e" }}>💰 Toplam</span>
+                              <span style={{ fontSize: "18px", fontWeight: 800, color: "#534AB7" }}>{t.toplam_fiyat} EUR</span>
+                            </div>
+                          </>
+                        )}
                       </div>
+
+                      {/* Mesajlaş butonu — onaylandıysa */}
+                      {t.durum === "onaylandi" && (
+                        <div style={{ marginTop: "16px" }}>
+                          <a href="/mesajlar" style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "8px", background: "#534AB7", color: "#fff", padding: "12px", borderRadius: "10px", fontSize: "14px", textDecoration: "none", fontWeight: 600 }}>
+                            💬 Hasta ile Mesajlaş
+                          </a>
+                        </div>
+                      )}
                     </div>
                   ))}
                   {teklifler.length === 0 && <div style={{ textAlign: "center", padding: "48px", background: "#fff", borderRadius: "12px", border: "1px solid #EEEDFE", color: "#888" }}>Henüz teklif gönderilmedi</div>}
