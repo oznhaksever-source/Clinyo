@@ -128,7 +128,7 @@ export default function Mesajlar() {
           max_tokens: 500,
           messages: [{
             role: "user",
-            content: `Translate the following message to ${herefDil}. Only return the translated text, nothing else:\n\n${metin}`
+            content: `Translate the following message to ${hedefDil}. Only return the translated text, nothing else:\n\n${metin}`
           }]
         })
       });
