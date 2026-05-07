@@ -82,7 +82,9 @@ export default function Navbar() {
                     <div style={{ fontSize: "11px", color: "#888", marginTop: "2px" }}>{kullanici.hesap_turu}</div>
                   </div>
                   <a href={panelLinki()} style={{ display: "block", padding: "10px 16px", fontSize: "13px", color: "#534AB7", textDecoration: "none", borderBottom: "1px solid #f0f0f0" }}>{t.nav.panelim}</a>
-                  <a href="/teklif" style={{ display: "block", padding: "10px 16px", fontSize: "13px", color: "#555", textDecoration: "none", borderBottom: "1px solid #f0f0f0" }}>{t.nav.teklifAl}</a>
+                  {kullanici?.hesap_turu === "hasta" && (
+  <a href="/teklif" style={{ display: "block", padding: "10px 16px", fontSize: "13px", color: "#555", textDecoration: "none", borderBottom: "1px solid #f0f0f0" }}>{t.nav.teklifAl}</a>
+)}
                   <button onClick={cikisYap} style={{ display: "block", width: "100%", textAlign: "left", padding: "10px 16px", fontSize: "13px", color: "#c00", background: "none", border: "none", cursor: "pointer" }}>{t.nav.cikisYap}</button>
                 </div>
               )}
@@ -121,6 +123,11 @@ export default function Navbar() {
               {l.label}
             </a>
           ))}
+          {(!kullanici || kullanici?.hesap_turu === "hasta") && (
+            <a href="/teklif" onClick={() => setMobileAcik(false)} style={{ display: "block", color: "#7F77DD", fontSize: "15px", textDecoration: "none", padding: "12px 8px", borderBottom: "1px solid rgba(255,255,255,0.05)", fontWeight: 600 }}>
+              {t.nav.teklifAl}
+            </a>
+          )}
           <div style={{ marginTop: "12px" }}>
             {kullanici ? (
               <div>
