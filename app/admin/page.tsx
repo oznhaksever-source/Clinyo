@@ -113,14 +113,34 @@ export default function Admin() {
     );
   }
 
-  const zorunluBelgeler = [
-    { id: "saglik_bakanligi", ad: "Sağlık Bakanlığı Yetki Belgesi" },
-    { id: "faaliyet_ruhsati", ad: "Faaliyet Ruhsatı" },
-    { id: "hekim_sertifikasi", ad: "Sorumlu Hekim Sertifikası" },
-    { id: "sigorta_policesi", ad: "Sigorta Poliçesi" },
-    { id: "vergi_levhasi", ad: "Vergi Levhası" },
-    { id: "ticaret_sicil", ad: "Ticaret Sicil Belgesi" },
-  ];
+  const belgeTurleri: Record<string, { id: string; ad: string }[]> = {
+    klinik: [
+      { id: "saglik_bakanligi", ad: "Sağlık Bakanlığı Yetki Belgesi" },
+      { id: "faaliyet_ruhsati", ad: "Faaliyet Ruhsatı" },
+      { id: "hekim_sertifikasi", ad: "Sorumlu Hekim Sertifikası" },
+      { id: "sigorta_policesi", ad: "Sigorta Poliçesi" },
+      { id: "vergi_levhasi", ad: "Vergi Levhası" },
+      { id: "ticaret_sicil", ad: "Ticaret Sicil Belgesi" },
+    ],
+    otel: [
+      { id: "turizm_isletme", ad: "Turizm İşletmesi Belgesi" },
+      { id: "isyeri_ruhsati", ad: "İşyeri Açma ve Çalışma Ruhsatı" },
+      { id: "yangin_belgesi", ad: "Yangın Güvenlik Belgesi" },
+      { id: "vergi_levhasi", ad: "Vergi Levhası" },
+      { id: "ticaret_sicil", ad: "Ticaret Sicil Belgesi" },
+    ],
+    transfer: [
+      { id: "tursab_belgesi", ad: "TURSAB A Grubu Seyahat Acentası Belgesi" },
+      { id: "saglik_turizmi_yetki", ad: "Sağlık Turizmi Yetki Belgesi" },
+      { id: "arac_ruhsatlari", ad: "Ticari Araç Ruhsatları" },
+      { id: "psikoteknik", ad: "Şoför Psikoteknik Belgeleri" },
+      { id: "trafik_sigorta", ad: "Trafik Sigortası ve Kasko" },
+      { id: "vergi_levhasi", ad: "Vergi Levhası" },
+      { id: "ticaret_sicil", ad: "Ticaret Sicil Belgesi" },
+    ],
+  };
+
+  const zorunluBelgeler = belgeTurleri[detayKullanici?.hesap_turu] || belgeTurleri.klinik;
 
   return (
     <main style={{ minHeight: "100vh", background: "#f9fafb", fontFamily: "sans-serif", display: "flex" }}>
