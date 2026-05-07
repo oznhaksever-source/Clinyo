@@ -229,7 +229,17 @@ export default function KlinikPanel() {
     aciklama: "",
   });
 
-  const [yeniTeklif, setYeniTeklif] = useState({ talep_id: "", fiyat: "", aciklama: "" });
+  const [yeniTeklif, setYeniTeklif] = useState({ 
+    talep_id: "", 
+    fiyat: "", 
+    aciklama: "",
+    otel_dahil: false,
+    otel_aciklama: "",
+    otel_fiyat: "",
+    transfer_dahil: false,
+    transfer_aciklama: "",
+    transfer_fiyat: "",
+  });
 
   const supabase = createClient();
 
@@ -356,7 +366,25 @@ export default function KlinikPanel() {
   async function teklifGonder() {
     if (!yeniTeklif.talep_id || !yeniTeklif.fiyat) return;
     const { data: { user } } = await supabase.auth.getUser();
-    await supabase.from("teklifler").insert({ talep_id: yeniTeklif.talep_id, klinik_id: user?.id, fiyat: parseFloat(yeniTeklif.fiyat), para_birimi: "EUR", aciklama: yeniTeklif.aciklama, durum: "beklemede" });
+    const tedaviFiyat = parseFloat(yeniTeklif.fiyat) || 0;
+    const otelFiyat = yeniTeklif.otel_dahil ? (parseFloat(yeniTeklif.otel_fiyat) || 0) : 0;
+    const transferFiyat = yeniTeklif.transfer_dahil ? (parseFloat(yeniTeklif.transfer_fiyat) || 0) : 0;
+    const toplamFiyat = tedaviFiyat + otelFiyat + transferFiyat;
+    await supabase.from("teklifler").insert({ 
+      talep_id: yeniTeklif.talep_id, 
+      klinik_id: user?.id, 
+      fiyat: tedaviFiyat,
+      para_birimi: "EUR", 
+      aciklama: yeniTeklif.aciklama, 
+      durum: "beklemede",
+      otel_dahil: yeniTeklif.otel_dahil,
+      otel_aciklama: yeniTeklif.otel_aciklama,
+      otel_fiyat: otelFiyat,
+      transfer_dahil: yeniTeklif.transfer_dahil,
+      transfer_aciklama: yeniTeklif.transfer_aciklama,
+      transfer_fiyat: transferFiyat,
+      toplam_fiyat: toplamFiyat,
+    });
     // Hastaya email gönder
       const talep = talepler.find(t => t.id === yeniTeklif.talep_id);
       if (talep?.profiles?.email) {
@@ -375,7 +403,7 @@ export default function KlinikPanel() {
         });
       }
     setMesaj("Teklif gönderildi!");
-    setYeniTeklif({ talep_id: "", fiyat: "", aciklama: "" });
+    setYeniTeklif({ talep_id: "", fiyat: "", aciklama: "", otel_dahil: false, otel_aciklama: "", otel_fiyat: "", transfer_dahil: false, transfer_aciklama: "", transfer_fiyat: "" });
     veriYukle();
     setTimeout(() => setMesaj(""), 3000);
   }
@@ -742,14 +770,60 @@ export default function KlinikPanel() {
                       </div>
                       {kullanici?.onaylandi && (
                         <div style={{ borderTop: "1px solid #EEEDFE", paddingTop: "12px" }}>
-                          <div style={{ display: "flex", gap: "8px" }}>
-                            <select onChange={(e) => { const h = hizmetler.find(hiz => hiz.id === e.target.value); if (h) setYeniTeklif({ talep_id: t.id, fiyat: h.fiyat.toString(), aciklama: h.hizmet_adi }); }} style={{ border: "1px solid #e5e7eb", borderRadius: "8px", padding: "8px 12px", fontSize: "13px", outline: "none", background: "#fff" }}>
-                              <option value="">Hizmet listesinden seç</option>
-                              {hizmetler.filter(h => h.aktif).map(h => <option key={h.id} value={h.id}>{h.hizmet_adi} — {h.fiyat} {h.para_birimi}</option>)}
-                            </select>
-                            <input type="number" placeholder="Fiyat (EUR)" value={yeniTeklif.talep_id === t.id ? yeniTeklif.fiyat : ""} onChange={(e) => setYeniTeklif({ talep_id: t.id, fiyat: e.target.value, aciklama: yeniTeklif.aciklama })} style={{ width: "120px", border: "1px solid #e5e7eb", borderRadius: "8px", padding: "8px 12px", fontSize: "13px", outline: "none" }} />
-                            <input type="text" placeholder="Açıklama" value={yeniTeklif.talep_id === t.id ? yeniTeklif.aciklama : ""} onChange={(e) => setYeniTeklif({ ...yeniTeklif, talep_id: t.id, aciklama: e.target.value })} style={{ flex: 1, border: "1px solid #e5e7eb", borderRadius: "8px", padding: "8px 12px", fontSize: "13px", outline: "none" }} />
-                            <button onClick={() => { setYeniTeklif(prev => ({ ...prev, talep_id: t.id })); teklifGonder(); }} style={{ background: "#534AB7", color: "#fff", border: "none", padding: "8px 16px", borderRadius: "8px", fontSize: "13px", cursor: "pointer" }}>Gönder</button>
+                          <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+                            {/* Tedavi fiyatı */}
+                            <div style={{ display: "flex", gap: "8px" }}>
+                              <select onChange={(e) => { const h = hizmetler.find(hiz => hiz.id === e.target.value); if (h) setYeniTeklif(prev => ({ ...prev, talep_id: t.id, fiyat: h.fiyat.toString(), aciklama: h.hizmet_adi })); }} style={{ flex: 1, border: "1px solid #e5e7eb", borderRadius: "8px", padding: "8px 12px", fontSize: "13px", outline: "none", background: "#fff" }}>
+                                <option value="">Hizmet listesinden seç</option>
+                                {hizmetler.filter(h => h.aktif).map(h => <option key={h.id} value={h.id}>{h.hizmet_adi} — {h.fiyat} {h.para_birimi}</option>)}
+                              </select>
+                              <input type="number" placeholder="Tedavi Fiyatı (EUR)" value={yeniTeklif.talep_id === t.id ? yeniTeklif.fiyat : ""} onChange={(e) => setYeniTeklif(prev => ({ ...prev, talep_id: t.id, fiyat: e.target.value }))} style={{ width: "160px", border: "1px solid #e5e7eb", borderRadius: "8px", padding: "8px 12px", fontSize: "13px", outline: "none" }} />
+                              <input type="text" placeholder="Açıklama" value={yeniTeklif.talep_id === t.id ? yeniTeklif.aciklama : ""} onChange={(e) => setYeniTeklif(prev => ({ ...prev, talep_id: t.id, aciklama: e.target.value }))} style={{ flex: 1, border: "1px solid #e5e7eb", borderRadius: "8px", padding: "8px 12px", fontSize: "13px", outline: "none" }} />
+                            </div>
+
+                            {/* Otel dahil mi? */}
+                            <div style={{ background: "#f8f9ff", borderRadius: "8px", padding: "10px 14px" }}>
+                              <label style={{ display: "flex", alignItems: "center", gap: "8px", cursor: "pointer", marginBottom: yeniTeklif.talep_id === t.id && yeniTeklif.otel_dahil ? "10px" : "0" }}>
+                                <input type="checkbox" checked={yeniTeklif.talep_id === t.id && yeniTeklif.otel_dahil} onChange={(e) => setYeniTeklif(prev => ({ ...prev, talep_id: t.id, otel_dahil: e.target.checked }))} />
+                                <span style={{ fontSize: "13px", fontWeight: 600, color: "#0f0d2e" }}>🏨 Otel Dahil</span>
+                              </label>
+                              {yeniTeklif.talep_id === t.id && yeniTeklif.otel_dahil && (
+                                <div style={{ display: "flex", gap: "8px" }}>
+                                  <input type="text" placeholder="Otel adı / açıklama" value={yeniTeklif.otel_aciklama} onChange={(e) => setYeniTeklif(prev => ({ ...prev, otel_aciklama: e.target.value }))} style={{ flex: 1, border: "1px solid #e5e7eb", borderRadius: "8px", padding: "8px 12px", fontSize: "13px", outline: "none" }} />
+                                  <input type="number" placeholder="Otel fiyatı (EUR)" value={yeniTeklif.otel_fiyat} onChange={(e) => setYeniTeklif(prev => ({ ...prev, otel_fiyat: e.target.value }))} style={{ width: "160px", border: "1px solid #e5e7eb", borderRadius: "8px", padding: "8px 12px", fontSize: "13px", outline: "none" }} />
+                                </div>
+                              )}
+                            </div>
+
+                            {/* Transfer dahil mi? */}
+                            <div style={{ background: "#f8f9ff", borderRadius: "8px", padding: "10px 14px" }}>
+                              <label style={{ display: "flex", alignItems: "center", gap: "8px", cursor: "pointer", marginBottom: yeniTeklif.talep_id === t.id && yeniTeklif.transfer_dahil ? "10px" : "0" }}>
+                                <input type="checkbox" checked={yeniTeklif.talep_id === t.id && yeniTeklif.transfer_dahil} onChange={(e) => setYeniTeklif(prev => ({ ...prev, talep_id: t.id, transfer_dahil: e.target.checked }))} />
+                                <span style={{ fontSize: "13px", fontWeight: 600, color: "#0f0d2e" }}>🚗 Transfer Dahil</span>
+                              </label>
+                              {yeniTeklif.talep_id === t.id && yeniTeklif.transfer_dahil && (
+                                <div style={{ display: "flex", gap: "8px" }}>
+                                  <input type="text" placeholder="Transfer açıklama (havalimanı-otel vb.)" value={yeniTeklif.transfer_aciklama} onChange={(e) => setYeniTeklif(prev => ({ ...prev, transfer_aciklama: e.target.value }))} style={{ flex: 1, border: "1px solid #e5e7eb", borderRadius: "8px", padding: "8px 12px", fontSize: "13px", outline: "none" }} />
+                                  <input type="number" placeholder="Transfer fiyatı (EUR)" value={yeniTeklif.transfer_fiyat} onChange={(e) => setYeniTeklif(prev => ({ ...prev, transfer_fiyat: e.target.value }))} style={{ width: "160px", border: "1px solid #e5e7eb", borderRadius: "8px", padding: "8px 12px", fontSize: "13px", outline: "none" }} />
+                                </div>
+                              )}
+                            </div>
+
+                            {/* Toplam + Gönder */}
+                            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                              {yeniTeklif.talep_id === t.id && yeniTeklif.fiyat && (
+                                <div style={{ fontSize: "14px", fontWeight: 700, color: "#534AB7" }}>
+                                  Toplam: {(
+                                    (parseFloat(yeniTeklif.fiyat) || 0) +
+                                    (yeniTeklif.otel_dahil ? parseFloat(yeniTeklif.otel_fiyat) || 0 : 0) +
+                                    (yeniTeklif.transfer_dahil ? parseFloat(yeniTeklif.transfer_fiyat) || 0 : 0)
+                                  ).toFixed(0)} EUR
+                                </div>
+                              )}
+                              <button onClick={() => { setYeniTeklif(prev => ({ ...prev, talep_id: t.id })); teklifGonder(); }} style={{ background: "#534AB7", color: "#fff", border: "none", padding: "10px 24px", borderRadius: "8px", fontSize: "13px", cursor: "pointer", fontWeight: 600, marginLeft: "auto" }}>
+                                Teklif Gönder →
+                              </button>
+                            </div>
                           </div>
                         </div>
                       )}
