@@ -43,6 +43,15 @@ export default function Admin() {
     window.location.href = "/giris";
   }
 
+  const [detayKullanici, setDetayKullanici] = useState<any>(null);
+  const [kullaniciBelgeler, setKullaniciBelgeler] = useState<any[]>([]);
+
+  async function detayGoster(kullanici: any) {
+    setDetayKullanici(kullanici);
+    const { data } = await supabase.from("belgeler").select("*").eq("kullanici_id", kullanici.id);
+    setKullaniciBelgeler(data || []);
+  }
+
   const klinikler = kullanicilar.filter(k => k.hesap_turu === "klinik");
   const hastalar = kullanicilar.filter(k => k.hesap_turu === "hasta");
   const oteller = kullanicilar.filter(k => k.hesap_turu === "otel");
@@ -89,6 +98,7 @@ export default function Admin() {
                     {k.askida && (
                       <button onClick={() => { guncelle(k.id, "askida", false); guncelle(k.id, "onaylandi", true); }} style={{ background: "#185FA5", color: "#fff", border: "none", padding: "4px 10px", borderRadius: "6px", fontSize: "11px", cursor: "pointer" }}>Aktif Et</button>
                     )}
+                    <button onClick={() => detayGoster(k)} style={{ background: "#185FA5", color: "#fff", border: "none", padding: "4px 10px", borderRadius: "6px", fontSize: "11px", cursor: "pointer" }}>Detay</button>
                     <button onClick={() => kullaniciyiSil(k.id)} style={{ background: "#c00", color: "#fff", border: "none", padding: "4px 10px", borderRadius: "6px", fontSize: "11px", cursor: "pointer" }}>Sil</button>
                   </div>
                 </td>
@@ -103,8 +113,112 @@ export default function Admin() {
     );
   }
 
+  const zorunluBelgeler = [
+    { id: "saglik_bakanligi", ad: "Sağlık Bakanlığı Yetki Belgesi" },
+    { id: "faaliyet_ruhsati", ad: "Faaliyet Ruhsatı" },
+    { id: "hekim_sertifikasi", ad: "Sorumlu Hekim Sertifikası" },
+    { id: "sigorta_policesi", ad: "Sigorta Poliçesi" },
+    { id: "vergi_levhasi", ad: "Vergi Levhası" },
+    { id: "ticaret_sicil", ad: "Ticaret Sicil Belgesi" },
+  ];
+
   return (
     <main style={{ minHeight: "100vh", background: "#f9fafb", fontFamily: "sans-serif", display: "flex" }}>
+
+      {/* Detay Modali */}
+      {detayKullanici && (
+        <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.5)", zIndex: 999, display: "flex", alignItems: "center", justifyContent: "center", padding: "24px" }}>
+          <div style={{ background: "#fff", borderRadius: "20px", width: "100%", maxWidth: "640px", maxHeight: "90vh", overflow: "auto", padding: "32px" }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "24px" }}>
+              <h2 style={{ fontSize: "20px", fontWeight: 700, color: "#0f0d2e", margin: 0 }}>Kullanıcı Detayı</h2>
+              <button onClick={() => setDetayKullanici(null)} style={{ background: "none", border: "none", fontSize: "24px", cursor: "pointer", color: "#888" }}>×</button>
+            </div>
+
+            {/* Kullanıcı bilgileri */}
+            <div style={{ background: "#f8f9ff", borderRadius: "12px", padding: "20px", marginBottom: "24px" }}>
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px" }}>
+                {[
+                  { etiket: "Ad Soyad", deger: `${detayKullanici.ad} ${detayKullanici.soyad}` },
+                  { etiket: "E-posta", deger: detayKullanici.email },
+                  { etiket: "Hesap Türü", deger: detayKullanici.hesap_turu },
+                  { etiket: "Durum", deger: detayKullanici.onaylandi ? "✅ Onaylı" : detayKullanici.askida ? "🔴 Askıda" : "⏳ Bekliyor" },
+                  { etiket: "Telefon", deger: detayKullanici.telefon || "-" },
+                  { etiket: "Website", deger: detayKullanici.website || "-" },
+                  { etiket: "Adres", deger: detayKullanici.konum_adres || "-" },
+                  { etiket: "Kayıt Tarihi", deger: detayKullanici.olusturma_tarihi ? new Date(detayKullanici.olusturma_tarihi).toLocaleDateString("tr-TR") : "-" },
+                ].map(item => (
+                  <div key={item.etiket}>
+                    <div style={{ fontSize: "11px", color: "#94a3b8", marginBottom: "3px" }}>{item.etiket}</div>
+                    <div style={{ fontSize: "13px", fontWeight: 600, color: "#0f0d2e" }}>{item.deger}</div>
+                  </div>
+                ))}
+              </div>
+              {detayKullanici.tanitim_yazisi && (
+                <div style={{ marginTop: "12px", paddingTop: "12px", borderTop: "1px solid #eeecff" }}>
+                  <div style={{ fontSize: "11px", color: "#94a3b8", marginBottom: "4px" }}>Tanıtım Yazısı</div>
+                  <div style={{ fontSize: "13px", color: "#0f0d2e", lineHeight: 1.6 }}>{detayKullanici.tanitim_yazisi}</div>
+                </div>
+              )}
+            </div>
+
+            {/* Kapak fotoğrafı */}
+            {detayKullanici.kapak_fotograf && (
+              <div style={{ marginBottom: "24px" }}>
+                <div style={{ fontSize: "13px", fontWeight: 700, color: "#0f0d2e", marginBottom: "8px" }}>Kapak Fotoğrafı</div>
+                <img src={detayKullanici.kapak_fotograf} alt="Kapak" style={{ width: "100%", height: "160px", objectFit: "cover", borderRadius: "10px" }} />
+              </div>
+            )}
+
+            {/* Belgeler */}
+            <div style={{ marginBottom: "24px" }}>
+              <div style={{ fontSize: "13px", fontWeight: 700, color: "#0f0d2e", marginBottom: "12px" }}>
+                Yüklenen Belgeler ({kullaniciBelgeler.length}/{zorunluBelgeler.length})
+              </div>
+              {zorunluBelgeler.map(zb => {
+                const belge = kullaniciBelgeler.find(b => b.belge_turu === zb.id);
+                return (
+                  <div key={zb.id} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "10px 14px", borderRadius: "8px", background: belge ? "#f0fff4" : "#fff0f0", border: `1px solid ${belge ? "#9f9" : "#fcc"}`, marginBottom: "8px" }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                      <span>{belge ? "✅" : "❌"}</span>
+                      <span style={{ fontSize: "13px", color: "#0f0d2e" }}>{zb.ad}</span>
+                    </div>
+                    {belge ? (
+                      <a href={belge.belge_url} target="_blank" rel="noreferrer" style={{ fontSize: "12px", color: "#534AB7", textDecoration: "none", fontWeight: 600 }}>Görüntüle →</a>
+                    ) : (
+                      <span style={{ fontSize: "11px", color: "#c00" }}>Yüklenmedi</span>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+
+            {/* Aksiyon butonları */}
+            <div style={{ display: "flex", gap: "10px" }}>
+              {!detayKullanici.onaylandi && !detayKullanici.askida && (
+                <button onClick={() => { guncelle(detayKullanici.id, "onaylandi", true); setDetayKullanici(null); }} style={{ flex: 1, background: "#059669", color: "#fff", border: "none", padding: "12px", borderRadius: "10px", fontSize: "14px", cursor: "pointer", fontWeight: 700 }}>
+                  ✅ Onayla
+                </button>
+              )}
+              {detayKullanici.onaylandi && !detayKullanici.askida && (
+                <button onClick={() => { guncelle(detayKullanici.id, "askida", true); setDetayKullanici(null); }} style={{ flex: 1, background: "#D97706", color: "#fff", border: "none", padding: "12px", borderRadius: "10px", fontSize: "14px", cursor: "pointer", fontWeight: 700 }}>
+                  ⏸ Askıya Al
+                </button>
+              )}
+              {detayKullanici.askida && (
+                <button onClick={() => { guncelle(detayKullanici.id, "askida", false); guncelle(detayKullanici.id, "onaylandi", true); setDetayKullanici(null); }} style={{ flex: 1, background: "#185FA5", color: "#fff", border: "none", padding: "12px", borderRadius: "10px", fontSize: "14px", cursor: "pointer", fontWeight: 700 }}>
+                  ✅ Aktif Et
+                </button>
+              )}
+              <button onClick={() => { kullaniciyiSil(detayKullanici.id); setDetayKullanici(null); }} style={{ background: "#fff0f0", color: "#c00", border: "1px solid #fcc", padding: "12px 20px", borderRadius: "10px", fontSize: "14px", cursor: "pointer", fontWeight: 600 }}>
+                🗑 Sil
+              </button>
+              <button onClick={() => setDetayKullanici(null)} style={{ background: "#f8f9ff", color: "#64748b", border: "1px solid #eeecff", padding: "12px 20px", borderRadius: "10px", fontSize: "14px", cursor: "pointer" }}>
+                Kapat
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       <div style={{ width: "220px", background: "#12103a", display: "flex", flexDirection: "column", padding: "24px 0", flexShrink: 0 }}>
         <div style={{ padding: "0 20px 24px", borderBottom: "1px solid #1e1b4b" }}>

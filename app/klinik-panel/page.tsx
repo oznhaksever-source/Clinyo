@@ -2,6 +2,110 @@
 import { useState, useEffect } from "react";
 import { createClient } from "../../utils/supabase/client";
 
+function BelgeYukle({ kullanici, supabase, onMesaj }: any) {
+  const [belgeler, setBelgeler] = useState<any[]>([]);
+  const [yukleniyor, setYukleniyor] = useState(false);
+
+  const zorunluBelgeler = [
+    { id: "saglik_bakanligi", ad: "Sağlık Bakanlığı Yetki Belgesi", aciklama: "Uluslararası Sağlık Turizmi Yetki Belgesi" },
+    { id: "faaliyet_ruhsati", ad: "Faaliyet Ruhsatı", aciklama: "Sağlık tesisi açma ve çalışma ruhsatı" },
+    { id: "hekim_sertifikasi", ad: "Sorumlu Hekim Sertifikası", aciklama: "Uzman doktor sertifikası ve diploması" },
+    { id: "sigorta_policesi", ad: "Sigorta Poliçesi", aciklama: "Zorunlu mesleki sorumluluk sigortası" },
+    { id: "vergi_levhasi", ad: "Vergi Levhası", aciklama: "Güncel vergi levhası" },
+    { id: "ticaret_sicil", ad: "Ticaret Sicil Belgesi", aciklama: "Güncel ticaret sicil gazetesi" },
+  ];
+
+  useEffect(() => { belgeleriGetir(); }, []);
+
+  async function belgeleriGetir() {
+    if (!kullanici) return;
+    const { data } = await supabase.from("belgeler").select("*").eq("kullanici_id", kullanici.id);
+    setBelgeler(data || []);
+  }
+
+  async function belgeYukle(belge_turu: string, file: File) {
+    setYukleniyor(true);
+    const dosyaAdi = `belgeler/${kullanici.id}/${belge_turu}_${Date.now()}_${file.name}`;
+    const { error } = await supabase.storage.from("medoqa-images").upload(dosyaAdi, file);
+    if (error) { onMesaj("Hata: " + error.message); setYukleniyor(false); return; }
+    const { data: url } = supabase.storage.from("medoqa-images").getPublicUrl(dosyaAdi);
+    // Varsa güncelle, yoksa ekle
+    const mevcut = belgeler.find(b => b.belge_turu === belge_turu);
+    if (mevcut) {
+      await supabase.from("belgeler").update({ belge_url: url.publicUrl, yukleme_tarihi: new Date().toISOString() }).eq("id", mevcut.id);
+    } else {
+      await supabase.from("belgeler").insert({ kullanici_id: kullanici.id, belge_turu, belge_url: url.publicUrl });
+    }
+    onMesaj("Belge yüklendi!");
+    belgeleriGetir();
+    setYukleniyor(false);
+    setTimeout(() => onMesaj(""), 3000);
+  }
+
+  async function belgeSil(id: string) {
+    await supabase.from("belgeler").delete().eq("id", id);
+    belgeleriGetir();
+  }
+
+  return (
+    <div>
+      <h1 style={{ fontSize: "24px", fontWeight: 700, color: "#12103a", marginBottom: "8px" }}>📄 Belgelerim</h1>
+      <p style={{ fontSize: "14px", color: "#888", marginBottom: "24px" }}>Onay sürecinde incelenecek belgelerinizi yükleyin. Tüm belgeler zorunludur.</p>
+
+      {yukleniyor && (
+        <div style={{ background: "#f0eeff", border: "1px solid #534AB7", borderRadius: "8px", padding: "10px 16px", marginBottom: "16px", fontSize: "13px", color: "#534AB7" }}>
+          ⏳ Belge yükleniyor...
+        </div>
+      )}
+
+      <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
+        {zorunluBelgeler.map(zb => {
+          const yuklendi = belgeler.find(b => b.belge_turu === zb.id);
+          return (
+            <div key={zb.id} style={{ background: "#fff", border: `1px solid ${yuklendi ? "#059669" : "#EEEDFE"}`, borderRadius: "14px", padding: "20px", display: "flex", justifyContent: "space-between", alignItems: "center", gap: "16px" }}>
+              <div style={{ flex: 1 }}>
+                <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "4px" }}>
+                  <span style={{ fontSize: "18px" }}>{yuklendi ? "✅" : "📋"}</span>
+                  <span style={{ fontSize: "14px", fontWeight: 700, color: "#0f0d2e" }}>{zb.ad}</span>
+                  {!yuklendi && <span style={{ fontSize: "10px", background: "#fff0f0", color: "#c00", padding: "2px 8px", borderRadius: "10px", fontWeight: 600 }}>Zorunlu</span>}
+                </div>
+                <p style={{ fontSize: "12px", color: "#94a3b8", margin: "0 0 0 28px" }}>{zb.aciklama}</p>
+                {yuklendi && (
+                  <div style={{ marginTop: "8px", marginLeft: "28px", display: "flex", alignItems: "center", gap: "12px" }}>
+                    <a href={yuklendi.belge_url} target="_blank" rel="noreferrer" style={{ fontSize: "12px", color: "#534AB7", textDecoration: "none", fontWeight: 600 }}>📎 Belgeyi Görüntüle</a>
+                    <span style={{ fontSize: "11px", color: "#94a3b8" }}>{new Date(yuklendi.yukleme_tarihi).toLocaleDateString("tr-TR")}</span>
+                  </div>
+                )}
+              </div>
+              <div style={{ display: "flex", gap: "8px", alignItems: "center", flexShrink: 0 }}>
+                <label style={{ background: yuklendi ? "#f0eeff" : "#534AB7", color: yuklendi ? "#534AB7" : "#fff", padding: "8px 16px", borderRadius: "8px", fontSize: "12px", cursor: "pointer", fontWeight: 600, whiteSpace: "nowrap" }}>
+                  {yuklendi ? "Güncelle" : "Yükle"}
+                  <input type="file" accept=".pdf,.jpg,.jpeg,.png" style={{ display: "none" }} onChange={e => { const f = e.target.files?.[0]; if (f) belgeYukle(zb.id, f); }} />
+                </label>
+                {yuklendi && (
+                  <button onClick={() => belgeSil(yuklendi.id)} style={{ background: "#fff0f0", color: "#c00", border: "none", padding: "8px 12px", borderRadius: "8px", fontSize: "12px", cursor: "pointer" }}>Sil</button>
+                )}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
+      <div style={{ marginTop: "24px", background: "#f0eeff", border: "1px solid #EEEDFE", borderRadius: "12px", padding: "16px 20px" }}>
+        <div style={{ fontSize: "13px", fontWeight: 700, color: "#534AB7", marginBottom: "6px" }}>
+          {belgeler.length}/{zorunluBelgeler.length} belge yüklendi
+        </div>
+        <div style={{ background: "#e5e7eb", borderRadius: "6px", height: "8px", overflow: "hidden" }}>
+          <div style={{ background: belgeler.length === zorunluBelgeler.length ? "#059669" : "#534AB7", height: "100%", width: `${(belgeler.length / zorunluBelgeler.length) * 100}%`, transition: "width 0.3s", borderRadius: "6px" }} />
+        </div>
+        {belgeler.length === zorunluBelgeler.length && (
+          <p style={{ fontSize: "12px", color: "#059669", marginTop: "8px", fontWeight: 600 }}>✅ Tüm belgeler yüklendi! Admin onayı bekleniyor.</p>
+        )}
+      </div>
+    </div>
+  );
+}
+
 const hizmetKategorileri = {
   "Diş Tedavisi": {
     "Genel Diş": ["Muayene", "Röntgen", "Kanal Tedavisi", "Diş Çekimi", "Dolgu (Kompozit)", "Dolgu (Amalgam)", "Diş Taşı Temizleme"],
@@ -263,6 +367,7 @@ export default function KlinikPanel() {
             { id: "once-sonra", ad: "Önce/Sonra" },
             { id: "talepler", ad: "Teklif Talepleri" },
             { id: "tekliflerim", ad: "Gönderilen Teklifler" },
+{ id: "belgeler", ad: "📄 Belgelerim" },
 { id: "mesajlar", ad: "💬 Mesajlar" },
           ].map((m) => (
             <div key={m.id} onClick={() => setAktifMenu(m.id)} style={{ padding: "10px 12px", borderRadius: "8px", cursor: "pointer", marginBottom: "4px", background: aktifMenu === m.id ? "#534AB7" : "transparent", color: aktifMenu === m.id ? "#fff" : "#8b8fc8", fontSize: "13px" }}>
@@ -625,7 +730,11 @@ export default function KlinikPanel() {
                 </div>
               </div>
             )}
-          {aktifMenu === "mesajlar" && (
+          {aktifMenu === "belgeler" && (
+              <BelgeYukle kullanici={kullanici} supabase={supabase} onMesaj={setMesaj} />
+            )}
+
+            {aktifMenu === "mesajlar" && (
               <div>
                 <h1 style={{ fontSize: "24px", fontWeight: 700, color: "#12103a", marginBottom: "8px" }}>💬 Mesajlar</h1>
                 <p style={{ fontSize: "14px", color: "#888", marginBottom: "24px" }}>Hastalarla mesajlaşmak için mesajlar sayfasını kullanın.</p>
