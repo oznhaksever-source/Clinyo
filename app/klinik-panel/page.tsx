@@ -25,21 +25,51 @@ function BelgeYukle({ kullanici, supabase, onMesaj }: any) {
 
   async function belgeYukle(belge_turu: string, file: File) {
     setYukleniyor(true);
-    const dosyaAdi = `belgeler/${kullanici.id}/${belge_turu}_${Date.now()}_${file.name}`;
-    const { error } = await supabase.storage.from("medoqa-images").upload(dosyaAdi, file);
-    if (error) { onMesaj("Hata: " + error.message); setYukleniyor(false); return; }
-    const { data: url } = supabase.storage.from("medoqa-images").getPublicUrl(dosyaAdi);
-    // Varsa güncelle, yoksa ekle
-    const mevcut = belgeler.find(b => b.belge_turu === belge_turu);
-    if (mevcut) {
-      await supabase.from("belgeler").update({ belge_url: url.publicUrl, yukleme_tarihi: new Date().toISOString() }).eq("id", mevcut.id);
-    } else {
-      await supabase.from("belgeler").insert({ kullanici_id: kullanici.id, belge_turu, belge_url: url.publicUrl });
+    try {
+      // Kullanıcı ID kontrol
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) { onMesaj("Hata: Oturum bulunamadı!"); setYukleniyor(false); return; }
+
+      const dosyaAdi = `belgeler/${user.id}/${belge_turu}_${Date.now()}_${file.name}`;
+      
+      // Storage'a yükle
+      const { error: uploadError } = await supabase.storage
+        .from("medoqa-images")
+        .upload(dosyaAdi, file, { upsert: true });
+      
+      if (uploadError) { 
+        onMesaj("Storage Hata: " + uploadError.message); 
+        setYukleniyor(false); 
+        return; 
+      }
+      
+      // Public URL al
+      const { data: urlData } = supabase.storage
+        .from("medoqa-images")
+        .getPublicUrl(dosyaAdi);
+      
+      // Veritabanına kaydet
+      const mevcut = belgeler.find(b => b.belge_turu === belge_turu);
+      if (mevcut) {
+        const { error: updateError } = await supabase
+          .from("belgeler")
+          .update({ belge_url: urlData.publicUrl, yukleme_tarihi: new Date().toISOString() })
+          .eq("id", mevcut.id);
+        if (updateError) { onMesaj("DB Güncelleme Hata: " + updateError.message); setYukleniyor(false); return; }
+      } else {
+        const { error: insertError } = await supabase
+          .from("belgeler")
+          .insert({ kullanici_id: user.id, belge_turu, belge_url: urlData.publicUrl });
+        if (insertError) { onMesaj("DB Kayıt Hata: " + insertError.message); setYukleniyor(false); return; }
+      }
+      
+      onMesaj("✅ Belge başarıyla yüklendi!");
+      belgeleriGetir();
+    } catch (err: any) {
+      onMesaj("Beklenmeyen Hata: " + err.message);
     }
-    onMesaj("Belge yüklendi!");
-    belgeleriGetir();
     setYukleniyor(false);
-    setTimeout(() => onMesaj(""), 3000);
+    setTimeout(() => onMesaj(""), 4000);
   }
 
   async function belgeSil(id: string) {
