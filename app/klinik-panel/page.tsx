@@ -366,9 +366,7 @@ export default function KlinikPanel() {
 
   async function teklifGonder() {
     if (!yeniTeklif.talep_id || !yeniTeklif.fiyat) return;
-    // Zaten teklif verilmiş mi kontrol et
-    const mevcutTeklif = teklifler.find(t => t.talep_id === yeniTeklif.talep_id);
-    if (mevcutTeklif) { setMesaj("Bu talep için zaten teklif gönderdiniz!"); setTimeout(() => setMesaj(""), 3000); return; }
+    
     const { data: { user } } = await supabase.auth.getUser();
     const tedaviFiyat = parseFloat(yeniTeklif.fiyat) || 0;
     const otelFiyat = yeniTeklif.otel_dahil ? (parseFloat(yeniTeklif.otel_fiyat) || 0) : 0;

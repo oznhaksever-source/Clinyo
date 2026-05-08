@@ -164,9 +164,11 @@ function ToothSVG({ no, upper, conds }: { no: number; upper: boolean; conds: str
     }
   }
 
-  if (cekim) {
-    inner += `<line x1="2" y1="3" x2="24" y2="61" stroke="#E24B4A" stroke-width="2.5" stroke-linecap="round" opacity=".85"/>
-      <line x1="24" y1="3" x2="2" y2="61" stroke="#E24B4A" stroke-width="2.5" stroke-linecap="round" opacity=".85"/>`;
+  if (cekim && !impl) {
+    // Çekim: diş boşluğu göster, çarpı değil
+    inner = `<rect x="2" y="2" width="22" height="60" rx="4" fill="none" stroke="#E24B4A" stroke-width="1" stroke-dasharray="4,3"/>
+      <line x1="8" y1="20" x2="18" y2="44" stroke="#E24B4A" stroke-width="1.5" stroke-linecap="round" opacity=".5"/>
+      <line x1="18" y1="20" x2="8" y2="44" stroke="#E24B4A" stroke-width="1.5" stroke-linecap="round" opacity=".5"/>`;
   }
   if (multi) {
     inner += `<circle cx="22" cy="5" r="5" fill="#1a1840"/>
