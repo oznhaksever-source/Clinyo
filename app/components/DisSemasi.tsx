@@ -19,7 +19,7 @@ const TIP_ISIM: Record<string, string> = {
 };
 
 interface DisSemasiProps {
-  onDegistir?: (tedaviPlan: Record<number, string>) => void;
+  onDegistir?: (tedaviPlan: Record<number, string[]>) => void;
 }
 
 export default function DisSemasi({ onDegistir }: DisSemasiProps) {
