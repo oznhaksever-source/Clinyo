@@ -204,86 +204,29 @@ export default function HastaPanel() {
                     <div style={{ fontSize: "13px", color: "#888" }}>Henüz gelen teklif yok. Teklif talebi oluşturduktan sonra klinikler size teklif gönderecek.</div>
                   </div>
                 ) : (
-                  <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
+                  <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
                     {teklifler.map((t) => (
-                      <div key={t.id} style={{ background: "#fff", border: `2px solid ${t.durum === "onaylandi" ? "#059669" : t.durum === "reddedildi" ? "#fcc" : "#EEEDFE"}`, borderRadius: "16px", padding: "24px" }}>
-                        
-                        {/* Üst kısım - Klinik bilgisi */}
-                        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "16px" }}>
-                          <div style={{ flex: 1 }}>
-                            <div style={{ fontSize: "16px", fontWeight: 700, color: "#12103a", marginBottom: "4px" }}>
+                      <a key={t.id} href={`/teklifler/${t.id}`} style={{ textDecoration: "none", display: "block", background: "#fff", border: `2px solid ${t.durum === "onaylandi" ? "#059669" : t.durum === "reddedildi" ? "#fcc" : "#EEEDFE"}`, borderRadius: "14px", padding: "18px" }}>
+                        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                          <div>
+                            <div style={{ fontSize: "15px", fontWeight: 700, color: "#12103a", marginBottom: "4px" }}>
                               🏥 {t.profiles?.ad} {t.profiles?.soyad}
                             </div>
-                            {t.profiles?.konum_adres && (
-                              <div style={{ fontSize: "12px", color: "#94a3b8", marginBottom: "6px" }}>📍 {t.profiles.konum_adres}</div>
-                            )}
-                            {t.aciklama && (
-                              <div style={{ fontSize: "13px", color: "#64748b" }}>{t.aciklama}</div>
-                            )}
+                            {t.profiles?.konum_adres && <div style={{ fontSize: "12px", color: "#94a3b8" }}>📍 {t.profiles.konum_adres}</div>}
+                            <div style={{ fontSize: "12px", color: "#94a3b8", marginTop: "2px" }}>{new Date(t.olusturma_tarihi).toLocaleDateString("tr-TR")}</div>
                           </div>
-                          <span style={{ fontSize: "12px", padding: "4px 12px", borderRadius: "20px", flexShrink: 0, marginLeft: "12px",
-                            background: t.durum === "onaylandi" ? "#f0fff4" : t.durum === "reddedildi" ? "#fff0f0" : "#fff8e1",
-                            color: t.durum === "onaylandi" ? "#059669" : t.durum === "reddedildi" ? "#c00" : "#BA7517",
-                            fontWeight: 600
-                          }}>
-                            {t.durum === "onaylandi" ? "✅ Onaylandı" : t.durum === "reddedildi" ? "❌ Reddedildi" : "⏳ Beklemede"}
-                          </span>
-                        </div>
-
-                        {/* Fiyat detayları */}
-                        <div style={{ background: "#f8f9ff", borderRadius: "10px", padding: "16px", marginBottom: "16px" }}>
-                          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "8px" }}>
-                            <span style={{ fontSize: "13px", color: "#64748b" }}>💊 Tedavi Ücreti</span>
-                            <span style={{ fontSize: "15px", fontWeight: 700, color: "#534AB7" }}>{t.fiyat} EUR</span>
+                          <div style={{ textAlign: "right" }}>
+                            <div style={{ fontSize: "20px", fontWeight: 700, color: "#534AB7", marginBottom: "4px" }}>{t.toplam_fiyat || t.fiyat} EUR</div>
+                            <span style={{ fontSize: "11px", padding: "3px 10px", borderRadius: "20px", fontWeight: 600,
+                              background: t.durum === "onaylandi" ? "#f0fff4" : t.durum === "reddedildi" ? "#fff0f0" : "#fff8e1",
+                              color: t.durum === "onaylandi" ? "#059669" : t.durum === "reddedildi" ? "#c00" : "#BA7517"
+                            }}>
+                              {t.durum === "onaylandi" ? "✅ Onaylandı" : t.durum === "reddedildi" ? "❌ Reddedildi" : "⏳ Beklemede"}
+                            </span>
                           </div>
-                          {t.otel_dahil && (
-                            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "8px" }}>
-                              <span style={{ fontSize: "13px", color: "#64748b" }}>🏨 Otel — {t.otel_aciklama}</span>
-                              <span style={{ fontSize: "14px", fontWeight: 600, color: "#059669" }}>{t.otel_fiyat} EUR</span>
-                            </div>
-                          )}
-                          {t.transfer_dahil && (
-                            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "8px" }}>
-                              <span style={{ fontSize: "13px", color: "#64748b" }}>🚗 Transfer — {t.transfer_aciklama}</span>
-                              <span style={{ fontSize: "14px", fontWeight: 600, color: "#059669" }}>{t.transfer_fiyat} EUR</span>
-                            </div>
-                          )}
-                          {(t.otel_dahil || t.transfer_dahil) && (
-                            <>
-                              <div style={{ borderTop: "1px solid #EEEDFE", margin: "8px 0" }} />
-                              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                                <span style={{ fontSize: "14px", fontWeight: 700, color: "#0f0d2e" }}>💰 Toplam</span>
-                                <span style={{ fontSize: "18px", fontWeight: 800, color: "#534AB7" }}>{t.toplam_fiyat} EUR</span>
-                              </div>
-                            </>
-                          )}
                         </div>
-
-                        {/* Tarih */}
-                        <div style={{ fontSize: "11px", color: "#94a3b8", marginBottom: "16px" }}>
-                          {new Date(t.olusturma_tarihi).toLocaleDateString("tr-TR")}
-                        </div>
-
-                        {/* Butonlar */}
-                        {t.durum === "beklemede" && (
-                          <div style={{ display: "flex", gap: "10px" }}>
-                            <button onClick={() => teklifOnayla(t.id, t.klinik_id)} style={{ flex: 2, background: "#059669", color: "#fff", border: "none", padding: "12px", borderRadius: "10px", fontSize: "14px", cursor: "pointer", fontWeight: 700 }}>
-                              ✅ Teklifi Onayla
-                            </button>
-                            <button onClick={() => teklifReddet(t.id)} style={{ flex: 1, background: "#fff0f0", color: "#c00", border: "1px solid #fcc", padding: "12px", borderRadius: "10px", fontSize: "13px", cursor: "pointer", fontWeight: 600 }}>
-                              ❌ Reddet
-                            </button>
-                            <a href="/mesajlar" style={{ flex: 1, background: "#f0eeff", color: "#534AB7", border: "1px solid #EEEDFE", padding: "12px", borderRadius: "10px", fontSize: "13px", cursor: "pointer", fontWeight: 600, textDecoration: "none", textAlign: "center" as const, display: "flex", alignItems: "center", justifyContent: "center" }}>
-                              💬 Sor
-                            </a>
-                          </div>
-                        )}
-                        {t.durum === "onaylandi" && (
-                          <a href="/mesajlar" style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "8px", background: "#534AB7", color: "#fff", padding: "12px", borderRadius: "10px", fontSize: "14px", textDecoration: "none", fontWeight: 600 }}>
-                            💬 Klinik ile Mesajlaş
-                          </a>
-                        )}
-                      </div>
+                        <div style={{ fontSize: "12px", color: "#534AB7", marginTop: "8px", fontWeight: 500 }}>Detayları gör →</div>
+                      </a>
                     ))}
                   </div>
                 )}
