@@ -23,7 +23,7 @@ interface DisSemasiProps {
 }
 
 export default function DisSemasi({ onDegistir }: DisSemasiProps) {
-  const [tedaviler, setTedaviler] = useState<Record<number, string>>({});
+  const [tedaviler, setTedaviler] = useState<Record<number, string[]>>({});
   const [seciliDis, setSeciliDis] = useState<number | null>(null);
 
   const ustSira = [18,17,16,15,14,13,12,11,21,22,23,24,25,26,27,28];
@@ -31,7 +31,12 @@ export default function DisSemasi({ onDegistir }: DisSemasiProps) {
 
   function tedaviSec(tip: string) {
     if (!seciliDis) return;
-    const yeni = { ...tedaviler, [seciliDis]: tip };
+    const mevcutlar = tedaviler[seciliDis] || [];
+    const yeniListe = mevcutlar.includes(tip)
+      ? mevcutlar.filter(t => t !== tip)
+      : [...mevcutlar, tip];
+    const yeni = { ...tedaviler, [seciliDis]: yeniListe };
+    if (yeniListe.length === 0) delete yeni[seciliDis];
     setTedaviler(yeni);
     onDegistir?.(yeni);
   }
@@ -53,7 +58,8 @@ export default function DisSemasi({ onDegistir }: DisSemasiProps) {
 
   function DisSekli({ no, alt }: { no: number; alt: boolean }) {
     const tip = TIPLER[no];
-    const renk = tedaviler[no] ? RENKLER[tedaviler[no]] : RENKLER.default;
+    const mevcutTedaviler = tedaviler[no] || [];
+const renk = mevcutTedaviler.length > 0 ? RENKLER[mevcutTedaviler[0]] : RENKLER.default;
     const secili = seciliDis === no;
 
     function getPath() {
@@ -104,7 +110,7 @@ export default function DisSemasi({ onDegistir }: DisSemasiProps) {
         >
           <path d={getPath()} fill={renk} stroke={secili ? "#534AB7" : "rgba(0,0,0,0.12)"} strokeWidth={secili ? 2 : 0.8} />
           {tumpaths}
-          {tedaviler[no] === "cekim" && (
+          {(tedaviler[no] || []).includes("cekim") && (
             <>
               <line x1={6} y1={8} x2={22} y2={30} stroke="white" strokeWidth={2.5} strokeLinecap="round" />
               <line x1={22} y1={8} x2={6} y2={30} stroke="white" strokeWidth={2.5} strokeLinecap="round" />
@@ -118,9 +124,11 @@ export default function DisSemasi({ onDegistir }: DisSemasiProps) {
 
   // Özet
   const gruplar: Record<string, number[]> = {};
-  for (const [no, tip] of Object.entries(tedaviler)) {
-    if (!gruplar[tip]) gruplar[tip] = [];
-    gruplar[tip].push(Number(no));
+  for (const [no, tipler] of Object.entries(tedaviler)) {
+    for (const tip of tipler) {
+      if (!gruplar[tip]) gruplar[tip] = [];
+      gruplar[tip].push(Number(no));
+    }
   }
 
   return (
@@ -163,9 +171,9 @@ export default function DisSemasi({ onDegistir }: DisSemasiProps) {
                 onClick={() => tedaviSec(k)}
                 style={{
                   padding: "6px 14px", borderRadius: "8px", fontSize: "12px", cursor: "pointer", fontWeight: 600,
-                  background: tedaviler[seciliDis] === k ? RENKLER[k] : "#fff",
-                  color: tedaviler[seciliDis] === k ? "#fff" : "#374151",
-                  border: `1px solid ${tedaviler[seciliDis] === k ? RENKLER[k] : "#e5e7eb"}`,
+                  background: (tedaviler[seciliDis] || []).includes(k) ? RENKLER[k] : "#fff",
+                  color: (tedaviler[seciliDis] || []).includes(k) ? "#fff" : "#374151",
+                  border: `1px solid ${(tedaviler[seciliDis] || []).includes(k) ? RENKLER[k] : "#e5e7eb"}`,
                 }}
               >{v}</button>
             ))}
