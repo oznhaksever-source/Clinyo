@@ -2,6 +2,7 @@
 import { useState, useEffect } from "react";
 import { createClient } from "../../utils/supabase/client";
 import DisSemasi from "../components/DisSemasi";
+import { useDil } from "../locales/context";
 
 // ─── TDB Hizmet Listesi ───────────────────────────────────────────────────────
 const TDB_LISTE: Record<string, Record<string, string[]>> = {
@@ -214,6 +215,138 @@ const DIS_SEMASI_MAP: Record<string,string> = {
   "Detartraj (Diş Taşı Temizliği - Tek Çene)":"yok",
 };
 
+
+// ─── Çok dilli metinler ──────────────────────────────────────────────────────
+const M = {
+  tr: {
+    panel:"Klinik Paneli",
+    menu:{ozet:"🏠 Genel Özet",profil:"✏️ Profil Düzenle",hizmetler:"💉 Hizmet & Fiyatlar",doktorlar:"👨‍⚕️ Doktorlar",onceSonra:"📸 Önce/Sonra",talepler:"📋 Teklif Talepleri",tekliflerim:"📤 Gönderilen Teklifler",belgeler:"📄 Belgelerim",mesajlar:"💬 Mesajlar"},
+    cikis:"Çıkış Yap",onaylandi:"✓ Onaylandı",onayBekliyor:"⏳ Onay Bekleniyor",
+    hosgeldin:"Hoş Geldiniz",panelAcik:"Klinik panelinizden profilinizi ve hizmetlerinizi yönetebilirsiniz.",
+    onayBekle:"Hesabınız Onay Bekliyor",onayBekleAcik:"Klinik hesabınız admin tarafından henüz onaylanmamış.",
+    ist:{hizmet:"Hizmet",doktor:"Doktor",onceSonra:"Önce/Sonra",teklif:"Teklif"},
+    kapakFoto:"Kapak Fotoğrafı",klinikBilgi:"Klinik Bilgileri",tanitim:"Tanıtım Yazısı",tanitimPH:"Kliniğiniz hakkında kısa bir tanıtım yazısı...",
+    telefon:"Telefon",website:"Website",adres:"Adres",googleMaps:"Google Maps URL",sosyal:"Sosyal Medya",kaydet:"Profili Kaydet",
+    hizmetListesi:"Hizmet & Fiyat Listesi",yeniHizmet:"Yeni Hizmet Ekle",kategori:"Kategori",altKat:"Alt Kategori",
+    listeden:"Listeden Seç",ozelAd:"Özel Hizmet Adı",ozelAdPH:"Listede yoksa buraya yazın",
+    fiyat:"Fiyat",paraBirimi:"Para Birimi",sure:"Süre",aciklama:"Açıklama",disSemasi:"Diş Şeması",
+    hizmetEkleBtn:"+ Hizmet Ekle",mevcutHizmetler:"Hizmet Listem",
+    hizmetSutun:{ad:"Hizmet",kat:"Kategori",dis:"Diş Şeması",fiyat:"Fiyat",islem:"İşlem"},
+    pasife:"Pasife Al",aktife:"Aktife Al",sil:"Sil",
+    doktorlarBaslik:"Doktorlar",doktorEkle:"Doktor Ekle",doktorAd:"Ad Soyad",uzmanlik:"Uzmanlık",doktorFoto:"Fotoğraf",doktorEkleBtn:"+ Doktor Ekle",
+    osBaslik:"Önce / Sonra Fotoğrafları",yeniEkle:"Yeni Ekle",hizmetAdi:"Hizmet Adı",hizmetAdPH:"Zirkonyum Kaplama, Saç Ekimi...",
+    onceFoto:"Önce Fotoğrafı",sonraFoto:"Sonra Fotoğrafı",ekleBtn:"+ Ekle",once:{m.once},sonra:{m.sonra},
+    teklifTalepleri:"Teklif Talepleri",hasta:"Hasta",teklifYok:"Henüz teklif talebi yok",
+    disPlani:"🦷 Diş Şeması ile Tedavi Planı",tedaviListesi:"Tedavi Listesi",islem:"işlem",
+    tedaviFiyati:"Tedavi Fiyatı (EUR)",aciklamaPH:"Ek açıklama...",
+    otelDahil:"🏨 Otel Dahil",otelAdi:"Otel adı / açıklama",otelFiyat:"Fiyat (EUR)",
+    transferDahil:"🚗 Transfer Dahil",transferAciklama:"Havalimanı-otel vb.",transferFiyat:"Fiyat (EUR)",
+    toplam:"Toplam",teklifGonder:"✅ Teklif Gönder",teklifAc:m.teklifAc,kapat:m.kapat,
+    gonderilen:"Gönderilen Teklifler",teklifYokGon:"Henüz teklif gönderilmedi",
+    yazdir:"🖨️ Yazdır",mesajlas:"💬 Hasta ile Mesajlaş",
+    onaylandiL:"✅ Onaylandı",reddedildiL:"❌ Reddedildi",beklemede:"⏳ Beklemede",
+    belgelerBaslik:"📄 Belgelerim",belgeAcik:"Onay sürecinde incelenecek belgelerinizi yükleyin.",
+    zorunlu:"Zorunlu",guncelle:"Güncelle",yukle:"Yükle",goruntule:"📎 Görüntüle",
+    belgeYukleniyor:"⏳ Belge yükleniyor...",belgeTamamlandi:"✅ Tüm belgeler yüklendi! Admin onayı bekleniyor.",
+    mesajlarBaslik:"💬 Mesajlar",mesajlarAcik:"Hastalarla mesajlaşmak için mesajlar sayfasını kullanın.",
+    mesajlarGit:"💬 Mesajlar Sayfasına Git →",
+    yukleniyor:"Yükleniyor...",
+    teklifGonderildi:"✅ Teklif gönderildi!",profilKaydedildi:"✅ Profil kaydedildi!",kapakYuklendi:"✅ Kapak fotoğrafı yüklendi!",
+    hizmetEklendi:"✅ Hizmet eklendi!",doktorEklendi:"✅ Doktor eklendi!",osEklendi:"✅ Önce/Sonra eklendi!",
+    hizmetAdZ:"Hata: Hizmet adı ve fiyat zorunludur!",doktorAdZ:"Hata: Doktor adı zorunludur!",
+    fotoZ:"Hata: Önce ve sonra fotoğrafları zorunludur!",fiyatZ:"Hata: Fiyat girilmelidir!",
+    hizmetYok:"Henüz hizmet eklenmemiş.",doktorYok:"Henüz doktor eklenmemiş.",osYok:"Henüz önce/sonra eklenmemiş.",
+    silOnay:"Silmek istediğinize emin misiniz?",fiyatYok:m.fiyatYok,
+    disHizmetYok:m.disHizmetYok,
+    profilDuzenle:"Profil Düzenle",hizmetEkle:"Hizmet Ekle",doktorEkle2:"Doktor Ekle",teklifTalepBtn:"Teklif Talepleri",
+  },
+  en: {
+    panel:"Clinic Panel",
+    menu:{ozet:"🏠 Overview",profil:"✏️ Edit Profile",hizmetler:"💉 Services & Prices",doktorlar:"👨‍⚕️ Doctors",onceSonra:"📸 Before/After",talepler:"📋 Quote Requests",tekliflerim:"📤 Sent Offers",belgeler:"📄 My Documents",mesajlar:"💬 Messages"},
+    cikis:"Sign Out",onaylandi:"✓ Approved",onayBekliyor:"⏳ Awaiting Approval",
+    hosgeldin:"Welcome",panelAcik:"Manage your profile and services from the clinic panel.",
+    onayBekle:"Account Awaiting Approval",onayBekleAcik:"Your clinic account has not been approved by the admin yet.",
+    ist:{hizmet:"Services",doktor:"Doctors",onceSonra:"Before/After",teklif:"Offers"},
+    kapakFoto:"Cover Photo",klinikBilgi:"Clinic Information",tanitim:"Introduction",tanitimPH:"A short introduction about your clinic...",
+    telefon:"Phone",website:"Website",adres:"Address",googleMaps:"Google Maps URL",sosyal:"Social Media",kaydet:"Save Profile",
+    hizmetListesi:"Service & Price List",yeniHizmet:"Add New Service",kategori:"Category",altKat:"Sub-category",
+    listeden:"Select from list",ozelAd:"Custom Service Name",ozelAdPH:"Write here if not in the list",
+    fiyat:"Price",paraBirimi:"Currency",sure:"Duration",aciklama:"Description",disSemasi:"Dental Chart",
+    hizmetEkleBtn:"+ Add Service",mevcutHizmetler:"My Service List",
+    hizmetSutun:{ad:"Service",kat:"Category",dis:"Dental Chart",fiyat:"Price",islem:"Action"},
+    pasife:"Deactivate",aktife:"Activate",sil:"Delete",
+    doktorlarBaslik:"Doctors",doktorEkle:"Add Doctor",doktorAd:"Full Name",uzmanlik:"Specialization",doktorFoto:"Photo",doktorEkleBtn:"+ Add Doctor",
+    osBaslik:"Before / After Photos",yeniEkle:"Add New",hizmetAdi:"Service Name",hizmetAdPH:"Zirconia Crown, Hair Transplant...",
+    onceFoto:"Before Photo",sonraFoto:"After Photo",ekleBtn:"+ Add",once:"BEFORE",sonra:"AFTER",
+    teklifTalepleri:"Quote Requests",hasta:"Patient",teklifYok:"No quote requests yet",
+    disPlani:"🦷 Treatment Plan — Dental Chart",tedaviListesi:"Treatment List",islem:"procedures",
+    tedaviFiyati:"Treatment Price (EUR)",aciklamaPH:"Additional notes...",
+    otelDahil:"🏨 Hotel Included",otelAdi:"Hotel name / description",otelFiyat:"Price (EUR)",
+    transferDahil:"🚗 Transfer Included",transferAciklama:"Airport-hotel etc.",transferFiyat:"Price (EUR)",
+    toplam:"Total",teklifGonder:"✅ Send Offer",teklifAc:"Make Offer →",kapat:"Close ↑",
+    gonderilen:"Sent Offers",teklifYokGon:"No offers sent yet",
+    yazdir:"🖨️ Print",mesajlas:"💬 Message Patient",
+    onaylandiL:"✅ Approved",reddedildiL:"❌ Rejected",beklemede:"⏳ Pending",
+    belgelerBaslik:"📄 My Documents",belgeAcik:"Upload your documents for the approval process.",
+    zorunlu:"Required",guncelle:"Update",yukle:"Upload",goruntule:"📎 View",
+    belgeYukleniyor:"⏳ Uploading document...",belgeTamamlandi:"✅ All documents uploaded! Awaiting admin approval.",
+    mesajlarBaslik:"💬 Messages",mesajlarAcik:"Use the messages page to communicate with patients.",
+    mesajlarGit:"💬 Go to Messages →",
+    yukleniyor:"Loading...",
+    teklifGonderildi:"✅ Offer sent!",profilKaydedildi:"✅ Profile saved!",kapakYuklendi:"✅ Cover photo uploaded!",
+    hizmetEklendi:"✅ Service added!",doktorEklendi:"✅ Doctor added!",osEklendi:"✅ Before/After added!",
+    hizmetAdZ:"Error: Service name and price are required!",doktorAdZ:"Error: Doctor name is required!",
+    fotoZ:"Error: Before and after photos are required!",fiyatZ:"Error: Price is required!",
+    hizmetYok:"No services added yet.",doktorYok:"No doctors added yet.",osYok:"No before/after photos added yet.",
+    silOnay:"Are you sure you want to delete?",fiyatYok:"No price",
+    disHizmetYok:"⚠️ No service found for this category",
+    profilDuzenle:"Edit Profile",hizmetEkle:"Add Service",doktorEkle2:"Add Doctor",teklifTalepBtn:"Quote Requests",
+  },
+  de: {
+    panel:"Klinikbereich",
+    menu:{ozet:"🏠 Übersicht",profil:"✏️ Profil bearbeiten",hizmetler:"💉 Leistungen & Preise",doktorlar:"👨‍⚕️ Ärzte",onceSonra:"📸 Vorher/Nachher",talepler:"📋 Angebotsanfragen",tekliflerim:"📤 Gesendete Angebote",belgeler:"📄 Meine Dokumente",mesajlar:"💬 Nachrichten"},
+    cikis:"Abmelden",onaylandi:"✓ Genehmigt",onayBekliyor:"⏳ Genehmigung ausstehend",
+    hosgeldin:"Willkommen",panelAcik:"Verwalten Sie Ihr Profil und Ihre Leistungen über den Klinikbereich.",
+    onayBekle:"Konto wartet auf Genehmigung",onayBekleAcik:"Ihr Kliniккonto wurde vom Administrator noch nicht genehmigt.",
+    ist:{hizmet:"Leistungen",doktor:"Ärzte",onceSonra:"Vorher/Nachher",teklif:"Angebote"},
+    kapakFoto:"Titelbild",klinikBilgi:"Klinikinformationen",tanitim:"Vorstellung",tanitimPH:"Eine kurze Vorstellung Ihrer Klinik...",
+    telefon:"Telefon",website:"Website",adres:"Adresse",googleMaps:"Google Maps URL",sosyal:"Soziale Medien",kaydet:"Profil speichern",
+    hizmetListesi:"Leistungs- & Preisliste",yeniHizmet:"Neue Leistung hinzufügen",kategori:"Kategorie",altKat:"Unterkategorie",
+    listeden:"Aus Liste auswählen",ozelAd:"Benutzerdefinierter Name",ozelAdPH:"Hier eingeben, wenn nicht in der Liste",
+    fiyat:"Preis",paraBirimi:"Währung",sure:"Dauer",aciklama:"Beschreibung",disSemasi:"Zahnschema",
+    hizmetEkleBtn:"+ Leistung hinzufügen",mevcutHizmetler:"Meine Leistungsliste",
+    hizmetSutun:{ad:"Leistung",kat:"Kategorie",dis:"Zahnschema",fiyat:"Preis",islem:"Aktion"},
+    pasife:"Deaktivieren",aktife:"Aktivieren",sil:"Löschen",
+    doktorlarBaslik:"Ärzte",doktorEkle:"Arzt hinzufügen",doktorAd:"Vollständiger Name",uzmanlik:"Fachgebiet",doktorFoto:"Foto",doktorEkleBtn:"+ Arzt hinzufügen",
+    osBaslik:"Vorher / Nachher Fotos",yeniEkle:"Neu hinzufügen",hizmetAdi:"Leistungsname",hizmetAdPH:"Zirkonkrone, Haartransplantation...",
+    onceFoto:"Vorher-Foto",sonraFoto:"Nachher-Foto",ekleBtn:"+ Hinzufügen",once:"VORHER",sonra:"NACHHER",
+    teklifTalepleri:"Angebotsanfragen",hasta:"Patient",teklifYok:"Noch keine Angebotsanfragen",
+    disPlani:"🦷 Behandlungsplan — Zahnschema",tedaviListesi:"Behandlungsliste",islem:"Eingriffe",
+    tedaviFiyati:"Behandlungspreis (EUR)",aciklamaPH:"Zusätzliche Hinweise...",
+    otelDahil:"🏨 Hotel inklusive",otelAdi:"Hotelname / Beschreibung",otelFiyat:"Preis (EUR)",
+    transferDahil:"🚗 Transfer inklusive",transferAciklama:"Flughafen-Hotel usw.",transferFiyat:"Preis (EUR)",
+    toplam:"Gesamt",teklifGonder:"✅ Angebot senden",teklifAc:"Angebot machen →",kapat:"Schließen ↑",
+    gonderilen:"Gesendete Angebote",teklifYokGon:"Noch keine Angebote gesendet",
+    yazdir:"🖨️ Drucken",mesajlas:"💬 Patient kontaktieren",
+    onaylandiL:"✅ Genehmigt",reddedildiL:"❌ Abgelehnt",beklemede:"⏳ Ausstehend",
+    belgelerBaslik:"📄 Meine Dokumente",belgeAcik:"Laden Sie Ihre Dokumente für den Genehmigungsprozess hoch.",
+    zorunlu:"Erforderlich",guncelle:"Aktualisieren",yukle:"Hochladen",goruntule:"📎 Anzeigen",
+    belgeYukleniyor:"⏳ Dokument wird hochgeladen...",belgeTamamlandi:"✅ Alle Dokumente hochgeladen! Warte auf Admin-Genehmigung.",
+    mesajlarBaslik:"💬 Nachrichten",mesajlarAcik:"Nutzen Sie die Nachrichtenseite, um mit Patienten zu kommunizieren.",
+    mesajlarGit:"💬 Zur Nachrichtenseite →",
+    yukleniyor:"Wird geladen...",
+    teklifGonderildi:"✅ Angebot gesendet!",profilKaydedildi:"✅ Profil gespeichert!",kapakYuklendi:"✅ Titelbild hochgeladen!",
+    hizmetEklendi:"✅ Leistung hinzugefügt!",doktorEklendi:"✅ Arzt hinzugefügt!",osEklendi:"✅ Vorher/Nachher hinzugefügt!",
+    hizmetAdZ:"Fehler: Leistungsname und Preis sind erforderlich!",doktorAdZ:"Fehler: Arztname ist erforderlich!",
+    fotoZ:"Fehler: Vorher- und Nachher-Fotos sind erforderlich!",fiyatZ:"Fehler: Preis ist erforderlich!",
+    hizmetYok:"Noch keine Leistungen hinzugefügt.",doktorYok:"Noch keine Ärzte hinzugefügt.",osYok:"Noch keine Vorher/Nachher-Fotos hinzugefügt.",
+    silOnay:"Möchten Sie wirklich löschen?",fiyatYok:"Kein Preis",
+    disHizmetYok:"⚠️ Kein Dienst für diese Kategorie gefunden",
+    profilDuzenle:"Profil bearbeiten",hizmetEkle:"Leistung hinzufügen",doktorEkle2:"Arzt hinzufügen",teklifTalepBtn:"Angebotsanfragen",
+  },
+} as const;
+type Dil = keyof typeof M;
+
 // Belge türleri
 const BELGE_TURLERI = {
   klinik: [
@@ -252,6 +385,8 @@ const cardStyle: React.CSSProperties = {
 
 export default function KlinikPanel() {
   const supabase = createClient();
+  const { dil, dilDegistir } = useDil();
+  const m = M[dil as Dil] || M.tr;
   const [menu, setMenu] = useState("ozet");
   const [kullanici, setKullanici] = useState<any>(null);
   const [talepler, setTalepler] = useState<any[]>([]);
@@ -292,7 +427,7 @@ export default function KlinikPanel() {
     transfer_dahil:boolean,transfer_aciklama:string,transfer_fiyat:string,
   }>>({});
   const [disPlanMap, setDisPlanMap] = useState<Record<string,Record<number,string[]>>>({});
-  const [disTedaviMap, setDisTedaviMap] = useState<Record<string,{dis:number,hizmet_id:string,hizmet_adi:string,fiyat:number,kategori:string}[]>>({});
+  const [disTedaviMap, setDisTedaviMap] = useState<Record<string,{dis:number,hizmet_adi:string,fiyat:number,kategori:string}[]>>({});
   const [acikTalep, setAcikTalep] = useState<string|null>(null);
 
   useEffect(() => { veriYukle(); }, []);
@@ -337,14 +472,14 @@ export default function KlinikPanel() {
     return url.publicUrl;
   }
 
-  function mesajGoster(m:string) { setMesaj(m); setTimeout(()=>setMesaj(""),3000); }
+  function mesajGoster(msg:string) { setMesaj(msg); setTimeout(()=>setMesaj(""),3000); }
 
   // ─── Profil ─────────────────────────────────────────────────────────────────
   async function profilKaydet() {
     const {data:{user}} = await supabase.auth.getUser();
     const {error} = await supabase.from("profiles").update(profil).eq("id",user?.id);
-    if (error) mesajGoster("Hata: "+error.message);
-    else { mesajGoster("✅ Profil kaydedildi!"); veriYukle(); }
+    if (error) mesajGoster(m.hataPrefix+error.message);
+    else { mesajGoster(m.profilKaydedildi); veriYukle(); }
   }
 
   async function kapakFotoYukle(file:File) {
@@ -352,13 +487,13 @@ export default function KlinikPanel() {
     if (url) {
       const {data:{user}} = await supabase.auth.getUser();
       await supabase.from("profiles").update({kapak_fotograf:url}).eq("id",user?.id);
-      veriYukle(); mesajGoster("✅ Kapak fotoğrafı yüklendi!");
+      veriYukle(); mesajGoster(m.kapakYuklendi);
     }
   }
 
   // ─── Hizmetler ───────────────────────────────────────────────────────────────
   async function hizmetEkle() {
-    if (!yeniHizmet.hizmet_adi || !yeniHizmet.fiyat) { mesajGoster("Hata: Hizmet adı ve fiyat zorunludur!"); return; }
+    if (!yeniHizmet.hizmet_adi || !yeniHizmet.fiyat) { mesajGoster(m.hizmetAdZ); return; }
     const {data:{user}} = await supabase.auth.getUser();
     await supabase.from("klinik_hizmetler").insert({
       klinik_id:user?.id,
@@ -371,7 +506,7 @@ export default function KlinikPanel() {
       sure:yeniHizmet.sure,
       dis_semasi_kategori:yeniHizmet.dis_semasi_kategori,
     });
-    mesajGoster("✅ Hizmet eklendi!");
+    mesajGoster(m.hizmetEklendi);
     const ilkKat = Object.keys(TDB_LISTE)[0];
     const ilkAlt = Object.keys(TDB_LISTE[ilkKat])[0];
     setYeniHizmet({kategori:ilkKat,alt_kategori:ilkAlt,hizmet_adi:"",aciklama:"",fiyat:"",para_birimi:"EUR",sure:"",dis_semasi_kategori:"yok"});
@@ -379,7 +514,7 @@ export default function KlinikPanel() {
   }
 
   async function hizmetSil(id:string) {
-    if (!confirm("Silmek istediğinize emin misiniz?")) return;
+    if (!confirm(m.silOnay)) return;
     await supabase.from("klinik_hizmetler").delete().eq("id",id);
     veriYukle();
   }
@@ -391,26 +526,26 @@ export default function KlinikPanel() {
 
   // ─── Doktorlar ────────────────────────────────────────────────────────────────
   async function doktorEkle() {
-    if (!yeniDoktor.ad) { mesajGoster("Hata: Doktor adı zorunludur!"); return; }
+    if (!yeniDoktor.ad) { mesajGoster(m.doktorAdZ); return; }
     const {data:{user}} = await supabase.auth.getUser();
     await supabase.from("doktorlar").insert({klinik_id:user?.id,...yeniDoktor});
-    mesajGoster("✅ Doktor eklendi!");
+    mesajGoster(m.doktorEklendi);
     setYeniDoktor({ad:"",uzmanlik:"",aciklama:"",fotograf_url:""});
     veriYukle();
   }
 
   async function doktorSil(id:string) {
-    if (!confirm("Silmek istediğinize emin misiniz?")) return;
+    if (!confirm(m.silOnay)) return;
     await supabase.from("doktorlar").delete().eq("id",id);
     veriYukle();
   }
 
   // ─── Önce/Sonra ───────────────────────────────────────────────────────────────
   async function osEkle() {
-    if (!yeniOS.once_fotograf || !yeniOS.sonra_fotograf) { mesajGoster("Hata: Önce ve sonra fotoğrafları zorunludur!"); return; }
+    if (!yeniOS.once_fotograf || !yeniOS.sonra_fotograf) { mesajGoster(m.fotoZ); return; }
     const {data:{user}} = await supabase.auth.getUser();
     await supabase.from("once_sonra").insert({klinik_id:user?.id,...yeniOS});
-    mesajGoster("✅ Önce/Sonra eklendi!");
+    mesajGoster(m.osEklendi);
     setYeniOS({hizmet_adi:"",once_fotograf:"",sonra_fotograf:"",aciklama:""});
     veriYukle();
   }
@@ -421,59 +556,32 @@ export default function KlinikPanel() {
   }
 
   // ─── Diş şeması fiyat hesaplama ──────────────────────────────────────────────
-  // Diş plan değişince sadece planı kaydet, hizmet seçimi ayrıca yapılacak
   function disPlanHesapla(talepId:string, plan:Record<number,string[]>) {
     setDisPlanMap(prev=>({...prev,[talepId]:plan}));
-    // Mevcut tedavi map'ini güncelle — yeni dişler için boş seçim ekle, silinen dişleri kaldır
-    setDisTedaviMap(prev=>{
-      const mevcut = prev[talepId]||[];
-      const yeni: {dis:number,hizmet_id:string,hizmet_adi:string,fiyat:number,kategori:string}[] = [];
-      Object.entries(plan).forEach(([no,kategoriler])=>{
-        kategoriler.forEach(kat=>{
-          if (['eksik','lezyon','kirik','cokmus'].includes(kat)) return;
-          // Daha önce seçilmiş hizmet varsa koru
-          const eskiSecim = mevcut.find(m=>m.dis===Number(no)&&m.kategori===kat);
-          if (eskiSecim) {
-            yeni.push(eskiSecim);
-          } else {
-            // Otomatik ilk hizmeti seç
-            const eslesenler = hizmetler.filter(h=>h.aktif&&h.dis_semasi_kategori===kat);
-            if (eslesenler.length>0) {
-              const h = eslesenler[0];
-              yeni.push({dis:Number(no),hizmet_id:h.id,hizmet_adi:h.hizmet_adi,fiyat:h.fiyat,kategori:kat});
-            } else {
-              yeni.push({dis:Number(no),hizmet_id:"",hizmet_adi:"",fiyat:0,kategori:kat});
-            }
-          }
-        });
-      });
-      // Fiyat toplamını güncelle
-      const toplam = yeni.reduce((s,d)=>s+d.fiyat,0);
-      setTeklifFormlar(fp=>({
-        ...fp,
-        [talepId]:{...(fp[talepId]||{otel_dahil:false,otel_aciklama:"",otel_fiyat:"",transfer_dahil:false,transfer_aciklama:"",transfer_fiyat:"",aciklama:""}),fiyat:toplam.toString()}
-      }));
-      return {...prev,[talepId]:yeni};
-    });
-  }
+    const detaylar: {dis:number,hizmet_adi:string,fiyat:number,kategori:string}[] = [];
 
-  function hizmetSecimGuncelle(talepId:string, dis:number, kategori:string, hizmetId:string) {
-    const hizmet = hizmetler.find(h=>h.id===hizmetId);
-    if (!hizmet) return;
-    setDisTedaviMap(prev=>{
-      const mevcut = prev[talepId]||[];
-      const yeni = mevcut.map(m=>
-        m.dis===dis && m.kategori===kategori
-          ? {...m,hizmet_id:hizmetId,hizmet_adi:hizmet.hizmet_adi,fiyat:hizmet.fiyat}
-          : m
-      );
-      const toplam = yeni.reduce((s,d)=>s+d.fiyat,0);
-      setTeklifFormlar(fp=>({
-        ...fp,
-        [talepId]:{...(fp[talepId]||{otel_dahil:false,otel_aciklama:"",otel_fiyat:"",transfer_dahil:false,transfer_aciklama:"",transfer_fiyat:"",aciklama:""}),fiyat:toplam.toString()}
-      }));
-      return {...prev,[talepId]:yeni};
+    Object.entries(plan).forEach(([no,kategoriler]) => {
+      kategoriler.forEach(kat => {
+        if (['eksik','lezyon','kirik','cokmus'].includes(kat)) return;
+        // Hizmet listesinden bu diş şeması kategorisine eşleşen hizmetleri bul
+        const eslesenler = hizmetler.filter(h => h.aktif && h.dis_semasi_kategori === kat);
+        if (eslesenler.length > 0) {
+          // En düşük fiyatlıyı al
+          const hizmet = eslesenler.sort((a,b)=>a.fiyat-b.fiyat)[0];
+          detaylar.push({dis:Number(no),hizmet_adi:hizmet.hizmet_adi,fiyat:hizmet.fiyat,kategori:kat});
+        } else if (kat !== 'yok') {
+          // Eşleşen hizmet yok, 0 fiyatla ekle
+          detaylar.push({dis:Number(no),hizmet_adi:`${kat} (fiyat girilmedi)`,fiyat:0,kategori:kat});
+        }
+      });
     });
+
+    setDisTedaviMap(prev=>({...prev,[talepId]:detaylar}));
+    const toplam = detaylar.reduce((s,d)=>s+d.fiyat,0);
+    setTeklifFormlar(prev=>({
+      ...prev,
+      [talepId]:{...(prev[talepId]||{otel_dahil:false,otel_aciklama:"",otel_fiyat:"",transfer_dahil:false,transfer_aciklama:"",transfer_fiyat:"",aciklama:""}),fiyat:toplam.toString()}
+    }));
   }
 
   function getTeklifForm(talepId:string) {
@@ -487,7 +595,7 @@ export default function KlinikPanel() {
   // ─── Teklif gönder ───────────────────────────────────────────────────────────
   async function teklifGonder(talepId:string) {
     const form = getTeklifForm(talepId);
-    if (!form.fiyat) { mesajGoster("Hata: Fiyat girilmelidir!"); return; }
+    if (!form.fiyat) { mesajGoster(m.fiyatZ); return; }
     const {data:{user}} = await supabase.auth.getUser();
     const tedaviFiyat = parseFloat(form.fiyat)||0;
     const otelFiyat = form.otel_dahil ? (parseFloat(form.otel_fiyat)||0) : 0;
@@ -507,11 +615,9 @@ export default function KlinikPanel() {
       otel_dahil:form.otel_dahil,otel_aciklama:form.otel_aciklama,otel_fiyat:otelFiyat,
       transfer_dahil:form.transfer_dahil,transfer_aciklama:form.transfer_aciklama,transfer_fiyat:transferFiyat,
       toplam_fiyat:toplamFiyat,
-      dis_plani: disPlanMap[talepId] ? JSON.stringify(disPlanMap[talepId]) : null,
-      tedavi_detaylari: disTedaviMap[talepId] ? JSON.stringify(disTedaviMap[talepId]) : null,
     });
 
-    if (error) { mesajGoster("Hata: "+error.message); return; }
+    if (error) { mesajGoster(m.hataPrefix+error.message); return; }
 
     // Email bildirimi
     const talep = talepler.find(t=>t.id===talepId);
@@ -526,7 +632,7 @@ export default function KlinikPanel() {
       });
     }
 
-    mesajGoster("✅ Teklif gönderildi!");
+    mesajGoster(m.teklifGonderildi);
     setTeklifFormlar(prev=>{const y={...prev};delete y[talepId];return y;});
     setDisPlanMap(prev=>{const y={...prev};delete y[talepId];return y;});
     setDisTedaviMap(prev=>{const y={...prev};delete y[talepId];return y;});
@@ -591,7 +697,7 @@ export default function KlinikPanel() {
     <div class="row" style="font-size:18px;font-weight:bold;color:#534AB7">
     <span>💰 Toplam</span><span>${t.toplam_fiyat} EUR</span></div></div>`:""}
     <div style="text-align:center;margin-top:32px">
-      <button onclick="window.print()" style="background:#534AB7;color:#fff;border:none;padding:12px 32px;border-radius:8px;font-size:14px;cursor:pointer">🖨️ Yazdır</button>
+      <button onclick="window.print()" style="background:#534AB7;color:#fff;border:none;padding:12px 32px;border-radius:8px;font-size:14px;cursor:pointer">{m.yazdir}</button>
     </div></body></html>`);
     w.document.close();
   }
@@ -609,7 +715,7 @@ export default function KlinikPanel() {
           <a href="/" style={{fontSize:"20px",fontWeight:700,color:"#fff",textDecoration:"none"}}>
             med<span style={{color:"#7F77DD",fontWeight:300}}>oqa</span>
           </a>
-          <div style={{fontSize:"11px",color:"#6b6fa8",marginTop:"4px"}}>Klinik Paneli</div>
+          <div style={{fontSize:"11px",color:"#6b6fa8",marginTop:"4px"}}>{m.panel}</div>
         </div>
         {kullanici && (
           <div style={{padding:"14px 20px",borderBottom:"1px solid #1e1b4b"}}>
@@ -618,22 +724,28 @@ export default function KlinikPanel() {
             </div>
             <div style={{fontSize:"13px",fontWeight:600,color:"#fff"}}>{kullanici.ad} {kullanici.soyad}</div>
             <div style={{fontSize:"11px",color:kullanici.onaylandi?"#7F77DD":"#BA7517",marginTop:"2px"}}>
-              {kullanici.onaylandi?"✓ Onaylandı":"⏳ Onay Bekleniyor"}
+              {kullanici.onaylandi ? m.onaylandi : m.onayBekliyor}
             </div>
           </div>
         )}
+        {/* Dil seçici */}
+        <div style={{padding:"8px 16px",borderBottom:"1px solid #1e1b4b",display:"flex",gap:"5px"}}>
+          {(["tr","en","de"] as const).map(d=>(
+            <span key={d} onClick={()=>dilDegistir(d)} style={{fontSize:"10px",padding:"3px 8px",border:`1px solid ${dil===d?"#534AB7":"#2a2a4e"}`,borderRadius:"4px",color:dil===d?"#7F77DD":"#aab4c8",cursor:"pointer",textTransform:"uppercase"}}>{d}</span>
+          ))}
+        </div>
         <nav style={{padding:"16px 12px",flex:1}}>
-          {MENU.map(m => (
-            <div key={m.id} onClick={()=>setMenu(m.id)} style={{
+          {Object.entries(m.menu).map(([id, ad]) => (
+            <div key={id} onClick={()=>setMenu(id)} style={{
               padding:"9px 12px",borderRadius:"8px",cursor:"pointer",marginBottom:"3px",
-              background:menu===m.id?"#534AB7":"transparent",
-              color:menu===m.id?"#fff":"#8b8fc8",fontSize:"13px",
-            }}>{m.ad}</div>
+              background:menu===id?"#534AB7":"transparent",
+              color:menu===id?"#fff":"#8b8fc8",fontSize:"13px",
+            }}>{ad as string}</div>
           ))}
         </nav>
         <div style={{padding:"0 12px 20px"}}>
           <button onClick={cikisYap} style={{width:"100%",padding:"10px",background:"transparent",border:"1px solid #2a2a4e",borderRadius:"8px",color:"#8b8fc8",fontSize:"13px",cursor:"pointer"}}>
-            Çıkış Yap
+            {m.cikis}
           </button>
         </div>
       </aside>
@@ -647,27 +759,27 @@ export default function KlinikPanel() {
         )}
 
         {yukleniyor ? (
-          <div style={{textAlign:"center",padding:"64px",color:"#888"}}>Yükleniyor...</div>
+          <div style={{textAlign:"center",padding:"64px",color:"#888"}}>{m.yukleniyor}</div>
         ) : (
           <>
             {kullanici && !kullanici.onaylandi && (
               <div style={{background:"#fff8e1",border:"1px solid #f0c040",borderRadius:"12px",padding:"16px",marginBottom:"24px"}}>
-                <div style={{fontSize:"14px",fontWeight:700,color:"#BA7517"}}>⏳ Hesabınız Onay Bekliyor</div>
-                <div style={{fontSize:"13px",color:"#666",marginTop:"4px"}}>Klinik hesabınız admin tarafından henüz onaylanmamış.</div>
+                <div style={{fontSize:"14px",fontWeight:700,color:"#BA7517"}}>⏳ {m.onayBekle}</div>
+                <div style={{fontSize:"13px",color:"#666",marginTop:"4px"}}>{m.onayBekleAcik}</div>
               </div>
             )}
 
             {/* ── ÖZET ── */}
             {menu==="ozet" && (
               <div>
-                <h1 style={{fontSize:"24px",fontWeight:700,color:"#12103a",marginBottom:"8px"}}>Hoş Geldiniz, {kullanici?.ad}! 👋</h1>
-                <p style={{fontSize:"14px",color:"#888",marginBottom:"28px"}}>Klinik panelinizden profilinizi ve hizmetlerinizi yönetebilirsiniz.</p>
+                <h1 style={{fontSize:"24px",fontWeight:700,color:"#12103a",marginBottom:"8px"}}>{m.hosgeldin}, {kullanici?.ad}! 👋</h1>
+                <p style={{fontSize:"14px",color:"#888",marginBottom:"28px"}}>{m.panelAcik}</p>
                 <div style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:"16px",marginBottom:"28px"}}>
                   {[
-                    {l:"Hizmet",v:hizmetler.length,c:"#534AB7"},
-                    {l:"Doktor",v:doktorlar.length,c:"#185FA5"},
-                    {l:"Önce/Sonra",v:onceSonralar.length,c:"#7F77DD"},
-                    {l:"Teklif",v:teklifler.length,c:"#059669"},
+                    {l:m.ist.hizmet,v:hizmetler.length,c:"#534AB7"},
+                    {l:m.ist.doktor,v:doktorlar.length,c:"#185FA5"},
+                    {l:m.ist.onceSonra,v:onceSonralar.length,c:"#7F77DD"},
+                    {l:m.ist.teklif,v:teklifler.length,c:"#059669"},
                   ].map(k=>(
                     <div key={k.l} style={{background:"#fff",border:"1px solid #EEEDFE",borderRadius:"12px",padding:"20px"}}>
                       <div style={{fontSize:"28px",fontWeight:700,color:k.c,marginBottom:"6px"}}>{k.v}</div>
@@ -676,7 +788,7 @@ export default function KlinikPanel() {
                   ))}
                 </div>
                 <div style={{display:"flex",gap:"10px",flexWrap:"wrap"}}>
-                  {[{id:"profil",l:"Profil Düzenle"},{id:"hizmetler",l:"Hizmet Ekle"},{id:"doktorlar",l:"Doktor Ekle"},{id:"talepler",l:"Teklif Talepleri"}].map(b=>(
+                  {[{id:"profil",l:m.profilDuzenle},{id:"hizmetler",l:m.hizmetEkle},{id:"doktorlar",l:m.doktorEkle2},{id:"talepler",l:m.teklifTalepBtn}].map(b=>(
                     <button key={b.id} onClick={()=>setMenu(b.id)} style={{background:"#534AB7",color:"#fff",border:"none",padding:"10px 20px",borderRadius:"8px",fontSize:"13px",cursor:"pointer"}}>{b.l}</button>
                   ))}
                 </div>
@@ -686,33 +798,33 @@ export default function KlinikPanel() {
             {/* ── PROFİL ── */}
             {menu==="profil" && (
               <div>
-                <h1 style={{fontSize:"24px",fontWeight:700,color:"#12103a",marginBottom:"24px"}}>Profil Düzenle</h1>
+                <h1 style={{fontSize:"24px",fontWeight:700,color:"#12103a",marginBottom:"24px"}}>{m.menu.profil}</h1>
                 <div style={cardStyle}>
-                  <h2 style={{fontSize:"16px",fontWeight:700,color:"#12103a",marginBottom:"16px"}}>Kapak Fotoğrafı</h2>
+                  <h2 style={{fontSize:"16px",fontWeight:700,color:"#12103a",marginBottom:"16px"}}>{m.kapakFoto}</h2>
                   {kullanici?.kapak_fotograf && <img src={kullanici.kapak_fotograf} alt="Kapak" style={{width:"100%",maxHeight:"200px",objectFit:"cover",borderRadius:"8px",marginBottom:"12px"}}/>}
                   <input type="file" accept="image/*" onChange={e=>{const f=e.target.files?.[0];if(f)kapakFotoYukle(f);}} style={{...inputStyle}}/>
                 </div>
                 <div style={cardStyle}>
-                  <h2 style={{fontSize:"16px",fontWeight:700,color:"#12103a",marginBottom:"16px"}}>Klinik Bilgileri</h2>
+                  <h2 style={{fontSize:"16px",fontWeight:700,color:"#12103a",marginBottom:"16px"}}>{m.klinikBilgi}</h2>
                   <div style={{marginBottom:"12px"}}>
-                    <label style={labelStyle}>Tanıtım Yazısı</label>
+                    <label style={labelStyle}>{m.tanitim}</label>
                     <textarea rows={4} value={profil.tanitim_yazisi} onChange={e=>setProfil({...profil,tanitim_yazisi:e.target.value})} style={{...inputStyle,resize:"none"}}/>
                   </div>
                   <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:"12px",marginBottom:"12px"}}>
-                    <div><label style={labelStyle}>Telefon</label><input type="text" value={profil.telefon} onChange={e=>setProfil({...profil,telefon:e.target.value})} style={inputStyle}/></div>
-                    <div><label style={labelStyle}>Website</label><input type="text" value={profil.website} onChange={e=>setProfil({...profil,website:e.target.value})} style={inputStyle}/></div>
+                    <div><label style={labelStyle}>{m.telefon}</label><input type="text" value={profil.telefon} onChange={e=>setProfil({...profil,telefon:e.target.value})} style={inputStyle}/></div>
+                    <div><label style={labelStyle}>{m.website}</label><input type="text" value={profil.website} onChange={e=>setProfil({...profil,website:e.target.value})} style={inputStyle}/></div>
                   </div>
                   <div style={{marginBottom:"12px"}}>
-                    <label style={labelStyle}>Adres</label>
+                    <label style={labelStyle}>{m.adres}</label>
                     <input type="text" value={profil.konum_adres} onChange={e=>setProfil({...profil,konum_adres:e.target.value})} style={inputStyle}/>
                   </div>
                   <div style={{marginBottom:"12px"}}>
-                    <label style={labelStyle}>Google Maps URL</label>
+                    <label style={labelStyle}>{m.googleMaps}</label>
                     <input type="text" value={profil.google_maps_url} onChange={e=>setProfil({...profil,google_maps_url:e.target.value})} style={inputStyle}/>
                   </div>
                 </div>
                 <div style={cardStyle}>
-                  <h2 style={{fontSize:"16px",fontWeight:700,color:"#12103a",marginBottom:"16px"}}>Sosyal Medya</h2>
+                  <h2 style={{fontSize:"16px",fontWeight:700,color:"#12103a",marginBottom:"16px"}}>{m.sosyal}</h2>
                   <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:"12px"}}>
                     <div><label style={labelStyle}>Instagram</label><input type="text" placeholder="@kullanici" value={profil.instagram} onChange={e=>setProfil({...profil,instagram:e.target.value})} style={inputStyle}/></div>
                     <div><label style={labelStyle}>Facebook</label><input type="text" value={profil.facebook} onChange={e=>setProfil({...profil,facebook:e.target.value})} style={inputStyle}/></div>
@@ -728,12 +840,12 @@ export default function KlinikPanel() {
             {/* ── HİZMETLER ── */}
             {menu==="hizmetler" && (
               <div>
-                <h1 style={{fontSize:"24px",fontWeight:700,color:"#12103a",marginBottom:"24px"}}>Hizmet & Fiyat Listesi</h1>
+                <h1 style={{fontSize:"24px",fontWeight:700,color:"#12103a",marginBottom:"24px"}}>{m.hizmetListesi}</h1>
                 <div style={cardStyle}>
-                  <h2 style={{fontSize:"16px",fontWeight:700,color:"#12103a",marginBottom:"16px"}}>Yeni Hizmet Ekle</h2>
+                  <h2 style={{fontSize:"16px",fontWeight:700,color:"#12103a",marginBottom:"16px"}}>{m.yeniHizmet}</h2>
                   <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:"12px",marginBottom:"12px"}}>
                     <div>
-                      <label style={labelStyle}>Kategori</label>
+                      <label style={labelStyle}>{m.kategori}</label>
                       <select value={yeniHizmet.kategori} onChange={e=>{
                         const kat=e.target.value;
                         const altlar=Object.keys(TDB_LISTE[kat]||{});
@@ -743,7 +855,7 @@ export default function KlinikPanel() {
                       </select>
                     </div>
                     <div>
-                      <label style={labelStyle}>Alt Kategori</label>
+                      <label style={labelStyle}>{m.altKat}</label>
                       <select value={yeniHizmet.alt_kategori} onChange={e=>setYeniHizmet({...yeniHizmet,alt_kategori:e.target.value,hizmet_adi:""})} style={{...inputStyle,background:"#fff"}}>
                         {altKategoriler.map(k=><option key={k}>{k}</option>)}
                       </select>
@@ -751,7 +863,7 @@ export default function KlinikPanel() {
                   </div>
                   <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:"12px",marginBottom:"12px"}}>
                     <div>
-                      <label style={labelStyle}>Listeden Seç</label>
+                      <label style={labelStyle}>{m.listeden}</label>
                       <select value={yeniHizmet.hizmet_adi} onChange={e=>{
                         const ad=e.target.value;
                         const disCat = DIS_SEMASI_MAP[ad]||"yok";
@@ -762,27 +874,27 @@ export default function KlinikPanel() {
                       </select>
                     </div>
                     <div>
-                      <label style={labelStyle}>Özel Hizmet Adı</label>
-                      <input type="text" placeholder="Listede yoksa buraya yazın" value={yeniHizmet.hizmet_adi} onChange={e=>setYeniHizmet({...yeniHizmet,hizmet_adi:e.target.value})} style={inputStyle}/>
+                      <label style={labelStyle}>{m.ozelAd}</label>
+                      <input type="text" placeholder={m.ozelAdPH} value={yeniHizmet.hizmet_adi} onChange={e=>setYeniHizmet({...yeniHizmet,hizmet_adi:e.target.value})} style={inputStyle}/>
                     </div>
                   </div>
                   <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr 1fr",gap:"12px",marginBottom:"12px"}}>
                     <div>
-                      <label style={labelStyle}>Fiyat *</label>
+                      <label style={labelStyle}>{m.fiyat} *</label>
                       <input type="number" placeholder="0" value={yeniHizmet.fiyat} onChange={e=>setYeniHizmet({...yeniHizmet,fiyat:e.target.value})} style={inputStyle}/>
                     </div>
                     <div>
-                      <label style={labelStyle}>Para Birimi</label>
+                      <label style={labelStyle}>{m.paraBirimi}</label>
                       <select value={yeniHizmet.para_birimi} onChange={e=>setYeniHizmet({...yeniHizmet,para_birimi:e.target.value})} style={{...inputStyle,background:"#fff"}}>
                         <option>EUR</option><option>USD</option><option>TRY</option><option>GBP</option>
                       </select>
                     </div>
                     <div>
-                      <label style={labelStyle}>Süre</label>
-                      <input type="text" placeholder="örn: 1 saat" value={yeniHizmet.sure} onChange={e=>setYeniHizmet({...yeniHizmet,sure:e.target.value})} style={inputStyle}/>
+                      <label style={labelStyle}>{m.sure}</label>
+                      <input type="text" placeholder="e.g. 1 hour" value={yeniHizmet.sure} onChange={e=>setYeniHizmet({...yeniHizmet,sure:e.target.value})} style={inputStyle}/>
                     </div>
                     <div>
-                      <label style={labelStyle}>Diş Şeması</label>
+                      <label style={labelStyle}>{m.disSemasi}</label>
                       <select value={yeniHizmet.dis_semasi_kategori} onChange={e=>setYeniHizmet({...yeniHizmet,dis_semasi_kategori:e.target.value})} style={{...inputStyle,background:"#fff"}}>
                         <option value="yok">Görsel yok</option>
                         <option value="dolgu">Dolgu</option>
@@ -797,7 +909,7 @@ export default function KlinikPanel() {
                     </div>
                   </div>
                   <div style={{marginBottom:"16px"}}>
-                    <label style={labelStyle}>Açıklama</label>
+                    <label style={labelStyle}>{m.aciklama}</label>
                     <textarea rows={2} value={yeniHizmet.aciklama} onChange={e=>setYeniHizmet({...yeniHizmet,aciklama:e.target.value})} style={{...inputStyle,resize:"none"}}/>
                   </div>
                   <button onClick={hizmetEkle} style={{background:"#534AB7",color:"#fff",border:"none",padding:"10px 24px",borderRadius:"8px",fontSize:"13px",cursor:"pointer",fontWeight:600}}>
@@ -807,12 +919,12 @@ export default function KlinikPanel() {
 
                 <div style={{background:"#fff",border:"1px solid #EEEDFE",borderRadius:"12px",overflow:"hidden"}}>
                   <div style={{padding:"16px 20px",borderBottom:"1px solid #EEEDFE",display:"flex",justifyContent:"space-between",alignItems:"center"}}>
-                    <h2 style={{fontSize:"16px",fontWeight:700,color:"#12103a",margin:0}}>Hizmet Listem ({hizmetler.length})</h2>
+                    <h2 style={{fontSize:"16px",fontWeight:700,color:"#12103a",margin:0}}>{m.mevcutHizmetler} ({hizmetler.length})</h2>
                   </div>
                   <table style={{width:"100%",borderCollapse:"collapse"}}>
                     <thead>
                       <tr style={{background:"#f9fafb"}}>
-                        {["Hizmet","Kategori","Diş Şeması","Fiyat","İşlem"].map(h=>(
+                        {[m.hizmetSutun.ad,m.hizmetSutun.kat,m.hizmetSutun.dis,m.hizmetSutun.fiyat,m.hizmetSutun.islem].map(h=>(
                           <th key={h} style={{padding:"10px 16px",textAlign:"left",fontSize:"12px",color:"#888",fontWeight:600}}>{h}</th>
                         ))}
                       </tr>
@@ -831,16 +943,16 @@ export default function KlinikPanel() {
                           <td style={{padding:"10px 16px"}}>
                             <div style={{display:"flex",gap:"6px"}}>
                               <button onClick={()=>hizmetToggle(h.id,h.aktif)} style={{background:h.aktif?"#fff8e1":"#f0fff4",color:h.aktif?"#BA7517":"#0a7a3a",border:"none",padding:"4px 10px",borderRadius:"6px",fontSize:"11px",cursor:"pointer"}}>
-                                {h.aktif?"Pasife Al":"Aktife Al"}
+                                {h.aktif ? m.pasife : m.aktife}
                               </button>
-                              <button onClick={()=>hizmetSil(h.id)} style={{background:"#fff0f0",color:"#c00",border:"none",padding:"4px 10px",borderRadius:"6px",fontSize:"11px",cursor:"pointer"}}>Sil</button>
+                              <button onClick={()=>hizmetSil(h.id)} style={{background:"#fff0f0",color:"#c00",border:"none",padding:"4px 10px",borderRadius:"6px",fontSize:"11px",cursor:"pointer"}}>{m.sil}</button>
                             </div>
                           </td>
                         </tr>
                       ))}
                     </tbody>
                   </table>
-                  {hizmetler.length===0 && <div style={{textAlign:"center",padding:"32px",color:"#888",fontSize:"13px"}}>Henüz hizmet eklenmemiş.</div>}
+                  {hizmetler.length===0 && <div style={{textAlign:"center",padding:"32px",color:"#888",fontSize:"13px"}}>{m.hizmetYok}</div>}
                 </div>
               </div>
             )}
@@ -848,15 +960,15 @@ export default function KlinikPanel() {
             {/* ── DOKTORLAR ── */}
             {menu==="doktorlar" && (
               <div>
-                <h1 style={{fontSize:"24px",fontWeight:700,color:"#12103a",marginBottom:"24px"}}>Doktorlar</h1>
+                <h1 style={{fontSize:"24px",fontWeight:700,color:"#12103a",marginBottom:"24px"}}>{m.doktorlarBaslik}</h1>
                 <div style={cardStyle}>
-                  <h2 style={{fontSize:"16px",fontWeight:700,color:"#12103a",marginBottom:"16px"}}>Doktor Ekle</h2>
+                  <h2 style={{fontSize:"16px",fontWeight:700,color:"#12103a",marginBottom:"16px"}}>{m.doktorEkle}</h2>
                   <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:"12px",marginBottom:"12px"}}>
-                    <div><label style={labelStyle}>Ad Soyad *</label><input type="text" placeholder="Dr. Ad Soyad" value={yeniDoktor.ad} onChange={e=>setYeniDoktor({...yeniDoktor,ad:e.target.value})} style={inputStyle}/></div>
-                    <div><label style={labelStyle}>Uzmanlık</label><input type="text" placeholder="Diş Hekimi" value={yeniDoktor.uzmanlik} onChange={e=>setYeniDoktor({...yeniDoktor,uzmanlik:e.target.value})} style={inputStyle}/></div>
+                    <div><label style={labelStyle}>{m.doktorAd} *</label><input type="text" placeholder="Dr. Full Name" value={yeniDoktor.ad} onChange={e=>setYeniDoktor({...yeniDoktor,ad:e.target.value})} style={inputStyle}/></div>
+                    <div><label style={labelStyle}>{m.uzmanlik}</label><input type="text" placeholder="Dentist" value={yeniDoktor.uzmanlik} onChange={e=>setYeniDoktor({...yeniDoktor,uzmanlik:e.target.value})} style={inputStyle}/></div>
                   </div>
                   <div style={{marginBottom:"12px"}}>
-                    <label style={labelStyle}>Açıklama</label>
+                    <label style={labelStyle}>{m.aciklama}</label>
                     <textarea rows={2} value={yeniDoktor.aciklama} onChange={e=>setYeniDoktor({...yeniDoktor,aciklama:e.target.value})} style={{...inputStyle,resize:"none"}}/>
                   </div>
                   <div style={{marginBottom:"16px"}}>
@@ -865,7 +977,7 @@ export default function KlinikPanel() {
                     }}} style={inputStyle}/>
                     {yeniDoktor.fotograf_url && <img src={yeniDoktor.fotograf_url} alt="Doktor" style={{width:"60px",height:"60px",objectFit:"cover",borderRadius:"50%",marginTop:"8px"}}/>}
                   </div>
-                  <button onClick={doktorEkle} style={{background:"#534AB7",color:"#fff",border:"none",padding:"10px 24px",borderRadius:"8px",fontSize:"13px",cursor:"pointer",fontWeight:600}}>+ Doktor Ekle</button>
+                  <button onClick={doktorEkle} style={{background:"#534AB7",color:"#fff",border:"none",padding:"10px 24px",borderRadius:"8px",fontSize:"13px",cursor:"pointer",fontWeight:600}}>{m.doktorEkleBtn}</button>
                 </div>
                 <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:"16px"}}>
                   {doktorlar.map(d=>(
@@ -877,10 +989,10 @@ export default function KlinikPanel() {
                       <div style={{fontSize:"14px",fontWeight:700,color:"#12103a",marginBottom:"4px"}}>{d.ad}</div>
                       <div style={{fontSize:"12px",color:"#534AB7",marginBottom:"8px"}}>{d.uzmanlik}</div>
                       {d.aciklama && <div style={{fontSize:"12px",color:"#888",marginBottom:"12px"}}>{d.aciklama}</div>}
-                      <button onClick={()=>doktorSil(d.id)} style={{background:"#fff0f0",color:"#c00",border:"none",padding:"4px 12px",borderRadius:"6px",fontSize:"11px",cursor:"pointer"}}>Sil</button>
+                      <button onClick={()=>doktorSil(d.id)} style={{background:"#fff0f0",color:"#c00",border:"none",padding:"4px 12px",borderRadius:"6px",fontSize:"11px",cursor:"pointer"}}>{m.sil}</button>
                     </div>
                   ))}
-                  {doktorlar.length===0 && <div style={{gridColumn:"1/-1",textAlign:"center",padding:"32px",color:"#888"}}>Henüz doktor eklenmemiş.</div>}
+                  {doktorlar.length===0 && <div style={{gridColumn:"1/-1",textAlign:"center",padding:"32px",color:"#888"}}>{m.doktorYok}</div>}
                 </div>
               </div>
             )}
@@ -888,30 +1000,30 @@ export default function KlinikPanel() {
             {/* ── ÖNCE SONRA ── */}
             {menu==="once-sonra" && (
               <div>
-                <h1 style={{fontSize:"24px",fontWeight:700,color:"#12103a",marginBottom:"24px"}}>Önce / Sonra Fotoğrafları</h1>
+                <h1 style={{fontSize:"24px",fontWeight:700,color:"#12103a",marginBottom:"24px"}}>{m.osBaslik}</h1>
                 <div style={cardStyle}>
-                  <h2 style={{fontSize:"16px",fontWeight:700,color:"#12103a",marginBottom:"16px"}}>Yeni Ekle</h2>
+                  <h2 style={{fontSize:"16px",fontWeight:700,color:"#12103a",marginBottom:"16px"}}>{m.yeniEkle}</h2>
                   <div style={{marginBottom:"12px"}}>
-                    <label style={labelStyle}>Hizmet Adı</label>
-                    <input type="text" placeholder="Zirkonyum Kaplama, Saç Ekimi..." value={yeniOS.hizmet_adi} onChange={e=>setYeniOS({...yeniOS,hizmet_adi:e.target.value})} style={inputStyle}/>
+                    <label style={labelStyle}>{m.hizmetAdi}</label>
+                    <input type="text" placeholder={m.hizmetAdPH} value={yeniOS.hizmet_adi} onChange={e=>setYeniOS({...yeniOS,hizmet_adi:e.target.value})} style={inputStyle}/>
                   </div>
                   <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:"16px",marginBottom:"12px"}}>
                     <div>
-                      <label style={labelStyle}>Önce Fotoğrafı *</label>
+                      <label style={labelStyle}>{m.onceFoto} *</label>
                       <input type="file" accept="image/*" onChange={async e=>{const f=e.target.files?.[0];if(f){const url=await fotografYukle(f,"once-sonra");if(url)setYeniOS({...yeniOS,once_fotograf:url});}}} style={inputStyle}/>
                       {yeniOS.once_fotograf && <img src={yeniOS.once_fotograf} alt="Önce" style={{width:"100%",height:"100px",objectFit:"cover",borderRadius:"6px",marginTop:"8px"}}/>}
                     </div>
                     <div>
-                      <label style={labelStyle}>Sonra Fotoğrafı *</label>
+                      <label style={labelStyle}>{m.sonraFoto} *</label>
                       <input type="file" accept="image/*" onChange={async e=>{const f=e.target.files?.[0];if(f){const url=await fotografYukle(f,"once-sonra");if(url)setYeniOS({...yeniOS,sonra_fotograf:url});}}} style={inputStyle}/>
                       {yeniOS.sonra_fotograf && <img src={yeniOS.sonra_fotograf} alt="Sonra" style={{width:"100%",height:"100px",objectFit:"cover",borderRadius:"6px",marginTop:"8px"}}/>}
                     </div>
                   </div>
                   <div style={{marginBottom:"16px"}}>
-                    <label style={labelStyle}>Açıklama</label>
+                    <label style={labelStyle}>{m.aciklama}</label>
                     <input type="text" value={yeniOS.aciklama} onChange={e=>setYeniOS({...yeniOS,aciklama:e.target.value})} style={inputStyle}/>
                   </div>
-                  <button onClick={osEkle} style={{background:"#534AB7",color:"#fff",border:"none",padding:"10px 24px",borderRadius:"8px",fontSize:"13px",cursor:"pointer",fontWeight:600}}>+ Ekle</button>
+                  <button onClick={osEkle} style={{background:"#534AB7",color:"#fff",border:"none",padding:"10px 24px",borderRadius:"8px",fontSize:"13px",cursor:"pointer",fontWeight:600}}>{m.ekleBtn}</button>
                 </div>
                 <div style={{display:"grid",gridTemplateColumns:"repeat(2,1fr)",gap:"16px"}}>
                   {onceSonralar.map(os=>(
@@ -931,11 +1043,11 @@ export default function KlinikPanel() {
                           <div style={{fontSize:"13px",fontWeight:600,color:"#12103a"}}>{os.hizmet_adi}</div>
                           {os.aciklama && <div style={{fontSize:"11px",color:"#888"}}>{os.aciklama}</div>}
                         </div>
-                        <button onClick={()=>osSil(os.id)} style={{background:"#fff0f0",color:"#c00",border:"none",padding:"4px 10px",borderRadius:"6px",fontSize:"11px",cursor:"pointer"}}>Sil</button>
+                        <button onClick={()=>osSil(os.id)} style={{background:"#fff0f0",color:"#c00",border:"none",padding:"4px 10px",borderRadius:"6px",fontSize:"11px",cursor:"pointer"}}>{m.sil}</button>
                       </div>
                     </div>
                   ))}
-                  {onceSonralar.length===0 && <div style={{gridColumn:"1/-1",textAlign:"center",padding:"32px",color:"#888"}}>Henüz önce/sonra eklenmemiş.</div>}
+                  {onceSonralar.length===0 && <div style={{gridColumn:"1/-1",textAlign:"center",padding:"32px",color:"#888"}}>{m.osYok}</div>}
                 </div>
               </div>
             )}
@@ -943,7 +1055,7 @@ export default function KlinikPanel() {
             {/* ── TEKLİF TALEPLERİ ── */}
             {menu==="talepler" && (
               <div>
-                <h1 style={{fontSize:"24px",fontWeight:700,color:"#12103a",marginBottom:"24px"}}>Teklif Talepleri ({talepler.length})</h1>
+                <h1 style={{fontSize:"24px",fontWeight:700,color:"#12103a",marginBottom:"24px"}}>{m.teklifTalepleri} ({talepler.length})</h1>
                 <div style={{display:"flex",flexDirection:"column",gap:"14px"}}>
                   {talepler.map(t=>{
                     const form = getTeklifForm(t.id);
@@ -955,13 +1067,13 @@ export default function KlinikPanel() {
                         <div style={{padding:"16px 20px",display:"flex",justifyContent:"space-between",alignItems:"center"}}>
                           <div>
                             <div style={{fontSize:"15px",fontWeight:700,color:"#12103a",marginBottom:"3px"}}>{t.tedavi_turu}</div>
-                            <div style={{fontSize:"12px",color:"#888"}}>Hasta: {t.profiles?.ad} {t.profiles?.soyad}</div>
+                            <div style={{fontSize:"12px",color:"#888"}}>{m.hasta}: {t.profiles?.ad} {t.profiles?.soyad}</div>
                           </div>
                           <div style={{display:"flex",gap:"8px",alignItems:"center"}}>
                             <span style={{fontSize:"11px",padding:"3px 10px",borderRadius:"20px",background:"#fff8e1",color:"#BA7517"}}>{t.durum}</span>
                             {kullanici?.onaylandi && (
                               <button onClick={()=>setAcikTalep(acik?null:t.id)} style={{background:acik?"#f0eeff":"#534AB7",color:acik?"#534AB7":"#fff",border:acik?"1px solid #534AB7":"none",padding:"7px 16px",borderRadius:"8px",fontSize:"12px",cursor:"pointer",fontWeight:600}}>
-                                {acik?"Kapat ↑":"Teklif Ver →"}
+                                {acik?m.kapat:m.teklifAc}
                               </button>
                             )}
                           </div>
@@ -973,51 +1085,24 @@ export default function KlinikPanel() {
                             
                             {/* Diş şeması */}
                             <div style={{background:"#fff",borderRadius:"12px",border:"1px solid #EEEDFE",padding:"16px",marginBottom:"16px"}}>
-                              <div style={{fontSize:"13px",fontWeight:700,color:"#0f0d2e",marginBottom:"12px"}}>🦷 Diş Şeması ile Tedavi Planı</div>
+                              <div style={{fontSize:"13px",fontWeight:700,color:"#0f0d2e",marginBottom:"12px"}}>{m.disPlani}</div>
                               <DisSemasi onDegistir={(plan)=>disPlanHesapla(t.id,plan)}/>
 
-                              {/* Tedavi detay listesi — hizmet seçimi */}
+                              {/* Tedavi detay listesi */}
                               {tedaviDetay.length>0 && (
                                 <div style={{marginTop:"14px",background:"#f8f9ff",borderRadius:"10px",overflow:"hidden",border:"1px solid #EEEDFE"}}>
                                   <div style={{padding:"10px 14px",background:"#534AB7",fontSize:"12px",fontWeight:700,color:"#fff"}}>
-                                    Tedavi Listesi — {tedaviDetay.length} işlem
+                                    {m.tedaviListesi} — {tedaviDetay.length} {m.islem}
                                   </div>
-                                  {tedaviDetay.map((d:any,i:number)=>{
-                                    const secenekler = hizmetler.filter(h=>h.aktif&&h.dis_semasi_kategori===d.kategori);
-                                    return (
-                                      <div key={i} style={{padding:"10px 14px",borderBottom:"1px solid #EEEDFE"}}>
-                                        <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",gap:"10px"}}>
-                                          <div style={{fontSize:"12px",fontWeight:600,color:"#0f0d2e",flexShrink:0}}>
-                                            Diş {d.dis} — <span style={{color:"#534AB7"}}>{d.kategori}</span>
-                                          </div>
-                                          <div style={{display:"flex",gap:"8px",alignItems:"center",flex:1}}>
-                                            {secenekler.length>0 ? (
-                                              <select
-                                                value={d.hizmet_id||""}
-                                                onChange={e=>hizmetSecimGuncelle(t.id,d.dis,d.kategori,e.target.value)}
-                                                style={{flex:1,border:"1px solid #e5e7eb",borderRadius:"8px",padding:"6px 10px",fontSize:"12px",outline:"none",background:"#fff"}}
-                                              >
-                                                <option value="">Hizmet seçin...</option>
-                                                {secenekler.map((h:any)=>(
-                                                  <option key={h.id} value={h.id}>{h.hizmet_adi} — {h.fiyat} {h.para_birimi}</option>
-                                                ))}
-                                              </select>
-                                            ) : (
-                                              <span style={{fontSize:"11px",color:"#BA7517",background:"#fff8e1",padding:"4px 10px",borderRadius:"8px"}}>
-                                                ⚠️ Bu kategori için hizmet yok
-                                              </span>
-                                            )}
-                                            <span style={{fontWeight:700,color:d.fiyat>0?"#534AB7":"#94a3b8",flexShrink:0,fontSize:"13px"}}>
-                                              {d.fiyat>0?`${d.fiyat} EUR`:"—"}
-                                            </span>
-                                          </div>
-                                        </div>
-                                      </div>
-                                    );
-                                  })}
-                                  <div style={{display:"flex",justifyContent:"space-between",padding:"12px 14px",background:"#f0eeff",fontSize:"13px",fontWeight:700}}>
-                                    <span style={{color:"#0f0d2e"}}>Toplam Tedavi</span>
-                                    <span style={{color:"#534AB7",fontSize:"16px"}}>{tedaviDetay.reduce((s:number,d:any)=>s+d.fiyat,0)} EUR</span>
+                                  {tedaviDetay.map((d,i)=>(
+                                    <div key={i} style={{display:"flex",justifyContent:"space-between",alignItems:"center",padding:"8px 14px",borderBottom:"1px solid #EEEDFE",fontSize:"12px"}}>
+                                      <span><strong>Diş {d.dis}</strong> — {d.hizmet_adi}</span>
+                                      <span style={{fontWeight:700,color:d.fiyat>0?"#534AB7":"#BA7517"}}>{d.fiyat>0?`${d.fiyat} EUR`:m.fiyatYok}</span>
+                                    </div>
+                                  ))}
+                                  <div style={{display:"flex",justifyContent:"space-between",padding:"10px 14px",background:"#f0eeff",fontSize:"13px",fontWeight:700}}>
+                                    <span>Toplam Tedavi</span>
+                                    <span style={{color:"#534AB7",fontSize:"15px"}}>{tedaviDetay.reduce((s,d)=>s+d.fiyat,0)} EUR</span>
                                   </div>
                                 </div>
                               )}
@@ -1026,12 +1111,12 @@ export default function KlinikPanel() {
                             {/* Manuel fiyat girişi */}
                             <div style={{display:"grid",gridTemplateColumns:"1fr 2fr",gap:"10px",marginBottom:"12px"}}>
                               <div>
-                                <label style={labelStyle}>Tedavi Fiyatı (EUR) *</label>
+                                <label style={labelStyle}>{m.tedaviFiyati} *</label>
                                 <input type="number" placeholder="0" value={form.fiyat} onChange={e=>setTeklifForm(t.id,{fiyat:e.target.value})} style={inputStyle}/>
                               </div>
                               <div>
-                                <label style={labelStyle}>Açıklama</label>
-                                <input type="text" placeholder="Ek açıklama..." value={form.aciklama} onChange={e=>setTeklifForm(t.id,{aciklama:e.target.value})} style={inputStyle}/>
+                                <label style={labelStyle}>{m.aciklama}</label>
+                                <input type="text" placeholder={m.aciklamaPH} value={form.aciklama} onChange={e=>setTeklifForm(t.id,{aciklama:e.target.value})} style={inputStyle}/>
                               </div>
                             </div>
 
@@ -1039,11 +1124,11 @@ export default function KlinikPanel() {
                             <div style={{background:"#fff",borderRadius:"10px",padding:"12px 14px",border:"1px solid #EEEDFE",marginBottom:"10px"}}>
                               <label style={{display:"flex",alignItems:"center",gap:"8px",cursor:"pointer",marginBottom:form.otel_dahil?"10px":"0"}}>
                                 <input type="checkbox" checked={form.otel_dahil} onChange={e=>setTeklifForm(t.id,{otel_dahil:e.target.checked})}/>
-                                <span style={{fontSize:"13px",fontWeight:600,color:"#0f0d2e"}}>🏨 Otel Dahil</span>
+                                <span style={{fontSize:"13px",fontWeight:600,color:"#0f0d2e"}}>{m.otelDahil}</span>
                               </label>
                               {form.otel_dahil && (
                                 <div style={{display:"flex",gap:"8px"}}>
-                                  <input type="text" placeholder="Otel adı / açıklama" value={form.otel_aciklama} onChange={e=>setTeklifForm(t.id,{otel_aciklama:e.target.value})} style={{...inputStyle,flex:1}}/>
+                                  <input type="text" placeholder={m.otelAdi} value={form.otel_aciklama} onChange={e=>setTeklifForm(t.id,{otel_aciklama:e.target.value})} style={{...inputStyle,flex:1}}/>
                                   <input type="number" placeholder="Fiyat (EUR)" value={form.otel_fiyat} onChange={e=>setTeklifForm(t.id,{otel_fiyat:e.target.value})} style={{...inputStyle,width:"140px"}}/>
                                 </div>
                               )}
@@ -1053,11 +1138,11 @@ export default function KlinikPanel() {
                             <div style={{background:"#fff",borderRadius:"10px",padding:"12px 14px",border:"1px solid #EEEDFE",marginBottom:"14px"}}>
                               <label style={{display:"flex",alignItems:"center",gap:"8px",cursor:"pointer",marginBottom:form.transfer_dahil?"10px":"0"}}>
                                 <input type="checkbox" checked={form.transfer_dahil} onChange={e=>setTeklifForm(t.id,{transfer_dahil:e.target.checked})}/>
-                                <span style={{fontSize:"13px",fontWeight:600,color:"#0f0d2e"}}>🚗 Transfer Dahil</span>
+                                <span style={{fontSize:"13px",fontWeight:600,color:"#0f0d2e"}}>{m.transferDahil}</span>
                               </label>
                               {form.transfer_dahil && (
                                 <div style={{display:"flex",gap:"8px"}}>
-                                  <input type="text" placeholder="Havalimanı-otel vb." value={form.transfer_aciklama} onChange={e=>setTeklifForm(t.id,{transfer_aciklama:e.target.value})} style={{...inputStyle,flex:1}}/>
+                                  <input type="text" placeholder={m.transferAciklama} value={form.transfer_aciklama} onChange={e=>setTeklifForm(t.id,{transfer_aciklama:e.target.value})} style={{...inputStyle,flex:1}}/>
                                   <input type="number" placeholder="Fiyat (EUR)" value={form.transfer_fiyat} onChange={e=>setTeklifForm(t.id,{transfer_fiyat:e.target.value})} style={{...inputStyle,width:"140px"}}/>
                                 </div>
                               )}
@@ -1084,7 +1169,7 @@ export default function KlinikPanel() {
                     );
                   })}
                   {talepler.length===0 && (
-                    <div style={{textAlign:"center",padding:"48px",background:"#fff",borderRadius:"12px",border:"1px solid #EEEDFE",color:"#888"}}>Henüz teklif talebi yok</div>
+                    <div style={{textAlign:"center",padding:"48px",background:"#fff",borderRadius:"12px",border:"1px solid #EEEDFE",color:"#888"}}>{m.teklifYok}</div>
                   )}
                 </div>
               </div>
@@ -1093,7 +1178,7 @@ export default function KlinikPanel() {
             {/* ── GÖNDERİLEN TEKLİFLER ── */}
             {menu==="tekliflerim" && (
               <div>
-                <h1 style={{fontSize:"24px",fontWeight:700,color:"#12103a",marginBottom:"24px"}}>Gönderilen Teklifler ({teklifler.length})</h1>
+                <h1 style={{fontSize:"24px",fontWeight:700,color:"#12103a",marginBottom:"24px"}}>{m.gonderilen} ({teklifler.length})</h1>
                 <div style={{display:"flex",flexDirection:"column",gap:"14px"}}>
                   {teklifler.map(t=>(
                     <div key={t.id} style={{background:"#fff",border:`2px solid ${t.durum==="onaylandi"?"#059669":t.durum==="reddedildi"?"#fcc":"#EEEDFE"}`,borderRadius:"14px",padding:"22px"}}>
@@ -1107,7 +1192,7 @@ export default function KlinikPanel() {
                             background:t.durum==="onaylandi"?"#f0fff4":t.durum==="reddedildi"?"#fff0f0":"#fff8e1",
                             color:t.durum==="onaylandi"?"#059669":t.durum==="reddedildi"?"#c00":"#BA7517"
                           }}>
-                            {t.durum==="onaylandi"?"✅ Onaylandı":t.durum==="reddedildi"?"❌ Reddedildi":"⏳ Beklemede"}
+                            {t.durum==="onaylandi"?m.onaylandiL:t.durum==="reddedildi"?m.reddedildiL:m.beklemede}
                           </span>
                           <button onClick={()=>teklifYazdir(t)} style={{background:"#f0eeff",color:"#534AB7",border:"1px solid #EEEDFE",padding:"6px 14px",borderRadius:"8px",fontSize:"12px",cursor:"pointer",fontWeight:600}}>
                             🖨️ Yazdır
@@ -1149,7 +1234,7 @@ export default function KlinikPanel() {
                       )}
                     </div>
                   ))}
-                  {teklifler.length===0 && <div style={{textAlign:"center",padding:"48px",background:"#fff",borderRadius:"12px",border:"1px solid #EEEDFE",color:"#888"}}>Henüz teklif gönderilmedi</div>}
+                  {teklifler.length===0 && <div style={{textAlign:"center",padding:"48px",background:"#fff",borderRadius:"12px",border:"1px solid #EEEDFE",color:"#888"}}>{m.teklifYokGon}</div>}
                 </div>
               </div>
             )}
@@ -1157,10 +1242,10 @@ export default function KlinikPanel() {
             {/* ── BELGELER ── */}
             {menu==="belgeler" && (
               <div>
-                <h1 style={{fontSize:"24px",fontWeight:700,color:"#12103a",marginBottom:"8px"}}>📄 Belgelerim</h1>
-                <p style={{fontSize:"14px",color:"#888",marginBottom:"24px"}}>Onay sürecinde incelenecek belgelerinizi yükleyin.</p>
+                <h1 style={{fontSize:"24px",fontWeight:700,color:"#12103a",marginBottom:"8px"}}>{m.belgelerBaslik}</h1>
+                <p style={{fontSize:"14px",color:"#888",marginBottom:"24px"}}>{m.belgeAcik}</p>
                 {belgeYukleniyor && (
-                  <div style={{background:"#f0eeff",border:"1px solid #534AB7",borderRadius:"8px",padding:"10px 16px",marginBottom:"16px",fontSize:"13px",color:"#534AB7"}}>⏳ Belge yükleniyor...</div>
+                  <div style={{background:"#f0eeff",border:"1px solid #534AB7",borderRadius:"8px",padding:"10px 16px",marginBottom:"16px",fontSize:"13px",color:"#534AB7"}}>{m.belgeYukleniyor}</div>
                 )}
                 <div style={{display:"flex",flexDirection:"column",gap:"14px"}}>
                   {zorunluBelgeler.map(zb=>{
@@ -1171,22 +1256,22 @@ export default function KlinikPanel() {
                           <div style={{display:"flex",alignItems:"center",gap:"10px",marginBottom:"4px"}}>
                             <span style={{fontSize:"18px"}}>{yuklendi?"✅":"📋"}</span>
                             <span style={{fontSize:"14px",fontWeight:700,color:"#0f0d2e"}}>{zb.ad}</span>
-                            {!yuklendi && <span style={{fontSize:"10px",background:"#fff0f0",color:"#c00",padding:"2px 8px",borderRadius:"10px",fontWeight:600}}>Zorunlu</span>}
+                            {!yuklendi && <span style={{fontSize:"10px",background:"#fff0f0",color:"#c00",padding:"2px 8px",borderRadius:"10px",fontWeight:600}}>{m.zorunlu}</span>}
                           </div>
                           <p style={{fontSize:"12px",color:"#94a3b8",margin:"0 0 0 28px"}}>{zb.aciklama}</p>
                           {yuklendi && (
                             <div style={{marginTop:"6px",marginLeft:"28px",display:"flex",gap:"12px",alignItems:"center"}}>
-                              <a href={yuklendi.belge_url} target="_blank" rel="noreferrer" style={{fontSize:"12px",color:"#534AB7",textDecoration:"none",fontWeight:600}}>📎 Görüntüle</a>
+                              <a href={yuklendi.belge_url} target="_blank" rel="noreferrer" style={{fontSize:"12px",color:"#534AB7",textDecoration:"none",fontWeight:600}}>{m.goruntule}</a>
                               <span style={{fontSize:"11px",color:"#94a3b8"}}>{new Date(yuklendi.yukleme_tarihi).toLocaleDateString("tr-TR")}</span>
                             </div>
                           )}
                         </div>
                         <div style={{display:"flex",gap:"8px",flexShrink:0}}>
                           <label style={{background:yuklendi?"#f0eeff":"#534AB7",color:yuklendi?"#534AB7":"#fff",padding:"8px 16px",borderRadius:"8px",fontSize:"12px",cursor:"pointer",fontWeight:600}}>
-                            {yuklendi?"Güncelle":"Yükle"}
+                            {yuklendi ? m.guncelle : m.yukle}
                             <input type="file" accept=".pdf,.jpg,.jpeg,.png" style={{display:"none"}} onChange={e=>{const f=e.target.files?.[0];if(f)belgeYukle(zb.id,f);}}/>
                           </label>
-                          {yuklendi && <button onClick={()=>belgeSil(yuklendi.id)} style={{background:"#fff0f0",color:"#c00",border:"none",padding:"8px 12px",borderRadius:"8px",fontSize:"12px",cursor:"pointer"}}>Sil</button>}
+                          {yuklendi && <button onClick={()=>belgeSil(yuklendi.id)} style={{background:"#fff0f0",color:"#c00",border:"none",padding:"8px 12px",borderRadius:"8px",fontSize:"12px",cursor:"pointer"}}>{m.sil}</button>}
                         </div>
                       </div>
                     );
@@ -1199,7 +1284,7 @@ export default function KlinikPanel() {
                   <div style={{background:"#e5e7eb",borderRadius:"6px",height:"8px",overflow:"hidden"}}>
                     <div style={{background:belgeler.length===zorunluBelgeler.length?"#059669":"#534AB7",height:"100%",width:`${(belgeler.length/zorunluBelgeler.length)*100}%`,transition:"width .3s",borderRadius:"6px"}}/>
                   </div>
-                  {belgeler.length===zorunluBelgeler.length && <p style={{fontSize:"12px",color:"#059669",marginTop:"8px",fontWeight:600}}>✅ Tüm belgeler yüklendi! Admin onayı bekleniyor.</p>}
+                  {belgeler.length===zorunluBelgeler.length && <p style={{fontSize:"12px",color:"#059669",marginTop:"8px",fontWeight:600}}>{m.belgeTamamlandi}</p>}
                 </div>
               </div>
             )}
@@ -1207,8 +1292,8 @@ export default function KlinikPanel() {
             {/* ── MESAJLAR ── */}
             {menu==="mesajlar" && (
               <div>
-                <h1 style={{fontSize:"24px",fontWeight:700,color:"#12103a",marginBottom:"8px"}}>💬 Mesajlar</h1>
-                <p style={{fontSize:"14px",color:"#888",marginBottom:"24px"}}>Hastalarla mesajlaşmak için mesajlar sayfasını kullanın.</p>
+                <h1 style={{fontSize:"24px",fontWeight:700,color:"#12103a",marginBottom:"8px"}}>{m.mesajlarBaslik}</h1>
+                <p style={{fontSize:"14px",color:"#888",marginBottom:"24px"}}>{m.mesajlarAcik}</p>
                 <a href="/mesajlar" style={{display:"inline-flex",alignItems:"center",gap:"8px",background:"#534AB7",color:"#fff",padding:"12px 24px",borderRadius:"10px",fontSize:"14px",textDecoration:"none",fontWeight:600}}>
                   💬 Mesajlar Sayfasına Git →
                 </a>
