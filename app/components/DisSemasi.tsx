@@ -1,269 +1,318 @@
 "use client";
 import React, { useState } from "react";
 
-const RENKLER: Record<string, string> = {
-  implant: "#534AB7", kaplama: "#1D9E75", kanal: "#D85A30",
-  cekim: "#E24B4A", dolgu: "#378ADD"
-};
-const ISIMLER: Record<string, string> = {
-  implant: "İmplant", kaplama: "Kaplama", kanal: "Kanal", cekim: "Çekim", dolgu: "Dolgu"
-};
-const TIPLER: Record<number, string> = {
-  18:"Y",17:"B",16:"B",15:"K2",14:"K2",13:"C",12:"K",11:"K",
-  21:"K",22:"K",23:"C",24:"K2",25:"K2",26:"B",27:"B",28:"Y",
-  48:"Y",47:"B",46:"B",45:"K2",44:"K2",43:"C",42:"K",41:"K",
-  31:"K",32:"K",33:"C",34:"K2",35:"K2",36:"B",37:"B",38:"Y"
-};
-const TIP_ISIM: Record<string, string> = {
-  K:"Kesici", C:"Köpek dişi", K2:"Küçük azı", B:"Büyük azı", Y:"Yirmilik"
-};
+const CONDS = [
+  { id:'eksik',   l:'Eksik',   c:'#bbb',    dash:true },
+  { id:'cekim',   l:'Çekim',   c:'#E24B4A' },
+  { id:'implant', l:'İmplant', c:'#534AB7' },
+  { id:'kopru',   l:'Köprü',   c:'#7F77DD' },
+  { id:'kaplama', l:'Kaplama', c:'#1D9E75' },
+  { id:'kanal',   l:'Kanal',   c:'#D85A30' },
+  { id:'dolgu',   l:'Dolgu',   c:'#378ADD' },
+  { id:'lezyon',  l:'Lezyon',  c:'#BA7517' },
+  { id:'kirik',   l:'Kırık',   c:'#993C1D' },
+  { id:'cokmus',  l:'Çökmüş',  c:'#5F5E5A' },
+];
 
-function getPath(tip: string, alt: boolean): string {
-  if (tip === "K") return alt
-    ? `M7,4 Q6,16 8,26 Q14,34 20,26 Q22,16 21,4 Q14,0 7,4Z`
-    : `M7,34 Q6,22 8,12 Q14,4 20,12 Q22,22 21,34 Q14,38 7,34Z`;
-  if (tip === "C") return alt
-    ? `M6,5 Q5,14 8,26 Q14,36 20,26 Q23,14 22,5 Q14,0 6,5Z`
-    : `M6,33 Q5,24 8,12 Q14,2 20,12 Q23,24 22,33 Q14,38 6,33Z`;
-  if (tip === "K2") return alt
-    ? `M4,5 Q3,18 6,28 Q10,36 14,34 Q18,36 22,28 Q25,18 24,5 Q16,0 4,5Z`
-    : `M4,33 Q3,20 6,10 Q10,2 14,4 Q18,2 22,10 Q25,20 24,33 Q16,38 4,33Z`;
-  if (tip === "B") return alt
-    ? `M3,6 Q2,20 5,29 Q9,36 14,35 Q19,36 23,29 Q26,20 25,6 Q16,1 3,6Z`
-    : `M3,32 Q2,18 5,9 Q9,2 14,3 Q19,2 23,9 Q26,18 25,32 Q16,37 3,32Z`;
-  return alt
-    ? `M4,6 Q3,19 6,28 Q10,35 14,34 Q18,35 22,28 Q25,19 24,6 Q16,1 4,6Z`
-    : `M4,32 Q3,19 6,10 Q10,3 14,4 Q18,3 22,10 Q25,19 24,32 Q16,37 4,32Z`;
-}
+const TYPES: Record<number,string> = {
+  18:'Y',17:'M',16:'M',15:'P',14:'P',13:'C',12:'LI',11:'CI',
+  21:'CI',22:'LI',23:'C',24:'P',25:'P',26:'M',27:'M',28:'Y',
+  48:'Y',47:'M',46:'M',45:'P',44:'P',43:'C',42:'LI',41:'CI',
+  31:'CI',32:'LI',33:'C',34:'P',35:'P',36:'M',37:'M',38:'Y'
+};
+const UST = [18,17,16,15,14,13,12,11,21,22,23,24,25,26,27,28];
+const ALT = [48,47,46,45,44,43,42,41,31,32,33,34,35,36,37,38];
 
-interface DisSekliProps {
-  no: number;
-  alt: boolean;
-  disTedaviler: string[];
-  secili: boolean;
+interface Props { onDegistir?: (plan: Record<number,string[]>) => void; }
+
+interface ToothProps {
+  no: number; upper: boolean;
+  conds: string[]; selected: boolean;
   onClick: () => void;
 }
 
-function DisSekli({ no, alt, disTedaviler, secili, onClick }: DisSekliProps) {
-  const tip = TIPLER[no];
-  const renk = disTedaviler.length > 0 ? RENKLER[disTedaviler[0]] : "#e0ddf0";
-  const stroke = secili ? "#534AB7" : "rgba(0,0,0,0.12)";
-  const strokeW = secili ? 2 : 0.8;
+function ToothSVG({ no, upper, conds }: { no: number; upper: boolean; conds: string[] }) {
+  const t = TYPES[no];
+  const rk = conds.includes('kanal') ? '#C8501A' : '#c8b882';
+  const rs = '#a89860';
+  const ck = conds.includes('kaplama') ? '#1D9E75' : conds.includes('kopru') ? '#7F77DD' : '#e8e0f0';
+  const ch = conds.includes('kaplama') ? '#4DDFAA' : conds.includes('kopru') ? '#B0A8F0' : '#f8f5ff';
+  const cshadow = conds.includes('kaplama') ? '#0A5C3A' : conds.includes('kopru') ? '#4840A0' : '#b8aad8';
+  const impl = conds.includes('implant');
+  const eksik = conds.includes('eksik') && !impl;
+  const cekim = conds.includes('cekim');
+  const lez = conds.includes('lezyon');
+  const dolgu = conds.includes('dolgu');
+  const kirik = conds.includes('kirik');
+  const cok = conds.includes('cokmus');
+  const multi = conds.length > 1;
 
-  const tumpaths: React.ReactElement[] = [];
-  if (tip === "K2") {
-    const y = alt ? 28 : 10;
-    tumpaths.push(
-      <ellipse key="1" cx={10} cy={y} rx={2.5} ry={3} fill="rgba(255,255,255,0.18)" />,
-      <ellipse key="2" cx={18} cy={y} rx={2.5} ry={3} fill="rgba(255,255,255,0.18)" />
-    );
+  let inner = '';
+
+  if (eksik) {
+    const ey = upper ? 2 : 36;
+    inner = `<rect x="2" y="${ey}" width="22" height="26" rx="7" fill="none" stroke="#c0c0c0" stroke-width="1" stroke-dasharray="4,3"/>
+      <line x1="13" y1="${upper ? ey+26 : ey}" x2="13" y2="${upper ? ey+40 : ey-14}" stroke="#c0c0c0" stroke-width="1" stroke-dasharray="3,3"/>`;
+  } else if (impl) {
+    const vy = upper ? 2 : 28;
+    const cy = upper ? 32 : 6;
+    inner = `<rect x="10" y="${vy}" width="6" height="24" rx="3" fill="#5858a8"/>
+      ${[1,2,3,4].map(i => `<line x1="9" y1="${vy+i*5}" x2="17" y2="${vy+i*5}" stroke="#7878b8" stroke-width=".8"/>`).join('')}
+      <path d="M3,${cy+4} Q3,${cy} 13,${cy-2} Q23,${cy} 23,${cy+4} Q23,${cy+20} 13,${cy+22} Q3,${cy+20} 3,${cy+16}Z" fill="${ck}" stroke="${cshadow}" stroke-width=".8"/>
+      <path d="M4,${cy+6} Q13,${cy+3} 22,${cy+6}" stroke="${ch}" stroke-width="1.2" fill="none" opacity=".8"/>
+      ${dolgu ? `<ellipse cx="13" cy="${cy+14}" rx="5" ry="3" fill="#378ADD" opacity=".75"/>` : ''}`;
+  } else if (t === 'CI') {
+    if (upper) {
+      inner = `<path d="M10,30 C9,18 10,8 13,2 C16,8 17,18 16,30Z" fill="${rk}" stroke="${rs}" stroke-width=".7"/>
+        ${lez ? `<ellipse cx="13" cy="5" rx="5" ry="4" fill="#BA7517" opacity=".5"/>` : ''}
+        <path d="M3,30 C2,30 2,34 3,36 L5,46 C5,48 8,50 13,50 C18,50 21,48 21,46 L23,36 C24,34 24,30 23,30Z" fill="${ck}" stroke="${cshadow}" stroke-width=".8"/>
+        <path d="M4,32 Q13,29 22,32" stroke="${ch}" stroke-width="1.2" fill="none"/>
+        <path d="M5,38 Q13,35 21,38" stroke="${ch}" stroke-width=".7" fill="none" opacity=".5"/>
+        ${dolgu ? `<rect x="7" y="36" width="12" height="8" rx="2" fill="#378ADD" opacity=".7"/>` : ''}
+        ${kirik ? `<path d="M10,31 L16,44" stroke="#993C1D" stroke-width="1.5" stroke-linecap="round"/>` : ''}`;
+    } else {
+      inner = `<path d="M10,34 C9,46 10,56 13,62 C16,56 17,46 16,34Z" fill="${rk}" stroke="${rs}" stroke-width=".7"/>
+        ${lez ? `<ellipse cx="13" cy="59" rx="5" ry="4" fill="#BA7517" opacity=".5"/>` : ''}
+        <path d="M3,34 C2,34 2,30 3,28 L5,18 C5,16 8,14 13,14 C18,14 21,16 21,18 L23,28 C24,30 24,34 23,34Z" fill="${ck}" stroke="${cshadow}" stroke-width=".8"/>
+        <path d="M4,32 Q13,35 22,32" stroke="${ch}" stroke-width="1.2" fill="none"/>
+        <path d="M5,26 Q13,29 21,26" stroke="${ch}" stroke-width=".7" fill="none" opacity=".5"/>
+        ${dolgu ? `<rect x="7" y="20" width="12" height="8" rx="2" fill="#378ADD" opacity=".7"/>` : ''}`;
+    }
+  } else if (t === 'LI') {
+    if (upper) {
+      inner = `<path d="M11,30 C10,20 11,10 13,3 C15,10 15,20 15,30Z" fill="${rk}" stroke="${rs}" stroke-width=".7"/>
+        ${lez ? `<ellipse cx="13" cy="6" rx="4" ry="3.5" fill="#BA7517" opacity=".5"/>` : ''}
+        <path d="M5,30 C4,30 4,33 5,35 L7,44 C7,46 9,48 13,48 C17,48 19,46 19,44 L21,35 C22,33 22,30 21,30Z" fill="${ck}" stroke="${cshadow}" stroke-width=".8"/>
+        <path d="M6,32 Q13,29 20,32" stroke="${ch}" stroke-width="1.1" fill="none"/>
+        ${dolgu ? `<rect x="8" y="36" width="10" height="7" rx="2" fill="#378ADD" opacity=".7"/>` : ''}`;
+    } else {
+      inner = `<path d="M11,34 C10,44 11,54 13,61 C15,54 15,44 15,34Z" fill="${rk}" stroke="${rs}" stroke-width=".7"/>
+        ${lez ? `<ellipse cx="13" cy="58" rx="4" ry="3.5" fill="#BA7517" opacity=".5"/>` : ''}
+        <path d="M5,34 C4,34 4,31 5,29 L7,20 C7,18 9,16 13,16 C17,16 19,18 19,20 L21,29 C22,31 22,34 21,34Z" fill="${ck}" stroke="${cshadow}" stroke-width=".8"/>
+        <path d="M6,32 Q13,35 20,32" stroke="${ch}" stroke-width="1.1" fill="none"/>
+        ${dolgu ? `<rect x="8" y="21" width="10" height="7" rx="2" fill="#378ADD" opacity=".7"/>` : ''}`;
+    }
+  } else if (t === 'C') {
+    if (upper) {
+      inner = `<path d="M11,28 C10,16 11,6 13,1 C15,6 15,16 15,28Z" fill="${rk}" stroke="${rs}" stroke-width=".7"/>
+        ${lez ? `<ellipse cx="13" cy="4" rx="5" ry="4" fill="#BA7517" opacity=".5"/>` : ''}
+        <path d="M4,28 C3,28 3,32 5,34 L9,48 Q11,52 13,52 Q15,52 17,48 L21,34 C23,32 23,28 22,28Z" fill="${ck}" stroke="${cshadow}" stroke-width=".8"/>
+        <path d="M5,30 Q13,27 21,30" stroke="${ch}" stroke-width="1.1" fill="none"/>
+        <path d="M8,38 Q13,35 18,38" stroke="${ch}" stroke-width=".7" fill="none" opacity=".5"/>
+        ${dolgu ? `<ellipse cx="13" cy="40" rx="5" ry="4" fill="#378ADD" opacity=".7"/>` : ''}`;
+    } else {
+      inner = `<path d="M11,36 C10,48 11,58 13,63 C15,58 15,48 15,36Z" fill="${rk}" stroke="${rs}" stroke-width=".7"/>
+        ${lez ? `<ellipse cx="13" cy="60" rx="5" ry="4" fill="#BA7517" opacity=".5"/>` : ''}
+        <path d="M4,36 C3,36 3,32 5,30 L9,16 Q11,12 13,12 Q15,12 17,16 L21,30 C23,32 23,36 22,36Z" fill="${ck}" stroke="${cshadow}" stroke-width=".8"/>
+        <path d="M5,34 Q13,37 21,34" stroke="${ch}" stroke-width="1.1" fill="none"/>
+        <path d="M8,26 Q13,29 18,26" stroke="${ch}" stroke-width=".7" fill="none" opacity=".5"/>
+        ${dolgu ? `<ellipse cx="13" cy="24" rx="5" ry="4" fill="#378ADD" opacity=".7"/>` : ''}`;
+    }
+  } else if (t === 'P') {
+    if (upper) {
+      inner = `<path d="M9,28 C8,16 9,6 11,2 C12,0 13,0 14,2 C15,6 16,16 17,28Z" fill="${rk}" stroke="${rs}" stroke-width=".7"/>
+        <line x1="13" y1="28" x2="13" y2="4" stroke="${rs}" stroke-width=".6"/>
+        ${lez ? `<ellipse cx="10" cy="5" rx="4" ry="3" fill="#BA7517" opacity=".5"/><ellipse cx="16" cy="5" rx="4" ry="3" fill="#BA7517" opacity=".5"/>` : ''}
+        <path d="M3,28 C2,28 2,32 3,34 Q3,46 13,48 Q23,46 23,34 C24,32 24,28 23,28Z" fill="${ck}" stroke="${cshadow}" stroke-width=".8"/>
+        <path d="M4,30 Q13,27 22,30" stroke="${ch}" stroke-width="1" fill="none"/>
+        <path d="M5,34 Q8,30 13,32 Q18,30 21,34" stroke="${cshadow}" stroke-width=".8" fill="none"/>
+        <circle cx="8" cy="36" r="4" fill="${ch}" opacity=".55"/>
+        <circle cx="18" cy="36" r="4" fill="${ch}" opacity=".55"/>
+        ${dolgu ? `<ellipse cx="13" cy="38" rx="8" ry="5" fill="#378ADD" opacity=".65"/>` : ''}`;
+    } else {
+      inner = `<path d="M9,36 C8,48 9,58 11,62 C12,64 13,64 14,62 C15,58 16,48 17,36Z" fill="${rk}" stroke="${rs}" stroke-width=".7"/>
+        <line x1="13" y1="36" x2="13" y2="60" stroke="${rs}" stroke-width=".6"/>
+        ${lez ? `<ellipse cx="10" cy="59" rx="4" ry="3" fill="#BA7517" opacity=".5"/><ellipse cx="16" cy="59" rx="4" ry="3" fill="#BA7517" opacity=".5"/>` : ''}
+        <path d="M3,36 C2,36 2,32 3,30 Q3,18 13,16 Q23,18 23,30 C24,32 24,36 23,36Z" fill="${ck}" stroke="${cshadow}" stroke-width=".8"/>
+        <path d="M4,34 Q13,37 22,34" stroke="${ch}" stroke-width="1" fill="none"/>
+        <path d="M5,30 Q8,34 13,32 Q18,34 21,30" stroke="${cshadow}" stroke-width=".8" fill="none"/>
+        <circle cx="8" cy="28" r="4" fill="${ch}" opacity=".55"/>
+        <circle cx="18" cy="28" r="4" fill="${ch}" opacity=".55"/>
+        ${dolgu ? `<ellipse cx="13" cy="26" rx="8" ry="5" fill="#378ADD" opacity=".65"/>` : ''}`;
+    }
+  } else {
+    const isW = t === 'Y';
+    const h = isW ? 14 : 16;
+    if (upper) {
+      inner = `<path d="M5,26 C4,14 5,4 7,1 C8,0 9,2 9,2 C9,14 10,24 11,26Z" fill="${rk}" stroke="${rs}" stroke-width=".7"/>
+        <path d="M11,25 C11,12 12,3 13,1 C14,3 15,12 15,25Z" fill="${rk}" stroke="${rs}" stroke-width=".7"/>
+        <path d="M15,26 C16,24 17,14 17,2 C17,2 18,0 19,1 C21,4 22,14 21,26Z" fill="${rk}" stroke="${rs}" stroke-width=".7"/>
+        ${lez ? `<ellipse cx="8" cy="4" rx="4" ry="3.5" fill="#BA7517" opacity=".5"/><ellipse cx="13" cy="3" rx="3" ry="3" fill="#BA7517" opacity=".5"/><ellipse cx="18" cy="4" rx="4" ry="3.5" fill="#BA7517" opacity=".5"/>` : ''}
+        <path d="M1,26 C1,24 2,30 2,30 Q2,${26+h+2} 13,${26+h+4} Q24,${26+h+2} 24,30 C24,30 25,24 25,26Z" fill="${ck}" stroke="${cshadow}" stroke-width=".8"/>
+        <path d="M2,28 Q13,25 24,28" stroke="${ch}" stroke-width="1" fill="none"/>
+        <circle cx="7" cy="${26+h/2}" r="${isW?3:3.5}" fill="${ch}" opacity=".6"/>
+        <circle cx="19" cy="${26+h/2}" r="${isW?3:3.5}" fill="${ch}" opacity=".6"/>
+        <circle cx="7" cy="${26+h-2}" r="${isW?2.5:3}" fill="${ch}" opacity=".4"/>
+        <circle cx="19" cy="${26+h-2}" r="${isW?2.5:3}" fill="${ch}" opacity=".4"/>
+        ${dolgu ? `<ellipse cx="13" cy="${26+h/2}" rx="10" ry="5.5" fill="#378ADD" opacity=".6"/>` : ''}
+        ${cok ? `<ellipse cx="13" cy="${26+h/2}" rx="11" ry="6" fill="#5F5E5A" opacity=".3"/>` : ''}
+        ${kirik ? `<path d="M8,28 L19,${26+h}" stroke="#993C1D" stroke-width="1.5" stroke-linecap="round"/>` : ''}`;
+    } else {
+      inner = `<path d="M5,38 C4,50 5,60 7,63 C8,64 9,62 9,62 C9,50 10,40 11,38Z" fill="${rk}" stroke="${rs}" stroke-width=".7"/>
+        <path d="M11,39 C11,52 12,61 13,63 C14,61 15,52 15,39Z" fill="${rk}" stroke="${rs}" stroke-width=".7"/>
+        <path d="M15,38 C16,40 17,50 17,62 C17,62 18,64 19,63 C21,60 22,50 21,38Z" fill="${rk}" stroke="${rs}" stroke-width=".7"/>
+        ${lez ? `<ellipse cx="8" cy="60" rx="4" ry="3.5" fill="#BA7517" opacity=".5"/><ellipse cx="13" cy="61" rx="3" ry="3" fill="#BA7517" opacity=".5"/><ellipse cx="18" cy="60" rx="4" ry="3.5" fill="#BA7517" opacity=".5"/>` : ''}
+        <path d="M1,38 C1,40 2,34 2,34 Q2,${38-h-2} 13,${38-h-4} Q24,${38-h-2} 24,34 C24,34 25,40 25,38Z" fill="${ck}" stroke="${cshadow}" stroke-width=".8"/>
+        <path d="M2,36 Q13,39 24,36" stroke="${ch}" stroke-width="1" fill="none"/>
+        <circle cx="7" cy="${38-h/2}" r="${isW?3:3.5}" fill="${ch}" opacity=".6"/>
+        <circle cx="19" cy="${38-h/2}" r="${isW?3:3.5}" fill="${ch}" opacity=".6"/>
+        <circle cx="7" cy="${38-h+2}" r="${isW?2.5:3}" fill="${ch}" opacity=".4"/>
+        <circle cx="19" cy="${38-h+2}" r="${isW?2.5:3}" fill="${ch}" opacity=".4"/>
+        ${dolgu ? `<ellipse cx="13" cy="${38-h/2}" rx="10" ry="5.5" fill="#378ADD" opacity=".6"/>` : ''}
+        ${cok ? `<ellipse cx="13" cy="${38-h/2}" rx="11" ry="6" fill="#5F5E5A" opacity=".3"/>` : ''}
+        ${kirik ? `<path d="M8,36 L19,${38-h}" stroke="#993C1D" stroke-width="1.5" stroke-linecap="round"/>` : ''}`;
+    }
   }
-  if (tip === "B" || tip === "Y") {
-    const y1 = alt ? 28 : 10;
-    tumpaths.push(
-      <ellipse key="1" cx={9} cy={y1} rx={3} ry={3.5} fill="rgba(255,255,255,0.2)" />,
-      <ellipse key="2" cx={19} cy={y1} rx={3} ry={3.5} fill="rgba(255,255,255,0.2)" />,
-      <ellipse key="3" cx={9} cy={19} rx={2.5} ry={3} fill="rgba(255,255,255,0.12)" />,
-      <ellipse key="4" cx={19} cy={19} rx={2.5} ry={3} fill="rgba(255,255,255,0.12)" />
-    );
+
+  if (cekim) {
+    inner += `<line x1="2" y1="3" x2="24" y2="61" stroke="#E24B4A" stroke-width="2.5" stroke-linecap="round" opacity=".85"/>
+      <line x1="24" y1="3" x2="2" y2="61" stroke="#E24B4A" stroke-width="2.5" stroke-linecap="round" opacity=".85"/>`;
+  }
+  if (multi) {
+    inner += `<circle cx="22" cy="5" r="5" fill="#1a1840"/>
+      <text x="22" y="8.5" text-anchor="middle" font-size="6.5" fill="white" font-weight="bold">${conds.length}</text>`;
   }
 
   return (
+    <svg width="26" height="64" viewBox="0 0 26 64" dangerouslySetInnerHTML={{ __html: inner }} />
+  );
+}
+
+function Tooth({ no, upper, conds, selected, onClick }: ToothProps) {
+  return (
     <div
       onClick={onClick}
-      style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "1px", cursor: "pointer", position: "relative" }}
+      style={{
+        display: 'flex', flexDirection: 'column', alignItems: 'center',
+        cursor: 'pointer', padding: '1px', borderRadius: '3px',
+        background: selected ? 'rgba(83,74,183,.18)' : 'transparent',
+        outline: selected ? '2px solid #534AB7' : 'none',
+        transition: 'all .12s',
+      }}
     >
-      {!alt && <span style={{ fontSize: "8px", color: secili ? "#534AB7" : "#94a3b8", fontWeight: secili ? 700 : 400 }}>{no}</span>}
-      <div style={{ position: "relative" }}>
-        <svg width="26" height="36" viewBox="0 0 28 38"
-          style={{ filter: secili ? "drop-shadow(0 0 3px rgba(83,74,183,0.8))" : "none", transition: "all 0.15s" }}>
-          <path d={getPath(tip, alt)} fill={renk} stroke={stroke} strokeWidth={strokeW} />
-          {tumpaths}
-          {disTedaviler.includes("cekim") && (
-            <>
-              <line x1={6} y1={8} x2={22} y2={30} stroke="white" strokeWidth={2.5} strokeLinecap="round" />
-              <line x1={22} y1={8} x2={6} y2={30} stroke="white" strokeWidth={2.5} strokeLinecap="round" />
-            </>
-          )}
-        </svg>
-        {disTedaviler.length > 1 && (
-          <div style={{
-            position: "absolute", bottom: 0, right: -2,
-            width: "12px", height: "12px", borderRadius: "50%",
-            background: "#0f0d2e", color: "#fff", fontSize: "8px", fontWeight: 700,
-            display: "flex", alignItems: "center", justifyContent: "center",
-            border: "1px solid #fff"
-          }}>
-            {disTedaviler.length}
-          </div>
-        )}
-      </div>
-      {alt && <span style={{ fontSize: "8px", color: secili ? "#534AB7" : "#94a3b8", fontWeight: secili ? 700 : 400 }}>{no}</span>}
+      {upper && <span style={{ fontSize: '7px', color: '#94a3b8', lineHeight: '12px', height: '12px' }}>{no}</span>}
+      <ToothSVG no={no} upper={upper} conds={conds} />
+      {!upper && <span style={{ fontSize: '7px', color: '#94a3b8', lineHeight: '12px', height: '12px' }}>{no}</span>}
     </div>
   );
 }
 
-interface DisSemasiProps {
-  onDegistir?: (tedaviPlan: Record<number, string[]>) => void;
-}
+export default function DisSemasi({ onDegistir }: Props) {
+  const [state, setState] = useState<Record<number,string[]>>({});
+  const [sel, setSel] = useState<number|null>(null);
 
-export default function DisSemasi({ onDegistir }: DisSemasiProps) {
-  const [tedaviler, setTedaviler] = useState<Record<number, string[]>>({});
-  const [seciliDis, setSeciliDis] = useState<number | null>(null);
-
-  const ustSira = [18,17,16,15,14,13,12,11,21,22,23,24,25,26,27,28];
-  const altSira = [48,47,46,45,44,43,42,41,31,32,33,34,35,36,37,38];
-
-  function disTikla(no: number) {
-    setSeciliDis(prev => prev === no ? null : no);
+  function toggle(id: string) {
+    if (sel === null) return;
+    const cur = state[sel] || [];
+    const next = cur.includes(id) ? cur.filter(x => x !== id) : [...cur, id];
+    const ns = { ...state };
+    if (next.length === 0) delete ns[sel]; else ns[sel] = next;
+    setState(ns);
+    onDegistir?.(ns);
   }
 
-  function tedaviToggle(tip: string) {
-    if (seciliDis === null) return;
-    const mevcutlar = tedaviler[seciliDis] || [];
-    const yeniListe = mevcutlar.includes(tip)
-      ? mevcutlar.filter(t => t !== tip)
-      : [...mevcutlar, tip];
-    const yeni = { ...tedaviler };
-    if (yeniListe.length === 0) {
-      delete yeni[seciliDis];
-    } else {
-      yeni[seciliDis] = yeniListe;
-    }
-    setTedaviler(yeni);
-    onDegistir?.(yeni);
+  function remove(id: string) {
+    if (sel === null) return;
+    const next = (state[sel] || []).filter(x => x !== id);
+    const ns = { ...state };
+    if (next.length === 0) delete ns[sel]; else ns[sel] = next;
+    setState(ns);
+    onDegistir?.(ns);
   }
 
-  function disTemizle(no: number) {
-    const yeni = { ...tedaviler };
-    delete yeni[no];
-    setTedaviler(yeni);
-    setSeciliDis(null);
-    onDegistir?.(yeni);
+  function clearTooth() {
+    if (sel === null) return;
+    const ns = { ...state };
+    delete ns[sel];
+    setState(ns);
+    onDegistir?.(ns);
   }
 
-  function hepsiniTemizle() {
-    setTedaviler({});
-    setSeciliDis(null);
+  function clearAll() {
+    setState({});
+    setSel(null);
     onDegistir?.({});
   }
 
-  const gruplar: Record<string, number[]> = {};
-  for (const [no, tipler] of Object.entries(tedaviler)) {
-    for (const tip of tipler) {
-      if (!gruplar[tip]) gruplar[tip] = [];
-      gruplar[tip].push(Number(no));
-    }
-  }
-
-  const seciliTedaviler = seciliDis !== null ? (tedaviler[seciliDis] || []) : [];
+  const selConds = sel !== null ? (state[sel] || []) : [];
+  const gruplar: Record<string,number[]> = {};
+  Object.entries(state).forEach(([no, ds]) => ds.forEach(d => {
+    if (!gruplar[d]) gruplar[d] = [];
+    gruplar[d].push(Number(no));
+  }));
 
   return (
-    <div style={{ fontFamily: "sans-serif" }}>
+    <div style={{ fontFamily: 'sans-serif' }}>
       {/* Legend */}
-      <div style={{ display: "flex", gap: "10px", flexWrap: "wrap", justifyContent: "center", marginBottom: "12px" }}>
-        {Object.entries(ISIMLER).map(([k, v]) => (
-          <div key={k} style={{ display: "flex", alignItems: "center", gap: "4px", fontSize: "11px", color: "#64748b" }}>
-            <div style={{ width: "10px", height: "10px", borderRadius: "2px", background: RENKLER[k] }} />
-            {v}
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '7px', justifyContent: 'center', marginBottom: '10px' }}>
+        {CONDS.map(c => (
+          <div key={c.id} style={{ display: 'flex', alignItems: 'center', gap: '3px', fontSize: '10px', color: '#64748b' }}>
+            <div style={{ width: '9px', height: '9px', borderRadius: '2px', background: c.c, border: c.dash ? '1.5px dashed #aaa' : 'none' }} />
+            {c.l}
           </div>
         ))}
       </div>
 
-      {/* Üst çene */}
-      <p style={{ fontSize: "11px", color: "#94a3b8", textAlign: "center", margin: "0 0 4px", letterSpacing: "0.5px" }}>ÜST ÇENE</p>
-      <div style={{ display: "flex", justifyContent: "center", gap: "2px" }}>
-        {ustSira.map(no => (
-          <DisSekli
-            key={no} no={no} alt={false}
-            disTedaviler={tedaviler[no] || []}
-            secili={seciliDis === no}
-            onClick={() => disTikla(no)}
-          />
-        ))}
+      <p style={{ fontSize: '9px', color: '#94a3b8', textAlign: 'center', margin: '0 0 3px', letterSpacing: '.6px', textTransform: 'uppercase' }}>Üst çene</p>
+      <div style={{ display: 'flex', justifyContent: 'center', gap: '0px' }}>
+        {UST.map(no => <Tooth key={no} no={no} upper={true} conds={state[no]||[]} selected={sel===no} onClick={() => setSel(sel===no?null:no)} />)}
       </div>
-
-      <div style={{ height: "3px", background: "#e5e7eb", margin: "6px 16px", borderRadius: "2px" }} />
-
-      {/* Alt çene */}
-      <div style={{ display: "flex", justifyContent: "center", gap: "2px" }}>
-        {altSira.map(no => (
-          <DisSekli
-            key={no} no={no} alt={true}
-            disTedaviler={tedaviler[no] || []}
-            secili={seciliDis === no}
-            onClick={() => disTikla(no)}
-          />
-        ))}
+      <div style={{ height: '4px', background: '#e5e7eb', margin: '2px 10px', borderRadius: '2px' }} />
+      <div style={{ display: 'flex', justifyContent: 'center', gap: '0px' }}>
+        {ALT.map(no => <Tooth key={no} no={no} upper={false} conds={state[no]||[]} selected={sel===no} onClick={() => setSel(sel===no?null:no)} />)}
       </div>
-      <p style={{ fontSize: "11px", color: "#94a3b8", textAlign: "center", margin: "4px 0 0", letterSpacing: "0.5px" }}>ALT ÇENE</p>
+      <p style={{ fontSize: '9px', color: '#94a3b8', textAlign: 'center', margin: '3px 0 0', letterSpacing: '.6px', textTransform: 'uppercase' }}>Alt çene</p>
 
-      {/* Tedavi seçim paneli */}
-      {seciliDis !== null && (
-        <div style={{ background: "#f8f9ff", borderRadius: "12px", border: "1px solid #EEEDFE", padding: "14px", marginTop: "14px" }}>
-          <div style={{ fontSize: "13px", fontWeight: 600, color: "#0f0d2e", marginBottom: "8px" }}>
-            Diş {seciliDis} — {TIP_ISIM[TIPLER[seciliDis]]}
-          </div>
-          {seciliTedaviler.length > 0 && (
-            <div style={{ display: "flex", gap: "4px", flexWrap: "wrap", marginBottom: "10px" }}>
-              <span style={{ fontSize: "11px", color: "#64748b" }}>Seçili:</span>
-              {seciliTedaviler.map(t => (
-                <span key={t} style={{ fontSize: "11px", padding: "2px 8px", borderRadius: "20px", background: RENKLER[t] + "22", color: RENKLER[t], fontWeight: 600 }}>
-                  {ISIMLER[t]}
-                </span>
-              ))}
+      {sel !== null && (
+        <div style={{ background: '#f8f9ff', borderRadius: '12px', border: '1px solid #EEEDFE', padding: '12px', marginTop: '12px' }}>
+          <div style={{ fontSize: '13px', fontWeight: 600, color: '#0f0d2e', marginBottom: '8px' }}>Diş {sel}</div>
+          {selConds.length > 0 && (
+            <div style={{ display: 'flex', gap: '4px', flexWrap: 'wrap', marginBottom: '8px' }}>
+              {selConds.map(id => {
+                const c = CONDS.find(x => x.id === id)!;
+                return (
+                  <span key={id} onClick={() => remove(id)} style={{ padding: '2px 8px', borderRadius: '20px', fontSize: '11px', cursor: 'pointer', background: c.c + '18', color: c.c, border: `1px solid ${c.c}40`, display: 'flex', alignItems: 'center', gap: '3px' }}>
+                    {c.l} <span style={{ opacity: .6 }}>×</span>
+                  </span>
+                );
+              })}
             </div>
           )}
-          <div style={{ display: "flex", gap: "6px", flexWrap: "wrap" }}>
-            {Object.entries(ISIMLER).map(([k, v]) => {
-              const aktif = seciliTedaviler.includes(k);
+          <div style={{ display: 'flex', gap: '5px', flexWrap: 'wrap' }}>
+            {CONDS.map(c => {
+              const on = selConds.includes(c.id);
               return (
-                <button
-                  key={k}
-                  onClick={() => tedaviToggle(k)}
-                  style={{
-                    padding: "6px 14px", borderRadius: "8px", fontSize: "12px",
-                    cursor: "pointer", fontWeight: 600, transition: "all 0.15s",
-                    background: aktif ? RENKLER[k] : "#fff",
-                    color: aktif ? "#fff" : "#374151",
-                    border: `2px solid ${aktif ? RENKLER[k] : "#e5e7eb"}`,
-                  }}
-                >
-                  {aktif ? "✓ " : ""}{v}
+                <button key={c.id} onClick={() => toggle(c.id)} style={{
+                  padding: '4px 10px', borderRadius: '8px', fontSize: '11px', cursor: 'pointer',
+                  background: on ? c.c + '20' : '#fff', color: on ? c.c : '#374151',
+                  border: `${on?'1.5px':'0.5px'} solid ${on?c.c:'#e5e7eb'}`,
+                  display: 'flex', alignItems: 'center', gap: '4px',
+                }}>
+                  <span style={{ width: '7px', height: '7px', borderRadius: '50%', background: c.c, border: c.dash ? '1.5px dashed #bbb' : 'none', flexShrink: 0 }} />
+                  {c.l}
                 </button>
               );
             })}
-            <button
-              onClick={() => disTemizle(seciliDis)}
-              style={{ padding: "6px 14px", borderRadius: "8px", fontSize: "12px", cursor: "pointer", background: "#fff0f0", color: "#c00", border: "1px solid #fcc", fontWeight: 600 }}
-            >
-              Temizle
-            </button>
+            <button onClick={clearTooth} style={{ padding: '4px 10px', borderRadius: '8px', fontSize: '11px', cursor: 'pointer', background: '#fff0f0', color: '#c00', border: '1px solid #fcc' }}>Temizle</button>
           </div>
         </div>
       )}
 
-      {/* Özet */}
       {Object.keys(gruplar).length > 0 && (
-        <div style={{ background: "#f8f9ff", borderRadius: "12px", border: "1px solid #EEEDFE", padding: "14px", marginTop: "12px" }}>
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "10px" }}>
-            <div style={{ fontSize: "13px", fontWeight: 600, color: "#0f0d2e" }}>Tedavi Planı Özeti</div>
-            <button onClick={hepsiniTemizle} style={{ fontSize: "11px", color: "#94a3b8", background: "none", border: "none", cursor: "pointer" }}>
-              Tümünü temizle
-            </button>
+        <div style={{ background: '#f8f9ff', borderRadius: '12px', border: '1px solid #EEEDFE', padding: '12px', marginTop: '10px' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+            <div style={{ fontSize: '13px', fontWeight: 600, color: '#0f0d2e' }}>Tedavi planı özeti</div>
+            <button onClick={clearAll} style={{ fontSize: '11px', color: '#94a3b8', background: 'none', border: 'none', cursor: 'pointer' }}>Tümünü temizle</button>
           </div>
-          {Object.entries(gruplar).map(([tip, disler]) => (
-            <div key={tip} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "7px 12px", borderRadius: "8px", background: "#fff", border: "1px solid #EEEDFE", marginBottom: "6px", fontSize: "12px" }}>
-              <span style={{ fontWeight: 600, color: "#0f0d2e" }}>{ISIMLER[tip]}</span>
-              <div>
-                {disler.sort((a, b) => a - b).map(d => (
-                  <span key={d} style={{ padding: "2px 7px", borderRadius: "20px", fontSize: "10px", fontWeight: 500, marginLeft: "3px", background: RENKLER[tip] + "22", color: RENKLER[tip] }}>
-                    {d}
-                  </span>
-                ))}
+          {Object.entries(gruplar).map(([id, nos]) => {
+            const c = CONDS.find(x => x.id === id)!;
+            return (
+              <div key={id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '6px 10px', borderRadius: '8px', background: '#fff', border: '1px solid #EEEDFE', marginBottom: '5px', fontSize: '12px' }}>
+                <span style={{ fontWeight: 600, color: '#0f0d2e' }}>{c.l}</span>
+                <div>{nos.sort((a,b)=>a-b).map(n => <span key={n} style={{ padding: '1px 6px', borderRadius: '20px', fontSize: '10px', marginLeft: '2px', background: c.c+'18', color: c.c }}>{n}</span>)}</div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       )}
     </div>
