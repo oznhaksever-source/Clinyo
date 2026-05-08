@@ -131,11 +131,13 @@ export default function TeklifDetay({ params }: { params: { teklifId: string } }
   useEffect(() => { yukle(); }, []);
 
   async function yukle() {
-    const { data: t } = await supabase
+    const { data: t, error: tErr } = await supabase
       .from("teklifler")
       .select("*, talepler(tedavi_turu, hasta_id), profiles!teklifler_klinik_id_fkey(id, ad, soyad, konum_adres, telefon, instagram, kapak_fotograf, tanitim_yazisi)")
       .eq("id", params.teklifId)
       .single();
+    
+    console.log("Teklif:", t, "Hata:", tErr, "ID:", params.teklifId);
 
     if (t) {
       setTeklif(t);
