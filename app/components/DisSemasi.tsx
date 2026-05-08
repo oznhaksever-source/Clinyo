@@ -18,6 +18,91 @@ const TIP_ISIM: Record<string, string> = {
   K:"Kesici", C:"Köpek dişi", K2:"Küçük azı", B:"Büyük azı", Y:"Yirmilik"
 };
 
+function getPath(tip: string, alt: boolean): string {
+  if (tip === "K") return alt
+    ? `M7,4 Q6,16 8,26 Q14,34 20,26 Q22,16 21,4 Q14,0 7,4Z`
+    : `M7,34 Q6,22 8,12 Q14,4 20,12 Q22,22 21,34 Q14,38 7,34Z`;
+  if (tip === "C") return alt
+    ? `M6,5 Q5,14 8,26 Q14,36 20,26 Q23,14 22,5 Q14,0 6,5Z`
+    : `M6,33 Q5,24 8,12 Q14,2 20,12 Q23,24 22,33 Q14,38 6,33Z`;
+  if (tip === "K2") return alt
+    ? `M4,5 Q3,18 6,28 Q10,36 14,34 Q18,36 22,28 Q25,18 24,5 Q16,0 4,5Z`
+    : `M4,33 Q3,20 6,10 Q10,2 14,4 Q18,2 22,10 Q25,20 24,33 Q16,38 4,33Z`;
+  if (tip === "B") return alt
+    ? `M3,6 Q2,20 5,29 Q9,36 14,35 Q19,36 23,29 Q26,20 25,6 Q16,1 3,6Z`
+    : `M3,32 Q2,18 5,9 Q9,2 14,3 Q19,2 23,9 Q26,18 25,32 Q16,37 3,32Z`;
+  return alt
+    ? `M4,6 Q3,19 6,28 Q10,35 14,34 Q18,35 22,28 Q25,19 24,6 Q16,1 4,6Z`
+    : `M4,32 Q3,19 6,10 Q10,3 14,4 Q18,3 22,10 Q25,19 24,32 Q16,37 4,32Z`;
+}
+
+interface DisSekliProps {
+  no: number;
+  alt: boolean;
+  disTedaviler: string[];
+  secili: boolean;
+  onClick: () => void;
+}
+
+function DisSekli({ no, alt, disTedaviler, secili, onClick }: DisSekliProps) {
+  const tip = TIPLER[no];
+  const renk = disTedaviler.length > 0 ? RENKLER[disTedaviler[0]] : "#e0ddf0";
+  const stroke = secili ? "#534AB7" : "rgba(0,0,0,0.12)";
+  const strokeW = secili ? 2 : 0.8;
+
+  const tumpaths: React.ReactElement[] = [];
+  if (tip === "K2") {
+    const y = alt ? 28 : 10;
+    tumpaths.push(
+      <ellipse key="1" cx={10} cy={y} rx={2.5} ry={3} fill="rgba(255,255,255,0.18)" />,
+      <ellipse key="2" cx={18} cy={y} rx={2.5} ry={3} fill="rgba(255,255,255,0.18)" />
+    );
+  }
+  if (tip === "B" || tip === "Y") {
+    const y1 = alt ? 28 : 10;
+    tumpaths.push(
+      <ellipse key="1" cx={9} cy={y1} rx={3} ry={3.5} fill="rgba(255,255,255,0.2)" />,
+      <ellipse key="2" cx={19} cy={y1} rx={3} ry={3.5} fill="rgba(255,255,255,0.2)" />,
+      <ellipse key="3" cx={9} cy={19} rx={2.5} ry={3} fill="rgba(255,255,255,0.12)" />,
+      <ellipse key="4" cx={19} cy={19} rx={2.5} ry={3} fill="rgba(255,255,255,0.12)" />
+    );
+  }
+
+  return (
+    <div
+      onClick={onClick}
+      style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "1px", cursor: "pointer", position: "relative" }}
+    >
+      {!alt && <span style={{ fontSize: "8px", color: secili ? "#534AB7" : "#94a3b8", fontWeight: secili ? 700 : 400 }}>{no}</span>}
+      <div style={{ position: "relative" }}>
+        <svg width="26" height="36" viewBox="0 0 28 38"
+          style={{ filter: secili ? "drop-shadow(0 0 3px rgba(83,74,183,0.8))" : "none", transition: "all 0.15s" }}>
+          <path d={getPath(tip, alt)} fill={renk} stroke={stroke} strokeWidth={strokeW} />
+          {tumpaths}
+          {disTedaviler.includes("cekim") && (
+            <>
+              <line x1={6} y1={8} x2={22} y2={30} stroke="white" strokeWidth={2.5} strokeLinecap="round" />
+              <line x1={22} y1={8} x2={6} y2={30} stroke="white" strokeWidth={2.5} strokeLinecap="round" />
+            </>
+          )}
+        </svg>
+        {disTedaviler.length > 1 && (
+          <div style={{
+            position: "absolute", bottom: 0, right: -2,
+            width: "12px", height: "12px", borderRadius: "50%",
+            background: "#0f0d2e", color: "#fff", fontSize: "8px", fontWeight: 700,
+            display: "flex", alignItems: "center", justifyContent: "center",
+            border: "1px solid #fff"
+          }}>
+            {disTedaviler.length}
+          </div>
+        )}
+      </div>
+      {alt && <span style={{ fontSize: "8px", color: secili ? "#534AB7" : "#94a3b8", fontWeight: secili ? 700 : 400 }}>{no}</span>}
+    </div>
+  );
+}
+
 interface DisSemasiProps {
   onDegistir?: (tedaviPlan: Record<number, string[]>) => void;
 }
@@ -29,14 +114,16 @@ export default function DisSemasi({ onDegistir }: DisSemasiProps) {
   const ustSira = [18,17,16,15,14,13,12,11,21,22,23,24,25,26,27,28];
   const altSira = [48,47,46,45,44,43,42,41,31,32,33,34,35,36,37,38];
 
+  function disTikla(no: number) {
+    setSeciliDis(prev => prev === no ? null : no);
+  }
+
   function tedaviToggle(tip: string) {
-    if (!seciliDis) return;
+    if (seciliDis === null) return;
     const mevcutlar = tedaviler[seciliDis] || [];
-    // Toggle — varsa kaldır, yoksa ekle
     const yeniListe = mevcutlar.includes(tip)
       ? mevcutlar.filter(t => t !== tip)
       : [...mevcutlar, tip];
-    
     const yeni = { ...tedaviler };
     if (yeniListe.length === 0) {
       delete yeni[seciliDis];
@@ -61,90 +148,6 @@ export default function DisSemasi({ onDegistir }: DisSemasiProps) {
     onDegistir?.({});
   }
 
-  function getPath(tip: string, alt: boolean): string {
-    if (tip === "K") return alt
-      ? `M7,4 Q6,16 8,26 Q14,34 20,26 Q22,16 21,4 Q14,0 7,4Z`
-      : `M7,34 Q6,22 8,12 Q14,4 20,12 Q22,22 21,34 Q14,38 7,34Z`;
-    if (tip === "C") return alt
-      ? `M6,5 Q5,14 8,26 Q14,36 20,26 Q23,14 22,5 Q14,0 6,5Z`
-      : `M6,33 Q5,24 8,12 Q14,2 20,12 Q23,24 22,33 Q14,38 6,33Z`;
-    if (tip === "K2") return alt
-      ? `M4,5 Q3,18 6,28 Q10,36 14,34 Q18,36 22,28 Q25,18 24,5 Q16,0 4,5Z`
-      : `M4,33 Q3,20 6,10 Q10,2 14,4 Q18,2 22,10 Q25,20 24,33 Q16,38 4,33Z`;
-    if (tip === "B") return alt
-      ? `M3,6 Q2,20 5,29 Q9,36 14,35 Q19,36 23,29 Q26,20 25,6 Q16,1 3,6Z`
-      : `M3,32 Q2,18 5,9 Q9,2 14,3 Q19,2 23,9 Q26,18 25,32 Q16,37 3,32Z`;
-    return alt
-      ? `M4,6 Q3,19 6,28 Q10,35 14,34 Q18,35 22,28 Q25,19 24,6 Q16,1 4,6Z`
-      : `M4,32 Q3,19 6,10 Q10,3 14,4 Q18,3 22,10 Q25,19 24,32 Q16,37 4,32Z`;
-  }
-
-  function DisSekli({ no, alt }: { no: number; alt: boolean }) {
-    const tip = TIPLER[no];
-    const disTedaviler = tedaviler[no] || [];
-    const secili = seciliDis === no;
-    const renk = disTedaviler.length > 0 ? RENKLER[disTedaviler[0]] : "#e0ddf0";
-    const stroke = secili ? "#534AB7" : "rgba(0,0,0,0.12)";
-    const strokeW = secili ? 2 : 0.8;
-
-    const tumpaths: React.ReactElement[] = [];
-    if (tip === "K2") {
-      const y = alt ? 28 : 10;
-      tumpaths.push(
-        <ellipse key="1" cx={10} cy={y} rx={2.5} ry={3} fill="rgba(255,255,255,0.18)" />,
-        <ellipse key="2" cx={18} cy={y} rx={2.5} ry={3} fill="rgba(255,255,255,0.18)" />
-      );
-    }
-    if (tip === "B" || tip === "Y") {
-      const y1 = alt ? 28 : 10; const y2 = 19;
-      tumpaths.push(
-        <ellipse key="1" cx={9} cy={y1} rx={3} ry={3.5} fill="rgba(255,255,255,0.2)" />,
-        <ellipse key="2" cx={19} cy={y1} rx={3} ry={3.5} fill="rgba(255,255,255,0.2)" />,
-        <ellipse key="3" cx={9} cy={y2} rx={2.5} ry={3} fill="rgba(255,255,255,0.12)" />,
-        <ellipse key="4" cx={19} cy={y2} rx={2.5} ry={3} fill="rgba(255,255,255,0.12)" />
-      );
-    }
-
-    return (
-      <div
-        onClick={() => setSeciliDis(seciliDis === no ? null : no)}
-        style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "1px", cursor: "pointer", position: "relative" }}
-      >
-        {!alt && <span style={{ fontSize: "8px", color: secili ? "#534AB7" : "#94a3b8", fontWeight: secili ? 700 : 400 }}>{no}</span>}
-        
-        <div style={{ position: "relative" }}>
-          <svg width="26" height="36" viewBox="0 0 28 38"
-            style={{ filter: secili ? "drop-shadow(0 0 3px rgba(83,74,183,0.8))" : "none", transition: "all 0.15s" }}>
-            <path d={getPath(tip, alt)} fill={renk} stroke={stroke} strokeWidth={strokeW} />
-            {tumpaths}
-            {disTedaviler.includes("cekim") && (
-              <>
-                <line x1={6} y1={8} x2={22} y2={30} stroke="white" strokeWidth={2.5} strokeLinecap="round" />
-                <line x1={22} y1={8} x2={6} y2={30} stroke="white" strokeWidth={2.5} strokeLinecap="round" />
-              </>
-            )}
-          </svg>
-          {/* Çoklu tedavi göstergesi — sağ alt köşede nokta sayısı */}
-          {disTedaviler.length > 1 && (
-            <div style={{
-              position: "absolute", bottom: 0, right: -2,
-              width: "12px", height: "12px", borderRadius: "50%",
-              background: "#0f0d2e", color: "#fff",
-              fontSize: "8px", fontWeight: 700,
-              display: "flex", alignItems: "center", justifyContent: "center",
-              border: "1px solid #fff"
-            }}>
-              {disTedaviler.length}
-            </div>
-          )}
-        </div>
-
-        {alt && <span style={{ fontSize: "8px", color: secili ? "#534AB7" : "#94a3b8", fontWeight: secili ? 700 : 400 }}>{no}</span>}
-      </div>
-    );
-  }
-
-  // Özet
   const gruplar: Record<string, number[]> = {};
   for (const [no, tipler] of Object.entries(tedaviler)) {
     for (const tip of tipler) {
@@ -153,7 +156,7 @@ export default function DisSemasi({ onDegistir }: DisSemasiProps) {
     }
   }
 
-  const seciliTedaviler = seciliDis ? (tedaviler[seciliDis] || []) : [];
+  const seciliTedaviler = seciliDis !== null ? (tedaviler[seciliDis] || []) : [];
 
   return (
     <div style={{ fontFamily: "sans-serif" }}>
@@ -165,35 +168,44 @@ export default function DisSemasi({ onDegistir }: DisSemasiProps) {
             {v}
           </div>
         ))}
-        <div style={{ display: "flex", alignItems: "center", gap: "4px", fontSize: "11px", color: "#64748b" }}>
-          <div style={{ width: "14px", height: "14px", borderRadius: "50%", background: "#0f0d2e", color: "#fff", fontSize: "8px", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 700 }}>2</div>
-          Çoklu tedavi
-        </div>
       </div>
 
       {/* Üst çene */}
       <p style={{ fontSize: "11px", color: "#94a3b8", textAlign: "center", margin: "0 0 4px", letterSpacing: "0.5px" }}>ÜST ÇENE</p>
       <div style={{ display: "flex", justifyContent: "center", gap: "2px" }}>
-        {ustSira.map(no => <DisSekli key={no} no={no} alt={false} />)}
+        {ustSira.map(no => (
+          <DisSekli
+            key={no} no={no} alt={false}
+            disTedaviler={tedaviler[no] || []}
+            secili={seciliDis === no}
+            onClick={() => disTikla(no)}
+          />
+        ))}
       </div>
 
-      {/* Orta çizgi */}
       <div style={{ height: "3px", background: "#e5e7eb", margin: "6px 16px", borderRadius: "2px" }} />
 
       {/* Alt çene */}
       <div style={{ display: "flex", justifyContent: "center", gap: "2px" }}>
-        {altSira.map(no => <DisSekli key={no} no={no} alt={true} />)}
+        {altSira.map(no => (
+          <DisSekli
+            key={no} no={no} alt={true}
+            disTedaviler={tedaviler[no] || []}
+            secili={seciliDis === no}
+            onClick={() => disTikla(no)}
+          />
+        ))}
       </div>
       <p style={{ fontSize: "11px", color: "#94a3b8", textAlign: "center", margin: "4px 0 0", letterSpacing: "0.5px" }}>ALT ÇENE</p>
 
       {/* Tedavi seçim paneli */}
-      {seciliDis && (
+      {seciliDis !== null && (
         <div style={{ background: "#f8f9ff", borderRadius: "12px", border: "1px solid #EEEDFE", padding: "14px", marginTop: "14px" }}>
           <div style={{ fontSize: "13px", fontWeight: 600, color: "#0f0d2e", marginBottom: "8px" }}>
             Diş {seciliDis} — {TIP_ISIM[TIPLER[seciliDis]]}
           </div>
           {seciliTedaviler.length > 0 && (
-            <div style={{ display: "flex", gap: "4px", flexWrap: "wrap", marginBottom: "8px" }}>
+            <div style={{ display: "flex", gap: "4px", flexWrap: "wrap", marginBottom: "10px" }}>
               <span style={{ fontSize: "11px", color: "#64748b" }}>Seçili:</span>
               {seciliTedaviler.map(t => (
                 <span key={t} style={{ fontSize: "11px", padding: "2px 8px", borderRadius: "20px", background: RENKLER[t] + "22", color: RENKLER[t], fontWeight: 600 }}>
