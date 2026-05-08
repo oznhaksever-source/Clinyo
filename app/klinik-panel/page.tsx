@@ -292,7 +292,7 @@ export default function KlinikPanel() {
     transfer_dahil:boolean,transfer_aciklama:string,transfer_fiyat:string,
   }>>({});
   const [disPlanMap, setDisPlanMap] = useState<Record<string,Record<number,string[]>>>({});
-  const [disTedaviMap, setDisTedaviMap] = useState<Record<string,{dis:number,hizmet_adi:string,fiyat:number,kategori:string}[]>>({});
+  const [disTedaviMap, setDisTedaviMap] = useState<Record<string,{dis:number,hizmet_id:string,hizmet_adi:string,fiyat:number,kategori:string}[]>>({});
   const [acikTalep, setAcikTalep] = useState<string|null>(null);
 
   useEffect(() => { veriYukle(); }, []);
@@ -421,32 +421,59 @@ export default function KlinikPanel() {
   }
 
   // ─── Diş şeması fiyat hesaplama ──────────────────────────────────────────────
+  // Diş plan değişince sadece planı kaydet, hizmet seçimi ayrıca yapılacak
   function disPlanHesapla(talepId:string, plan:Record<number,string[]>) {
     setDisPlanMap(prev=>({...prev,[talepId]:plan}));
-    const detaylar: {dis:number,hizmet_adi:string,fiyat:number,kategori:string}[] = [];
-
-    Object.entries(plan).forEach(([no,kategoriler]) => {
-      kategoriler.forEach(kat => {
-        if (['eksik','lezyon','kirik','cokmus'].includes(kat)) return;
-        // Hizmet listesinden bu diş şeması kategorisine eşleşen hizmetleri bul
-        const eslesenler = hizmetler.filter(h => h.aktif && h.dis_semasi_kategori === kat);
-        if (eslesenler.length > 0) {
-          // En düşük fiyatlıyı al
-          const hizmet = eslesenler.sort((a,b)=>a.fiyat-b.fiyat)[0];
-          detaylar.push({dis:Number(no),hizmet_adi:hizmet.hizmet_adi,fiyat:hizmet.fiyat,kategori:kat});
-        } else if (kat !== 'yok') {
-          // Eşleşen hizmet yok, 0 fiyatla ekle
-          detaylar.push({dis:Number(no),hizmet_adi:`${kat} (fiyat girilmedi)`,fiyat:0,kategori:kat});
-        }
+    // Mevcut tedavi map'ini güncelle — yeni dişler için boş seçim ekle, silinen dişleri kaldır
+    setDisTedaviMap(prev=>{
+      const mevcut = prev[talepId]||[];
+      const yeni: {dis:number,hizmet_id:string,hizmet_adi:string,fiyat:number,kategori:string}[] = [];
+      Object.entries(plan).forEach(([no,kategoriler])=>{
+        kategoriler.forEach(kat=>{
+          if (['eksik','lezyon','kirik','cokmus'].includes(kat)) return;
+          // Daha önce seçilmiş hizmet varsa koru
+          const eskiSecim = mevcut.find(m=>m.dis===Number(no)&&m.kategori===kat);
+          if (eskiSecim) {
+            yeni.push(eskiSecim);
+          } else {
+            // Otomatik ilk hizmeti seç
+            const eslesenler = hizmetler.filter(h=>h.aktif&&h.dis_semasi_kategori===kat);
+            if (eslesenler.length>0) {
+              const h = eslesenler[0];
+              yeni.push({dis:Number(no),hizmet_id:h.id,hizmet_adi:h.hizmet_adi,fiyat:h.fiyat,kategori:kat});
+            } else {
+              yeni.push({dis:Number(no),hizmet_id:"",hizmet_adi:"",fiyat:0,kategori:kat});
+            }
+          }
+        });
       });
+      // Fiyat toplamını güncelle
+      const toplam = yeni.reduce((s,d)=>s+d.fiyat,0);
+      setTeklifFormlar(fp=>({
+        ...fp,
+        [talepId]:{...(fp[talepId]||{otel_dahil:false,otel_aciklama:"",otel_fiyat:"",transfer_dahil:false,transfer_aciklama:"",transfer_fiyat:"",aciklama:""}),fiyat:toplam.toString()}
+      }));
+      return {...prev,[talepId]:yeni};
     });
+  }
 
-    setDisTedaviMap(prev=>({...prev,[talepId]:detaylar}));
-    const toplam = detaylar.reduce((s,d)=>s+d.fiyat,0);
-    setTeklifFormlar(prev=>({
-      ...prev,
-      [talepId]:{...(prev[talepId]||{otel_dahil:false,otel_aciklama:"",otel_fiyat:"",transfer_dahil:false,transfer_aciklama:"",transfer_fiyat:"",aciklama:""}),fiyat:toplam.toString()}
-    }));
+  function hizmetSecimGuncelle(talepId:string, dis:number, kategori:string, hizmetId:string) {
+    const hizmet = hizmetler.find(h=>h.id===hizmetId);
+    if (!hizmet) return;
+    setDisTedaviMap(prev=>{
+      const mevcut = prev[talepId]||[];
+      const yeni = mevcut.map(m=>
+        m.dis===dis && m.kategori===kategori
+          ? {...m,hizmet_id:hizmetId,hizmet_adi:hizmet.hizmet_adi,fiyat:hizmet.fiyat}
+          : m
+      );
+      const toplam = yeni.reduce((s,d)=>s+d.fiyat,0);
+      setTeklifFormlar(fp=>({
+        ...fp,
+        [talepId]:{...(fp[talepId]||{otel_dahil:false,otel_aciklama:"",otel_fiyat:"",transfer_dahil:false,transfer_aciklama:"",transfer_fiyat:"",aciklama:""}),fiyat:toplam.toString()}
+      }));
+      return {...prev,[talepId]:yeni};
+    });
   }
 
   function getTeklifForm(talepId:string) {
@@ -947,21 +974,48 @@ export default function KlinikPanel() {
                               <div style={{fontSize:"13px",fontWeight:700,color:"#0f0d2e",marginBottom:"12px"}}>🦷 Diş Şeması ile Tedavi Planı</div>
                               <DisSemasi onDegistir={(plan)=>disPlanHesapla(t.id,plan)}/>
 
-                              {/* Tedavi detay listesi */}
+                              {/* Tedavi detay listesi — hizmet seçimi */}
                               {tedaviDetay.length>0 && (
                                 <div style={{marginTop:"14px",background:"#f8f9ff",borderRadius:"10px",overflow:"hidden",border:"1px solid #EEEDFE"}}>
                                   <div style={{padding:"10px 14px",background:"#534AB7",fontSize:"12px",fontWeight:700,color:"#fff"}}>
                                     Tedavi Listesi — {tedaviDetay.length} işlem
                                   </div>
-                                  {tedaviDetay.map((d,i)=>(
-                                    <div key={i} style={{display:"flex",justifyContent:"space-between",alignItems:"center",padding:"8px 14px",borderBottom:"1px solid #EEEDFE",fontSize:"12px"}}>
-                                      <span><strong>Diş {d.dis}</strong> — {d.hizmet_adi}</span>
-                                      <span style={{fontWeight:700,color:d.fiyat>0?"#534AB7":"#BA7517"}}>{d.fiyat>0?`${d.fiyat} EUR`:"Fiyat yok"}</span>
-                                    </div>
-                                  ))}
-                                  <div style={{display:"flex",justifyContent:"space-between",padding:"10px 14px",background:"#f0eeff",fontSize:"13px",fontWeight:700}}>
-                                    <span>Toplam Tedavi</span>
-                                    <span style={{color:"#534AB7",fontSize:"15px"}}>{tedaviDetay.reduce((s,d)=>s+d.fiyat,0)} EUR</span>
+                                  {tedaviDetay.map((d:any,i:number)=>{
+                                    const secenekler = hizmetler.filter(h=>h.aktif&&h.dis_semasi_kategori===d.kategori);
+                                    return (
+                                      <div key={i} style={{padding:"10px 14px",borderBottom:"1px solid #EEEDFE"}}>
+                                        <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",gap:"10px"}}>
+                                          <div style={{fontSize:"12px",fontWeight:600,color:"#0f0d2e",flexShrink:0}}>
+                                            Diş {d.dis} — <span style={{color:"#534AB7"}}>{d.kategori}</span>
+                                          </div>
+                                          <div style={{display:"flex",gap:"8px",alignItems:"center",flex:1}}>
+                                            {secenekler.length>0 ? (
+                                              <select
+                                                value={d.hizmet_id||""}
+                                                onChange={e=>hizmetSecimGuncelle(t.id,d.dis,d.kategori,e.target.value)}
+                                                style={{flex:1,border:"1px solid #e5e7eb",borderRadius:"8px",padding:"6px 10px",fontSize:"12px",outline:"none",background:"#fff"}}
+                                              >
+                                                <option value="">Hizmet seçin...</option>
+                                                {secenekler.map((h:any)=>(
+                                                  <option key={h.id} value={h.id}>{h.hizmet_adi} — {h.fiyat} {h.para_birimi}</option>
+                                                ))}
+                                              </select>
+                                            ) : (
+                                              <span style={{fontSize:"11px",color:"#BA7517",background:"#fff8e1",padding:"4px 10px",borderRadius:"8px"}}>
+                                                ⚠️ Bu kategori için hizmet yok
+                                              </span>
+                                            )}
+                                            <span style={{fontWeight:700,color:d.fiyat>0?"#534AB7":"#94a3b8",flexShrink:0,fontSize:"13px"}}>
+                                              {d.fiyat>0?`${d.fiyat} EUR`:"—"}
+                                            </span>
+                                          </div>
+                                        </div>
+                                      </div>
+                                    );
+                                  })}
+                                  <div style={{display:"flex",justifyContent:"space-between",padding:"12px 14px",background:"#f0eeff",fontSize:"13px",fontWeight:700}}>
+                                    <span style={{color:"#0f0d2e"}}>Toplam Tedavi</span>
+                                    <span style={{color:"#534AB7",fontSize:"16px"}}>{tedaviDetay.reduce((s:number,d:any)=>s+d.fiyat,0)} EUR</span>
                                   </div>
                                 </div>
                               )}
