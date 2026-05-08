@@ -3,7 +3,7 @@ import React, { useState } from "react";
 
 const RENKLER: Record<string, string> = {
   implant: "#534AB7", kaplama: "#1D9E75", kanal: "#D85A30",
-  cekim: "#E24B4A", dolgu: "#378ADD", default: "#e0ddf0"
+  cekim: "#E24B4A", dolgu: "#378ADD"
 };
 const ISIMLER: Record<string, string> = {
   implant: "İmplant", kaplama: "Kaplama", kanal: "Kanal", cekim: "Çekim", dolgu: "Dolgu"
@@ -29,22 +29,27 @@ export default function DisSemasi({ onDegistir }: DisSemasiProps) {
   const ustSira = [18,17,16,15,14,13,12,11,21,22,23,24,25,26,27,28];
   const altSira = [48,47,46,45,44,43,42,41,31,32,33,34,35,36,37,38];
 
-  function tedaviSec(tip: string) {
+  function tedaviToggle(tip: string) {
     if (!seciliDis) return;
     const mevcutlar = tedaviler[seciliDis] || [];
+    // Toggle — varsa kaldır, yoksa ekle
     const yeniListe = mevcutlar.includes(tip)
       ? mevcutlar.filter(t => t !== tip)
       : [...mevcutlar, tip];
-    const yeni = { ...tedaviler, [seciliDis]: yeniListe };
-    if (yeniListe.length === 0) delete yeni[seciliDis];
+    
+    const yeni = { ...tedaviler };
+    if (yeniListe.length === 0) {
+      delete yeni[seciliDis];
+    } else {
+      yeni[seciliDis] = yeniListe;
+    }
     setTedaviler(yeni);
     onDegistir?.(yeni);
   }
 
-  function tedaviKaldir() {
-    if (!seciliDis) return;
+  function disTemizle(no: number) {
     const yeni = { ...tedaviler };
-    delete yeni[seciliDis];
+    delete yeni[no];
     setTedaviler(yeni);
     setSeciliDis(null);
     onDegistir?.(yeni);
@@ -56,29 +61,31 @@ export default function DisSemasi({ onDegistir }: DisSemasiProps) {
     onDegistir?.({});
   }
 
+  function getPath(tip: string, alt: boolean): string {
+    if (tip === "K") return alt
+      ? `M7,4 Q6,16 8,26 Q14,34 20,26 Q22,16 21,4 Q14,0 7,4Z`
+      : `M7,34 Q6,22 8,12 Q14,4 20,12 Q22,22 21,34 Q14,38 7,34Z`;
+    if (tip === "C") return alt
+      ? `M6,5 Q5,14 8,26 Q14,36 20,26 Q23,14 22,5 Q14,0 6,5Z`
+      : `M6,33 Q5,24 8,12 Q14,2 20,12 Q23,24 22,33 Q14,38 6,33Z`;
+    if (tip === "K2") return alt
+      ? `M4,5 Q3,18 6,28 Q10,36 14,34 Q18,36 22,28 Q25,18 24,5 Q16,0 4,5Z`
+      : `M4,33 Q3,20 6,10 Q10,2 14,4 Q18,2 22,10 Q25,20 24,33 Q16,38 4,33Z`;
+    if (tip === "B") return alt
+      ? `M3,6 Q2,20 5,29 Q9,36 14,35 Q19,36 23,29 Q26,20 25,6 Q16,1 3,6Z`
+      : `M3,32 Q2,18 5,9 Q9,2 14,3 Q19,2 23,9 Q26,18 25,32 Q16,37 3,32Z`;
+    return alt
+      ? `M4,6 Q3,19 6,28 Q10,35 14,34 Q18,35 22,28 Q25,19 24,6 Q16,1 4,6Z`
+      : `M4,32 Q3,19 6,10 Q10,3 14,4 Q18,3 22,10 Q25,19 24,32 Q16,37 4,32Z`;
+  }
+
   function DisSekli({ no, alt }: { no: number; alt: boolean }) {
     const tip = TIPLER[no];
-    const mevcutTedaviler = tedaviler[no] || [];
-const renk = mevcutTedaviler.length > 0 ? RENKLER[mevcutTedaviler[0]] : RENKLER.default;
+    const disTedaviler = tedaviler[no] || [];
     const secili = seciliDis === no;
-
-    function getPath() {
-      if (tip === "K") return alt
-        ? `M7,4 Q6,16 8,26 Q14,34 20,26 Q22,16 21,4 Q14,0 7,4Z`
-        : `M7,34 Q6,22 8,12 Q14,4 20,12 Q22,22 21,34 Q14,38 7,34Z`;
-      if (tip === "C") return alt
-        ? `M6,5 Q5,14 8,26 Q14,36 20,26 Q23,14 22,5 Q14,0 6,5Z`
-        : `M6,33 Q5,24 8,12 Q14,2 20,12 Q23,24 22,33 Q14,38 6,33Z`;
-      if (tip === "K2") return alt
-        ? `M4,5 Q3,18 6,28 Q10,36 14,34 Q18,36 22,28 Q25,18 24,5 Q16,0 4,5Z`
-        : `M4,33 Q3,20 6,10 Q10,2 14,4 Q18,2 22,10 Q25,20 24,33 Q16,38 4,33Z`;
-      if (tip === "B") return alt
-        ? `M3,6 Q2,20 5,29 Q9,36 14,35 Q19,36 23,29 Q26,20 25,6 Q16,1 3,6Z`
-        : `M3,32 Q2,18 5,9 Q9,2 14,3 Q19,2 23,9 Q26,18 25,32 Q16,37 3,32Z`;
-      return alt
-        ? `M4,6 Q3,19 6,28 Q10,35 14,34 Q18,35 22,28 Q25,19 24,6 Q16,1 4,6Z`
-        : `M4,32 Q3,19 6,10 Q10,3 14,4 Q18,3 22,10 Q25,19 24,32 Q16,37 4,32Z`;
-    }
+    const renk = disTedaviler.length > 0 ? RENKLER[disTedaviler[0]] : "#e0ddf0";
+    const stroke = secili ? "#534AB7" : "rgba(0,0,0,0.12)";
+    const strokeW = secili ? 2 : 0.8;
 
     const tumpaths: React.ReactElement[] = [];
     if (tip === "K2") {
@@ -89,7 +96,7 @@ const renk = mevcutTedaviler.length > 0 ? RENKLER[mevcutTedaviler[0]] : RENKLER.
       );
     }
     if (tip === "B" || tip === "Y") {
-      const y1 = alt ? 28 : 10; const y2 = alt ? 19 : 19;
+      const y1 = alt ? 28 : 10; const y2 = 19;
       tumpaths.push(
         <ellipse key="1" cx={9} cy={y1} rx={3} ry={3.5} fill="rgba(255,255,255,0.2)" />,
         <ellipse key="2" cx={19} cy={y1} rx={3} ry={3.5} fill="rgba(255,255,255,0.2)" />,
@@ -101,22 +108,37 @@ const renk = mevcutTedaviler.length > 0 ? RENKLER[mevcutTedaviler[0]] : RENKLER.
     return (
       <div
         onClick={() => setSeciliDis(seciliDis === no ? null : no)}
-        style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "1px", cursor: "pointer" }}
+        style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "1px", cursor: "pointer", position: "relative" }}
       >
         {!alt && <span style={{ fontSize: "8px", color: secili ? "#534AB7" : "#94a3b8", fontWeight: secili ? 700 : 400 }}>{no}</span>}
-        <svg
-          width="26" height="36" viewBox="0 0 28 38"
-          style={{ filter: secili ? "drop-shadow(0 0 3px rgba(83,74,183,0.8))" : "none", transition: "all 0.15s" }}
-        >
-          <path d={getPath()} fill={renk} stroke={secili ? "#534AB7" : "rgba(0,0,0,0.12)"} strokeWidth={secili ? 2 : 0.8} />
-          {tumpaths}
-          {(tedaviler[no] || []).includes("cekim") && (
-            <>
-              <line x1={6} y1={8} x2={22} y2={30} stroke="white" strokeWidth={2.5} strokeLinecap="round" />
-              <line x1={22} y1={8} x2={6} y2={30} stroke="white" strokeWidth={2.5} strokeLinecap="round" />
-            </>
+        
+        <div style={{ position: "relative" }}>
+          <svg width="26" height="36" viewBox="0 0 28 38"
+            style={{ filter: secili ? "drop-shadow(0 0 3px rgba(83,74,183,0.8))" : "none", transition: "all 0.15s" }}>
+            <path d={getPath(tip, alt)} fill={renk} stroke={stroke} strokeWidth={strokeW} />
+            {tumpaths}
+            {disTedaviler.includes("cekim") && (
+              <>
+                <line x1={6} y1={8} x2={22} y2={30} stroke="white" strokeWidth={2.5} strokeLinecap="round" />
+                <line x1={22} y1={8} x2={6} y2={30} stroke="white" strokeWidth={2.5} strokeLinecap="round" />
+              </>
+            )}
+          </svg>
+          {/* Çoklu tedavi göstergesi — sağ alt köşede nokta sayısı */}
+          {disTedaviler.length > 1 && (
+            <div style={{
+              position: "absolute", bottom: 0, right: -2,
+              width: "12px", height: "12px", borderRadius: "50%",
+              background: "#0f0d2e", color: "#fff",
+              fontSize: "8px", fontWeight: 700,
+              display: "flex", alignItems: "center", justifyContent: "center",
+              border: "1px solid #fff"
+            }}>
+              {disTedaviler.length}
+            </div>
           )}
-        </svg>
+        </div>
+
         {alt && <span style={{ fontSize: "8px", color: secili ? "#534AB7" : "#94a3b8", fontWeight: secili ? 700 : 400 }}>{no}</span>}
       </div>
     );
@@ -131,9 +153,11 @@ const renk = mevcutTedaviler.length > 0 ? RENKLER[mevcutTedaviler[0]] : RENKLER.
     }
   }
 
+  const seciliTedaviler = seciliDis ? (tedaviler[seciliDis] || []) : [];
+
   return (
     <div style={{ fontFamily: "sans-serif" }}>
-      {/* Legent */}
+      {/* Legend */}
       <div style={{ display: "flex", gap: "10px", flexWrap: "wrap", justifyContent: "center", marginBottom: "12px" }}>
         {Object.entries(ISIMLER).map(([k, v]) => (
           <div key={k} style={{ display: "flex", alignItems: "center", gap: "4px", fontSize: "11px", color: "#64748b" }}>
@@ -141,6 +165,10 @@ const renk = mevcutTedaviler.length > 0 ? RENKLER[mevcutTedaviler[0]] : RENKLER.
             {v}
           </div>
         ))}
+        <div style={{ display: "flex", alignItems: "center", gap: "4px", fontSize: "11px", color: "#64748b" }}>
+          <div style={{ width: "14px", height: "14px", borderRadius: "50%", background: "#0f0d2e", color: "#fff", fontSize: "8px", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 700 }}>2</div>
+          Çoklu tedavi
+        </div>
       </div>
 
       {/* Üst çene */}
@@ -161,26 +189,44 @@ const renk = mevcutTedaviler.length > 0 ? RENKLER[mevcutTedaviler[0]] : RENKLER.
       {/* Tedavi seçim paneli */}
       {seciliDis && (
         <div style={{ background: "#f8f9ff", borderRadius: "12px", border: "1px solid #EEEDFE", padding: "14px", marginTop: "14px" }}>
-          <div style={{ fontSize: "13px", fontWeight: 600, color: "#0f0d2e", marginBottom: "10px" }}>
+          <div style={{ fontSize: "13px", fontWeight: 600, color: "#0f0d2e", marginBottom: "8px" }}>
             Diş {seciliDis} — {TIP_ISIM[TIPLER[seciliDis]]}
           </div>
+          {seciliTedaviler.length > 0 && (
+            <div style={{ display: "flex", gap: "4px", flexWrap: "wrap", marginBottom: "8px" }}>
+              <span style={{ fontSize: "11px", color: "#64748b" }}>Seçili:</span>
+              {seciliTedaviler.map(t => (
+                <span key={t} style={{ fontSize: "11px", padding: "2px 8px", borderRadius: "20px", background: RENKLER[t] + "22", color: RENKLER[t], fontWeight: 600 }}>
+                  {ISIMLER[t]}
+                </span>
+              ))}
+            </div>
+          )}
           <div style={{ display: "flex", gap: "6px", flexWrap: "wrap" }}>
-            {Object.entries(ISIMLER).map(([k, v]) => (
-              <button
-                key={k}
-                onClick={() => tedaviSec(k)}
-                style={{
-                  padding: "6px 14px", borderRadius: "8px", fontSize: "12px", cursor: "pointer", fontWeight: 600,
-                  background: (tedaviler[seciliDis] || []).includes(k) ? RENKLER[k] : "#fff",
-                  color: (tedaviler[seciliDis] || []).includes(k) ? "#fff" : "#374151",
-                  border: `1px solid ${(tedaviler[seciliDis] || []).includes(k) ? RENKLER[k] : "#e5e7eb"}`,
-                }}
-              >{v}</button>
-            ))}
+            {Object.entries(ISIMLER).map(([k, v]) => {
+              const aktif = seciliTedaviler.includes(k);
+              return (
+                <button
+                  key={k}
+                  onClick={() => tedaviToggle(k)}
+                  style={{
+                    padding: "6px 14px", borderRadius: "8px", fontSize: "12px",
+                    cursor: "pointer", fontWeight: 600, transition: "all 0.15s",
+                    background: aktif ? RENKLER[k] : "#fff",
+                    color: aktif ? "#fff" : "#374151",
+                    border: `2px solid ${aktif ? RENKLER[k] : "#e5e7eb"}`,
+                  }}
+                >
+                  {aktif ? "✓ " : ""}{v}
+                </button>
+              );
+            })}
             <button
-              onClick={tedaviKaldir}
+              onClick={() => disTemizle(seciliDis)}
               style={{ padding: "6px 14px", borderRadius: "8px", fontSize: "12px", cursor: "pointer", background: "#fff0f0", color: "#c00", border: "1px solid #fcc", fontWeight: 600 }}
-            >Temizle</button>
+            >
+              Temizle
+            </button>
           </div>
         </div>
       )}
@@ -190,14 +236,18 @@ const renk = mevcutTedaviler.length > 0 ? RENKLER[mevcutTedaviler[0]] : RENKLER.
         <div style={{ background: "#f8f9ff", borderRadius: "12px", border: "1px solid #EEEDFE", padding: "14px", marginTop: "12px" }}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "10px" }}>
             <div style={{ fontSize: "13px", fontWeight: 600, color: "#0f0d2e" }}>Tedavi Planı Özeti</div>
-            <button onClick={hepsiniTemizle} style={{ fontSize: "11px", color: "#94a3b8", background: "none", border: "none", cursor: "pointer" }}>Tümünü temizle</button>
+            <button onClick={hepsiniTemizle} style={{ fontSize: "11px", color: "#94a3b8", background: "none", border: "none", cursor: "pointer" }}>
+              Tümünü temizle
+            </button>
           </div>
           {Object.entries(gruplar).map(([tip, disler]) => (
             <div key={tip} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "7px 12px", borderRadius: "8px", background: "#fff", border: "1px solid #EEEDFE", marginBottom: "6px", fontSize: "12px" }}>
               <span style={{ fontWeight: 600, color: "#0f0d2e" }}>{ISIMLER[tip]}</span>
               <div>
-                {disler.sort((a,b)=>a-b).map(d => (
-                  <span key={d} style={{ padding: "2px 7px", borderRadius: "20px", fontSize: "10px", fontWeight: 500, marginLeft: "3px", background: RENKLER[tip] + "22", color: RENKLER[tip] }}>{d}</span>
+                {disler.sort((a, b) => a - b).map(d => (
+                  <span key={d} style={{ padding: "2px 7px", borderRadius: "20px", fontSize: "10px", fontWeight: 500, marginLeft: "3px", background: RENKLER[tip] + "22", color: RENKLER[tip] }}>
+                    {d}
+                  </span>
                 ))}
               </div>
             </div>
