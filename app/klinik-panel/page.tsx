@@ -241,6 +241,8 @@ export default function KlinikPanel() {
     transfer_aciklama: "",
     transfer_fiyat: "",
   });
+  const [disPlanMap, setDisPlanMap] = useState<Record<string, Record<number,string[]>>>({});
+  const [disTedaviDetayMap, setDisTedaviDetayMap] = useState<Record<string, {dis: number, tedavi: string, hizmet: string, fiyat: number}[]>>({});
 
   const supabase = createClient();
 
@@ -362,6 +364,44 @@ export default function KlinikPanel() {
   async function onceSonraSil(id: string) {
     await supabase.from("once_sonra").delete().eq("id", id);
     veriYukle();
+  }
+
+  const TEDAVI_ESLESME: Record<string, string[]> = {
+    implant: ["implant", "İmplant"],
+    cekim: ["çekim", "Çekim", "cekim"],
+    dolgu: ["dolgu", "Dolgu"],
+    kaplama: ["kaplama", "Kaplama", "zirkonyum", "Zirkonyum", "veneer", "lamine"],
+    kanal: ["kanal", "Kanal"],
+    kopru: ["köprü", "Köprü", "kopru"],
+  };
+
+  function disPlanHesapla(talepId: string, plan: Record<number,string[]>) {
+    setDisPlanMap(prev => ({ ...prev, [talepId]: plan }));
+    const detaylar: {dis: number, tedavi: string, hizmet: string, fiyat: number}[] = [];
+    
+    Object.entries(plan).forEach(([no, tedaviler]) => {
+      tedaviler.forEach(tedavi => {
+        if (['eksik','lezyon','kirik','cokmus'].includes(tedavi)) return;
+        const aramaKelimeleri = TEDAVI_ESLESME[tedavi] || [tedavi];
+        const eslesenHizmet = hizmetler.find(h => 
+          h.aktif && aramaKelimeleri.some((k: string) => 
+            h.hizmet_adi.toLowerCase().includes(k.toLowerCase())
+          )
+        );
+        if (eslesenHizmet) {
+          detaylar.push({
+            dis: Number(no),
+            tedavi,
+            hizmet: eslesenHizmet.hizmet_adi,
+            fiyat: eslesenHizmet.fiyat,
+          });
+        }
+      });
+    });
+    
+    setDisTedaviDetayMap(prev => ({ ...prev, [talepId]: detaylar }));
+    const toplamTedavi = detaylar.reduce((sum, d) => sum + d.fiyat, 0);
+    setYeniTeklif(prev => ({ ...prev, talep_id: talepId, fiyat: toplamTedavi.toString() }));
   }
 
   async function teklifGonder() {
@@ -783,13 +823,40 @@ export default function KlinikPanel() {
                               <input type="text" placeholder="Açıklama" value={yeniTeklif.talep_id === t.id ? yeniTeklif.aciklama : ""} onChange={(e) => setYeniTeklif(prev => ({ ...prev, talep_id: t.id, aciklama: e.target.value }))} style={{ flex: 1, border: "1px solid #e5e7eb", borderRadius: "8px", padding: "8px 12px", fontSize: "13px", outline: "none" }} />
                             </div>
 
-                            {/* Diş şeması — sadece diş tedavisi için */}
-                            {(yeniTeklif.talep_id === t.id && t.tedavi_turu?.toLowerCase().includes("diş")) || yeniTeklif.talep_id === t.id ? (
+                            {yeniTeklif.talep_id === t.id && (
                               <div style={{ background: "#f8f9ff", borderRadius: "10px", padding: "16px", border: "1px solid #EEEDFE" }}>
-                                <div style={{ fontSize: "13px", fontWeight: 600, color: "#0f0d2e", marginBottom: "12px" }}>🦷 Diş Şeması (İsteğe Bağlı)</div>
-                                <DisSemasi onDegistir={(plan) => setYeniTeklif(prev => ({ ...prev, dis_plani: JSON.stringify(plan) }))} />
+                                <div style={{ fontSize: "13px", fontWeight: 600, color: "#0f0d2e", marginBottom: "12px" }}>🦷 Diş Şeması ile Tedavi Planı</div>
+                                <DisSemasi onDegistir={(plan) => disPlanHesapla(t.id, plan)} />
+                                
+                                {/* Tedavi detayları */}
+                                {(disTedaviDetayMap[t.id] || []).length > 0 && (
+                                  <div style={{ marginTop: "14px", background: "#fff", borderRadius: "8px", border: "1px solid #EEEDFE", overflow: "hidden" }}>
+                                    <div style={{ padding: "10px 14px", background: "#f0eeff", fontSize: "12px", fontWeight: 700, color: "#534AB7" }}>
+                                      Tedavi Listesi ({(disTedaviDetayMap[t.id] || []).length} işlem)
+                                    </div>
+                                    {(disTedaviDetayMap[t.id] || []).map((d, i) => (
+                                      <div key={i} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "8px 14px", borderBottom: "1px solid #f5f5f5", fontSize: "12px" }}>
+                                        <span style={{ color: "#374151" }}>
+                                          <strong>Diş {d.dis}</strong> — {d.hizmet}
+                                        </span>
+                                        <span style={{ fontWeight: 700, color: "#534AB7" }}>{d.fiyat} EUR</span>
+                                      </div>
+                                    ))}
+                                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "10px 14px", background: "#f8f9ff", fontSize: "13px", fontWeight: 700 }}>
+                                      <span style={{ color: "#0f0d2e" }}>Toplam Tedavi</span>
+                                      <span style={{ color: "#534AB7", fontSize: "16px" }}>{(disTedaviDetayMap[t.id] || []).reduce((s,d) => s+d.fiyat, 0)} EUR</span>
+                                    </div>
+                                  </div>
+                                )}
+
+                                {/* Eşleşmeyen uyarı */}
+                                {Object.keys(disPlanMap[t.id] || {}).length > 0 && (disTedaviDetayMap[t.id] || []).length === 0 && (
+                                  <div style={{ marginTop: "8px", fontSize: "11px", color: "#BA7517", background: "#fff8e1", padding: "8px 12px", borderRadius: "8px" }}>
+                                    ⚠️ Seçilen tedaviler hizmet listenizde bulunamadı. Fiyat manuel girilebilir.
+                                  </div>
+                                )}
                               </div>
-                            ) : null}
+                            )}
 
                             {/* Otel dahil mi? */}
                             <div style={{ background: "#f8f9ff", borderRadius: "8px", padding: "10px 14px" }}>
