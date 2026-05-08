@@ -507,6 +507,8 @@ export default function KlinikPanel() {
       otel_dahil:form.otel_dahil,otel_aciklama:form.otel_aciklama,otel_fiyat:otelFiyat,
       transfer_dahil:form.transfer_dahil,transfer_aciklama:form.transfer_aciklama,transfer_fiyat:transferFiyat,
       toplam_fiyat:toplamFiyat,
+      dis_plani: disPlanMap[talepId] ? JSON.stringify(disPlanMap[talepId]) : null,
+      tedavi_detaylari: disTedaviMap[talepId] ? JSON.stringify(disTedaviMap[talepId]) : null,
     });
 
     if (error) { mesajGoster("Hata: "+error.message); return; }
