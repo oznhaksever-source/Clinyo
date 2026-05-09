@@ -4,6 +4,152 @@ import { createClient } from "../../utils/supabase/client";
 import DisSemasi from "../components/DisSemasi";
 import { useDil } from "../locales/context";
 
+const M = {
+  tr: {
+    panel:"Klinik Paneli",
+    menu:{ozet:"🏠 Genel Özet",profil:"✏️ Profil Düzenle",hizmetler:"💉 Hizmet & Fiyatlar",doktorlar:"👨‍⚕️ Doktorlar",onceSonra:"📸 Önce/Sonra",talepler:"📋 Teklif Talepleri",tekliflerim:"📤 Gönderilen Teklifler",belgeler:"📄 Belgelerim",mesajlar:"💬 Mesajlar"},
+    cikis:"Çıkış Yap", onaylandi:"✓ Onaylandı", onayBekliyor:"⏳ Onay Bekleniyor",
+    hosgeldin:"Hoş Geldiniz", panelAcik:"Klinik panelinizden profilinizi ve hizmetlerinizi yönetebilirsiniz.",
+    onayBekle:"Hesabınız Onay Bekliyor", onayBekleAcik:"Klinik hesabınız admin tarafından henüz onaylanmamış.",
+    istatistikler:{hizmet:"Hizmet",doktor:"Doktor",onceSonra:"Önce/Sonra",teklif:"Teklif"},
+    profilDuzenle:"Profil Düzenle", hizmetEkle:"Hizmet Ekle", doktorEkle:"Doktor Ekle", onceSonraEkle:"Önce/Sonra Ekle",
+    kapakFoto:"Kapak Fotoğrafı", klinikBilgileri:"Klinik Bilgileri",
+    tanitimYazisi:"Tanıtım Yazısı", tanitimPlaceholder:"Kliniğiniz hakkında kısa bir tanıtım yazısı...",
+    telefon:"Telefon", website:"Website", adres:"Adres", googleMaps:"Google Maps URL",
+    sosyalMedya:"Sosyal Medya", kaydet:"Profili Kaydet",
+    hizmetListesi:"Hizmet & Fiyat Listesi", yeniHizmet:"Yeni Hizmet Ekle",
+    kategori:"Kategori", altKategori:"Alt Kategori", listeden:"Listeden Seç",
+    ozelAd:"Özel Hizmet Adı", ozelAdPlaceholder:"Listede yoksa buraya yazın",
+    fiyat:"Fiyat", paraBirimi:"Para Birimi", sure:"Süre", aciklama:"Açıklama",
+    disSemasi:"Diş Şeması", hizmetEkleBtn:"+ Hizmet Ekle",
+    mevcutHizmetler:"Hizmet Listem", pasife:"Pasife Al", aktife:"Aktife Al", sil:"Sil",
+    doktorlarBaslik:"Doktorlar", doktorEkleBaslik:"Doktor Ekle",
+    doktorAd:"Ad Soyad", uzmanlik:"Uzmanlık", doktorFoto:"Fotoğraf", doktorEkleBtn:"+ Doktor Ekle",
+    onceSonraBaslik:"Önce / Sonra Fotoğrafları", yeniEkle:"Yeni Ekle",
+    hizmetAdi:"Hizmet Adı", hizmetAdPlaceholder:"Zirkonyum Kaplama, Saç Ekimi...",
+    onceFoto:"Önce Fotoğrafı", sonraFoto:"Sonra Fotoğrafı", ekleBtn:"+ Ekle",
+    teklifTalepleri:"Teklif Talepleri", hasta:"Hasta", teklifYok:"Henüz teklif talebi yok",
+    disPlani:"🦷 Diş Şeması ile Tedavi Planı", tedaviListesi:"Tedavi Listesi", islem:"işlem",
+    tedaviFiyati:"Tedavi Fiyatı (EUR)", aciklamaPlaceholder:"Ek açıklama...",
+    otelDahil:"🏨 Otel Dahil", otelAdi:"Otel adı / açıklama", otelFiyat:"Fiyat (EUR)",
+    transferDahil:"🚗 Transfer Dahil", transferAciklama:"Havalimanı-otel vb.", transferFiyat:"Fiyat (EUR)",
+    toplam:"Toplam", teklifGonder:"✅ Teklif Gönder", teklifAc:"Teklif Ver →", kapat:"Kapat ↑",
+    gonderilen:"Gönderilen Teklifler", teklifYokGon:"Henüz teklif gönderilmedi",
+    yazdir:"🖨️ Yazdır", mesajlas:"💬 Hasta ile Mesajlaş",
+    onaylandiLabel:"✅ Onaylandı", reddedildiLabel:"❌ Reddedildi", beklemede:"⏳ Beklemede",
+    belgelerBaslik:"📄 Belgelerim", belgeAcik:"Onay sürecinde incelenecek belgelerinizi yükleyin.",
+    zorunlu:"Zorunlu", guncelle:"Güncelle", yukle:"Yükle", goruntule:"📎 Görüntüle",
+    belgeYukleniyor:"⏳ Belge yükleniyor...", belgeTamamlandi:"✅ Tüm belgeler yüklendi! Admin onayı bekleniyor.",
+    mesajlarBaslik:"💬 Mesajlar", mesajlarAcik:"Hastalarla mesajlaşmak için mesajlar sayfasını kullanın.",
+    mesajlarGit:"💬 Mesajlar Sayfasına Git →",
+    yukleniyor:"Yükleniyor...",
+    teklifGonderildi:"✅ Teklif gönderildi!", profilKaydedildi:"✅ Profil kaydedildi!",
+    kapakYuklendi:"✅ Kapak fotoğrafı yüklendi!", hizmetEklendi:"✅ Hizmet eklendi!",
+    doktorEklendi:"✅ Doktor eklendi!", onceSonraEklendi:"✅ Önce/Sonra eklendi!",
+    hizmetAdZorunlu:"Hata: Hizmet adı ve fiyat zorunludur!", doktorAdZorunlu:"Hata: Doktor adı zorunludur!",
+    fotoZorunlu:"Hata: Önce ve sonra fotoğrafları zorunludur!", fiyatZorunlu:"Hata: Fiyat girilmelidir!",
+    hizmetYok:"Henüz hizmet eklenmemiş.", doktorYok:"Henüz doktor eklenmemiş.",
+    onceSonraYok:"Henüz önce/sonra eklenmemiş.", silOnay:"Silmek istediğinize emin misiniz?",
+    disHizmetYok:"⚠️ Bu kategori için hizmet yok",
+    hizmetSutun:{ad:"Hizmet",kat:"Kategori",dis:"Diş Şeması",fiyat:"Fiyat",islem:"İşlem"},
+  },
+  en: {
+    panel:"Clinic Panel",
+    menu:{ozet:"🏠 Overview",profil:"✏️ Edit Profile",hizmetler:"💉 Services & Prices",doktorlar:"👨‍⚕️ Doctors",onceSonra:"📸 Before/After",talepler:"📋 Quote Requests",tekliflerim:"📤 Sent Offers",belgeler:"📄 My Documents",mesajlar:"💬 Messages"},
+    cikis:"Sign Out", onaylandi:"✓ Approved", onayBekliyor:"⏳ Awaiting Approval",
+    hosgeldin:"Welcome", panelAcik:"Manage your profile and services from the clinic panel.",
+    onayBekle:"Account Awaiting Approval", onayBekleAcik:"Your clinic account has not been approved by the admin yet.",
+    istatistikler:{hizmet:"Services",doktor:"Doctors",onceSonra:"Before/After",teklif:"Offers"},
+    profilDuzenle:"Edit Profile", hizmetEkle:"Add Service", doktorEkle:"Add Doctor", onceSonraEkle:"Add Before/After",
+    kapakFoto:"Cover Photo", klinikBilgileri:"Clinic Information",
+    tanitimYazisi:"Introduction", tanitimPlaceholder:"A short introduction about your clinic...",
+    telefon:"Phone", website:"Website", adres:"Address", googleMaps:"Google Maps URL",
+    sosyalMedya:"Social Media", kaydet:"Save Profile",
+    hizmetListesi:"Service & Price List", yeniHizmet:"Add New Service",
+    kategori:"Category", altKategori:"Sub-category", listeden:"Select from list",
+    ozelAd:"Custom Service Name", ozelAdPlaceholder:"Write here if not in the list",
+    fiyat:"Price", paraBirimi:"Currency", sure:"Duration", aciklama:"Description",
+    disSemasi:"Dental Chart", hizmetEkleBtn:"+ Add Service",
+    mevcutHizmetler:"My Service List", pasife:"Deactivate", aktife:"Activate", sil:"Delete",
+    doktorlarBaslik:"Doctors", doktorEkleBaslik:"Add Doctor",
+    doktorAd:"Full Name", uzmanlik:"Specialization", doktorFoto:"Photo", doktorEkleBtn:"+ Add Doctor",
+    onceSonraBaslik:"Before / After Photos", yeniEkle:"Add New",
+    hizmetAdi:"Service Name", hizmetAdPlaceholder:"Zirconia Crown, Hair Transplant...",
+    onceFoto:"Before Photo", sonraFoto:"After Photo", ekleBtn:"+ Add",
+    teklifTalepleri:"Quote Requests", hasta:"Patient", teklifYok:"No quote requests yet",
+    disPlani:"🦷 Treatment Plan — Dental Chart", tedaviListesi:"Treatment List", islem:"procedures",
+    tedaviFiyati:"Treatment Price (EUR)", aciklamaPlaceholder:"Additional notes...",
+    otelDahil:"🏨 Hotel Included", otelAdi:"Hotel name / description", otelFiyat:"Price (EUR)",
+    transferDahil:"🚗 Transfer Included", transferAciklama:"Airport-hotel etc.", transferFiyat:"Price (EUR)",
+    toplam:"Total", teklifGonder:"✅ Send Offer", teklifAc:"Make Offer →", kapat:"Close ↑",
+    gonderilen:"Sent Offers", teklifYokGon:"No offers sent yet",
+    yazdir:"🖨️ Print", mesajlas:"💬 Message Patient",
+    onaylandiLabel:"✅ Approved", reddedildiLabel:"❌ Rejected", beklemede:"⏳ Pending",
+    belgelerBaslik:"📄 My Documents", belgeAcik:"Upload your documents for the approval process.",
+    zorunlu:"Required", guncelle:"Update", yukle:"Upload", goruntule:"📎 View",
+    belgeYukleniyor:"⏳ Uploading document...", belgeTamamlandi:"✅ All documents uploaded! Awaiting admin approval.",
+    mesajlarBaslik:"💬 Messages", mesajlarAcik:"Use the messages page to communicate with patients.",
+    mesajlarGit:"💬 Go to Messages →",
+    yukleniyor:"Loading...",
+    teklifGonderildi:"✅ Offer sent!", profilKaydedildi:"✅ Profile saved!",
+    kapakYuklendi:"✅ Cover photo uploaded!", hizmetEklendi:"✅ Service added!",
+    doktorEklendi:"✅ Doctor added!", onceSonraEklendi:"✅ Before/After added!",
+    hizmetAdZorunlu:"Error: Service name and price are required!", doktorAdZorunlu:"Error: Doctor name is required!",
+    fotoZorunlu:"Error: Before and after photos are required!", fiyatZorunlu:"Error: Price is required!",
+    hizmetYok:"No services added yet.", doktorYok:"No doctors added yet.",
+    onceSonraYok:"No before/after added yet.",silOnay:"Are you sure?",disHizmetYok:"⚠️ No service for this category",hizmetSutun:{ad:"Service",kat:"Category",dis:"Dental Chart",fiyat:"Price",islem:"Action"},
+  },
+  de: {
+    panel:"Klinikbereich",
+    menu:{ozet:"🏠 Übersicht",profil:"✏️ Profil bearbeiten",hizmetler:"💉 Leistungen",doktorlar:"👨‍⚕️ Ärzte",onceSonra:"📸 Vorher/Nachher",talepler:"📋 Anfragen",tekliflerim:"📤 Angebote",belgeler:"📄 Dokumente",mesajlar:"💬 Nachrichten"},
+    cikis:"Abmelden",onaylandi:"✓ Genehmigt",onayBekliyor:"⏳ Ausstehend",
+    hosgeldin:"Willkommen",panelAcik:"Verwalten Sie Ihr Profil.",
+    onayBekle:"Genehmigung ausstehend",onayBekleAcik:"Ihr Konto wurde noch nicht genehmigt.",
+    istatistikler:{hizmet:"Leistungen",doktor:"Ärzte",onceSonra:"Vorher/Nachher",teklif:"Angebote"},
+    profilDuzenle:"Profil bearbeiten",hizmetEkle:"Leistung hinzufügen",doktorEkle:"Arzt hinzufügen",onceSonraEkle:"Vorher/Nachher",
+    kapakFoto:"Titelbild",klinikBilgileri:"Klinikinformationen",
+    tanitimYazisi:"Vorstellung",tanitimPlaceholder:"Eine kurze Vorstellung...",
+    telefon:"Telefon",website:"Website",adres:"Adresse",googleMaps:"Google Maps URL",
+    sosyalMedya:"Soziale Medien",kaydet:"Profil speichern",
+    hizmetListesi:"Leistungsliste",yeniHizmet:"Neue Leistung",
+    kategori:"Kategorie",altKategori:"Unterkategorie",listeden:"Aus Liste",
+    ozelAd:"Benutzerdefiniert",ozelAdPlaceholder:"Hier eingeben",
+    fiyat:"Preis",paraBirimi:"Währung",sure:"Dauer",aciklama:"Beschreibung",
+    disSemasi:"Zahnschema",hizmetEkleBtn:"+ Hinzufügen",
+    mevcutHizmetler:"Meine Leistungen",pasife:"Deaktivieren",aktife:"Aktivieren",sil:"Löschen",
+    doktorlarBaslik:"Ärzte",doktorEkleBaslik:"Arzt hinzufügen",
+    doktorAd:"Vollständiger Name",uzmanlik:"Fachgebiet",doktorFoto:"Foto",doktorEkleBtn:"+ Arzt",
+    onceSonraBaslik:"Vorher / Nachher",yeniEkle:"Neu hinzufügen",
+    hizmetAdi:"Leistungsname",hizmetAdPlaceholder:"Zirkonkrone...",
+    onceFoto:"Vorher-Foto",sonraFoto:"Nachher-Foto",ekleBtn:"+ Hinzufügen",
+    teklifTalepleri:"Angebotsanfragen",hasta:"Patient",teklifYok:"Keine Anfragen",
+    disPlani:"🦷 Zahnschema",tedaviListesi:"Behandlungsliste",islem:"Eingriffe",
+    tedaviFiyati:"Behandlungspreis (EUR)",aciklamaPlaceholder:"Zusätzliche Hinweise...",
+    otelDahil:"🏨 Hotel inklusive",otelAdi:"Hotelname",otelFiyat:"Preis (EUR)",
+    transferDahil:"🚗 Transfer inklusive",transferAciklama:"Flughafen-Hotel",transferFiyat:"Preis (EUR)",
+    toplam:"Gesamt",teklifGonder:"✅ Angebot senden",teklifAc:"Angebot →",kapat:"Schließen ↑",
+    gonderilen:"Gesendete Angebote",teklifYokGon:"Keine Angebote",
+    yazdir:"🖨️ Drucken",mesajlas:"💬 Patient kontaktieren",
+    onaylandiLabel:"✅ Genehmigt",reddedildiLabel:"❌ Abgelehnt",beklemede:"⏳ Ausstehend",
+    belgelerBaslik:"📄 Dokumente",belgeAcik:"Laden Sie Ihre Dokumente hoch.",
+    zorunlu:"Erforderlich",guncelle:"Aktualisieren",yukle:"Hochladen",goruntule:"📎 Anzeigen",
+    belgeYukleniyor:"⏳ Wird hochgeladen...",belgeTamamlandi:"✅ Alle Dokumente hochgeladen!",
+    mesajlarBaslik:"💬 Nachrichten",mesajlarAcik:"Nachrichten für Patienten.",
+    mesajlarGit:"💬 Zur Nachrichtenseite →",
+    yukleniyor:"Wird geladen...",
+    teklifGonderildi:"✅ Angebot gesendet!",profilKaydedildi:"✅ Gespeichert!",
+    kapakYuklendi:"✅ Titelbild hochgeladen!",hizmetEklendi:"✅ Leistung hinzugefügt!",
+    doktorEklendi:"✅ Arzt hinzugefügt!",onceSonraEklendi:"✅ Vorher/Nachher hinzugefügt!",
+    hizmetAdZorunlu:"Fehler: Name und Preis erforderlich!",doktorAdZorunlu:"Fehler: Name erforderlich!",
+    fotoZorunlu:"Fehler: Fotos erforderlich!",fiyatZorunlu:"Fehler: Preis erforderlich!",
+    hizmetYok:"Keine Leistungen.",doktorYok:"Keine Ärzte.",
+    onceSonraYok:"Keine Vorher/Nachher.",silOnay:"Wirklich löschen?",
+    disHizmetYok:"⚠️ Kein Dienst für diese Kategorie",
+    hizmetSutun:{ad:"Leistung",kat:"Kategorie",dis:"Zahnschema",fiyat:"Preis",islem:"Aktion"},
+  },
+} as const;
+type Dil = keyof typeof M;
+
 // ─── TDB Hizmet Listesi ───────────────────────────────────────────────────────
 const TDB_LISTE: Record<string, Record<string, string[]>> = {
   "Teşhis ve Tedavi Planlaması": {
@@ -254,6 +400,7 @@ const cardStyle: React.CSSProperties = {
 export default function KlinikPanel() {
   const supabase = createClient();
   const { dil, dilDegistir } = useDil();
+  const m = M[dil] || M.tr;
   const [menu, setMenu] = useState("ozet");
   const [kullanici, setKullanici] = useState<any>(null);
   const [talepler, setTalepler] = useState<any[]>([]);
@@ -294,7 +441,7 @@ export default function KlinikPanel() {
     transfer_dahil:boolean,transfer_aciklama:string,transfer_fiyat:string,
   }>>({});
   const [disPlanMap, setDisPlanMap] = useState<Record<string,Record<number,string[]>>>({});
-  const [disTedaviMap, setDisTedaviMap] = useState<Record<string,{dis:number,hizmet_adi:string,fiyat:number,kategori:string}[]>>({});
+  const [disTedaviMap, setDisTedaviMap] = useState<Record<string,{dis:number,hizmet_id:string,hizmet_adi:string,fiyat:number,kategori:string}[]>>({});
   const [acikTalep, setAcikTalep] = useState<string|null>(null);
 
   useEffect(() => { veriYukle(); }, []);
@@ -423,32 +570,59 @@ export default function KlinikPanel() {
   }
 
   // ─── Diş şeması fiyat hesaplama ──────────────────────────────────────────────
+  // Diş plan değişince sadece planı kaydet, hizmet seçimi ayrıca yapılacak
   function disPlanHesapla(talepId:string, plan:Record<number,string[]>) {
     setDisPlanMap(prev=>({...prev,[talepId]:plan}));
-    const detaylar: {dis:number,hizmet_adi:string,fiyat:number,kategori:string}[] = [];
-
-    Object.entries(plan).forEach(([no,kategoriler]) => {
-      kategoriler.forEach(kat => {
-        if (['eksik','lezyon','kirik','cokmus'].includes(kat)) return;
-        // Hizmet listesinden bu diş şeması kategorisine eşleşen hizmetleri bul
-        const eslesenler = hizmetler.filter(h => h.aktif && h.dis_semasi_kategori === kat);
-        if (eslesenler.length > 0) {
-          // En düşük fiyatlıyı al
-          const hizmet = eslesenler.sort((a,b)=>a.fiyat-b.fiyat)[0];
-          detaylar.push({dis:Number(no),hizmet_adi:hizmet.hizmet_adi,fiyat:hizmet.fiyat,kategori:kat});
-        } else if (kat !== 'yok') {
-          // Eşleşen hizmet yok, 0 fiyatla ekle
-          detaylar.push({dis:Number(no),hizmet_adi:`${kat} (fiyat girilmedi)`,fiyat:0,kategori:kat});
-        }
+    // Mevcut tedavi map'ini güncelle — yeni dişler için boş seçim ekle, silinen dişleri kaldır
+    setDisTedaviMap(prev=>{
+      const mevcut = prev[talepId]||[];
+      const yeni: {dis:number,hizmet_id:string,hizmet_adi:string,fiyat:number,kategori:string}[] = [];
+      Object.entries(plan).forEach(([no,kategoriler])=>{
+        kategoriler.forEach(kat=>{
+          if (['eksik','lezyon','kirik','cokmus'].includes(kat)) return;
+          // Daha önce seçilmiş hizmet varsa koru
+          const eskiSecim = mevcut.find(m=>m.dis===Number(no)&&m.kategori===kat);
+          if (eskiSecim) {
+            yeni.push(eskiSecim);
+          } else {
+            // Otomatik ilk hizmeti seç
+            const eslesenler = hizmetler.filter(h=>h.aktif&&h.dis_semasi_kategori===kat);
+            if (eslesenler.length>0) {
+              const h = eslesenler[0];
+              yeni.push({dis:Number(no),hizmet_id:h.id,hizmet_adi:h.hizmet_adi,fiyat:h.fiyat,kategori:kat});
+            } else {
+              yeni.push({dis:Number(no),hizmet_id:"",hizmet_adi:"",fiyat:0,kategori:kat});
+            }
+          }
+        });
       });
+      // Fiyat toplamını güncelle
+      const toplam = yeni.reduce((s,d)=>s+d.fiyat,0);
+      setTeklifFormlar(fp=>({
+        ...fp,
+        [talepId]:{...(fp[talepId]||{otel_dahil:false,otel_aciklama:"",otel_fiyat:"",transfer_dahil:false,transfer_aciklama:"",transfer_fiyat:"",aciklama:""}),fiyat:toplam.toString()}
+      }));
+      return {...prev,[talepId]:yeni};
     });
+  }
 
-    setDisTedaviMap(prev=>({...prev,[talepId]:detaylar}));
-    const toplam = detaylar.reduce((s,d)=>s+d.fiyat,0);
-    setTeklifFormlar(prev=>({
-      ...prev,
-      [talepId]:{...(prev[talepId]||{otel_dahil:false,otel_aciklama:"",otel_fiyat:"",transfer_dahil:false,transfer_aciklama:"",transfer_fiyat:"",aciklama:""}),fiyat:toplam.toString()}
-    }));
+  function hizmetSecimGuncelle(talepId:string, dis:number, kategori:string, hizmetId:string) {
+    const hizmet = hizmetler.find(h=>h.id===hizmetId);
+    if (!hizmet) return;
+    setDisTedaviMap(prev=>{
+      const mevcut = prev[talepId]||[];
+      const yeni = mevcut.map(m=>
+        m.dis===dis && m.kategori===kategori
+          ? {...m,hizmet_id:hizmetId,hizmet_adi:hizmet.hizmet_adi,fiyat:hizmet.fiyat}
+          : m
+      );
+      const toplam = yeni.reduce((s,d)=>s+d.fiyat,0);
+      setTeklifFormlar(fp=>({
+        ...fp,
+        [talepId]:{...(fp[talepId]||{otel_dahil:false,otel_aciklama:"",otel_fiyat:"",transfer_dahil:false,transfer_aciklama:"",transfer_fiyat:"",aciklama:""}),fiyat:toplam.toString()}
+      }));
+      return {...prev,[talepId]:yeni};
+    });
   }
 
   function getTeklifForm(talepId:string) {
@@ -482,6 +656,8 @@ export default function KlinikPanel() {
       otel_dahil:form.otel_dahil,otel_aciklama:form.otel_aciklama,otel_fiyat:otelFiyat,
       transfer_dahil:form.transfer_dahil,transfer_aciklama:form.transfer_aciklama,transfer_fiyat:transferFiyat,
       toplam_fiyat:toplamFiyat,
+      dis_plani: disPlanMap[talepId] ? JSON.stringify(disPlanMap[talepId]) : null,
+      tedavi_detaylari: disTedaviMap[talepId] ? JSON.stringify(disTedaviMap[talepId]) : null,
     });
 
     if (error) { mesajGoster("Hata: "+error.message); return; }
@@ -582,13 +758,7 @@ export default function KlinikPanel() {
           <a href="/" style={{fontSize:"20px",fontWeight:700,color:"#fff",textDecoration:"none"}}>
             med<span style={{color:"#7F77DD",fontWeight:300}}>oqa</span>
           </a>
-          <div style={{fontSize:"11px",color:"#6b6fa8",marginTop:"4px"}}>Klinik Paneli</div>
-        </div>
-        {/* Dil seçici */}
-        <div style={{padding:"8px 16px",borderBottom:"1px solid #1e1b4b",display:"flex",gap:"5px"}}>
-          {(["tr","en","de"] as const).map(d=>(
-            <span key={d} onClick={()=>dilDegistir(d)} style={{fontSize:"10px",padding:"3px 8px",border:`1px solid ${dil===d?"#534AB7":"#2a2a4e"}`,borderRadius:"4px",color:dil===d?"#7F77DD":"#aab4c8",cursor:"pointer",textTransform:"uppercase"}}>{d}</span>
-          ))}
+          <div style={{fontSize:"11px",color:"#6b6fa8",marginTop:"4px"}}>{m.panel}</div>
         </div>
         {kullanici && (
           <div style={{padding:"14px 20px",borderBottom:"1px solid #1e1b4b"}}>
@@ -955,21 +1125,48 @@ export default function KlinikPanel() {
                               <div style={{fontSize:"13px",fontWeight:700,color:"#0f0d2e",marginBottom:"12px"}}>🦷 Diş Şeması ile Tedavi Planı</div>
                               <DisSemasi onDegistir={(plan)=>disPlanHesapla(t.id,plan)}/>
 
-                              {/* Tedavi detay listesi */}
+                              {/* Tedavi detay listesi — hizmet seçimi */}
                               {tedaviDetay.length>0 && (
                                 <div style={{marginTop:"14px",background:"#f8f9ff",borderRadius:"10px",overflow:"hidden",border:"1px solid #EEEDFE"}}>
                                   <div style={{padding:"10px 14px",background:"#534AB7",fontSize:"12px",fontWeight:700,color:"#fff"}}>
                                     Tedavi Listesi — {tedaviDetay.length} işlem
                                   </div>
-                                  {tedaviDetay.map((d,i)=>(
-                                    <div key={i} style={{display:"flex",justifyContent:"space-between",alignItems:"center",padding:"8px 14px",borderBottom:"1px solid #EEEDFE",fontSize:"12px"}}>
-                                      <span><strong>Diş {d.dis}</strong> — {d.hizmet_adi}</span>
-                                      <span style={{fontWeight:700,color:d.fiyat>0?"#534AB7":"#BA7517"}}>{d.fiyat>0?`${d.fiyat} EUR`:"Fiyat yok"}</span>
-                                    </div>
-                                  ))}
-                                  <div style={{display:"flex",justifyContent:"space-between",padding:"10px 14px",background:"#f0eeff",fontSize:"13px",fontWeight:700}}>
-                                    <span>Toplam Tedavi</span>
-                                    <span style={{color:"#534AB7",fontSize:"15px"}}>{tedaviDetay.reduce((s,d)=>s+d.fiyat,0)} EUR</span>
+                                  {tedaviDetay.map((d:any,i:number)=>{
+                                    const secenekler = hizmetler.filter(h=>h.aktif&&h.dis_semasi_kategori===d.kategori);
+                                    return (
+                                      <div key={i} style={{padding:"10px 14px",borderBottom:"1px solid #EEEDFE"}}>
+                                        <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",gap:"10px"}}>
+                                          <div style={{fontSize:"12px",fontWeight:600,color:"#0f0d2e",flexShrink:0}}>
+                                            Diş {d.dis} — <span style={{color:"#534AB7"}}>{d.kategori}</span>
+                                          </div>
+                                          <div style={{display:"flex",gap:"8px",alignItems:"center",flex:1}}>
+                                            {secenekler.length>0 ? (
+                                              <select
+                                                value={d.hizmet_id||""}
+                                                onChange={e=>hizmetSecimGuncelle(t.id,d.dis,d.kategori,e.target.value)}
+                                                style={{flex:1,border:"1px solid #e5e7eb",borderRadius:"8px",padding:"6px 10px",fontSize:"12px",outline:"none",background:"#fff"}}
+                                              >
+                                                <option value="">Hizmet seçin...</option>
+                                                {secenekler.map((h:any)=>(
+                                                  <option key={h.id} value={h.id}>{h.hizmet_adi} — {h.fiyat} {h.para_birimi}</option>
+                                                ))}
+                                              </select>
+                                            ) : (
+                                              <span style={{fontSize:"11px",color:"#BA7517",background:"#fff8e1",padding:"4px 10px",borderRadius:"8px"}}>
+                                                ⚠️ Bu kategori için hizmet yok
+                                              </span>
+                                            )}
+                                            <span style={{fontWeight:700,color:d.fiyat>0?"#534AB7":"#94a3b8",flexShrink:0,fontSize:"13px"}}>
+                                              {d.fiyat>0?`${d.fiyat} EUR`:"—"}
+                                            </span>
+                                          </div>
+                                        </div>
+                                      </div>
+                                    );
+                                  })}
+                                  <div style={{display:"flex",justifyContent:"space-between",padding:"12px 14px",background:"#f0eeff",fontSize:"13px",fontWeight:700}}>
+                                    <span style={{color:"#0f0d2e"}}>Toplam Tedavi</span>
+                                    <span style={{color:"#534AB7",fontSize:"16px"}}>{tedaviDetay.reduce((s:number,d:any)=>s+d.fiyat,0)} EUR</span>
                                   </div>
                                 </div>
                               )}
