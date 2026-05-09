@@ -832,7 +832,7 @@ export default function KlinikPanel() {
                   </div>
                 </div>
                 <button onClick={profilKaydet} style={{background:"#534AB7",color:"#fff",border:"none",padding:"12px 32px",borderRadius:"8px",fontSize:"14px",cursor:"pointer",fontWeight:600}}>
-                  Profili Kaydet
+                  {m.kaydet}
                 </button>
               </div>
             )}
@@ -972,7 +972,7 @@ export default function KlinikPanel() {
                     <textarea rows={2} value={yeniDoktor.aciklama} onChange={e=>setYeniDoktor({...yeniDoktor,aciklama:e.target.value})} style={{...inputStyle,resize:"none"}}/>
                   </div>
                   <div style={{marginBottom:"16px"}}>
-                    <label style={labelStyle}>Fotoğraf</label>
+                    <label style={labelStyle}>{m.doktorFoto}</label>
                     <input type="file" accept="image/*" onChange={async e=>{const f=e.target.files?.[0];if(f){const url=await fotografYukle(f,"doktorlar");if(url)setYeniDoktor({...yeniDoktor,fotograf_url:url});
                     }}} style={inputStyle}/>
                     {yeniDoktor.fotograf_url && <img src={yeniDoktor.fotograf_url} alt="Doktor" style={{width:"60px",height:"60px",objectFit:"cover",borderRadius:"50%",marginTop:"8px"}}/>}
@@ -1030,11 +1030,11 @@ export default function KlinikPanel() {
                     <div key={os.id} style={{background:"#fff",border:"1px solid #EEEDFE",borderRadius:"12px",overflow:"hidden"}}>
                       <div style={{display:"grid",gridTemplateColumns:"1fr 1fr"}}>
                         <div>
-                          <div style={{fontSize:"11px",color:"#888",padding:"6px 12px",background:"#f9fafb",textAlign:"center"}}>ÖNCE</div>
+                          <div style={{fontSize:"11px",color:"#888",padding:"6px 12px",background:"#f9fafb",textAlign:"center"}}>{m.once || "ÖNCE"}</div>
                           {os.once_fotograf && <img src={os.once_fotograf} alt="Önce" style={{width:"100%",height:"130px",objectFit:"cover"}}/>}
                         </div>
                         <div>
-                          <div style={{fontSize:"11px",color:"#059669",padding:"6px 12px",background:"#f0fff4",textAlign:"center"}}>SONRA</div>
+                          <div style={{fontSize:"11px",color:"#059669",padding:"6px 12px",background:"#f0fff4",textAlign:"center"}}>{m.sonra || "SONRA"}</div>
                           {os.sonra_fotograf && <img src={os.sonra_fotograf} alt="Sonra" style={{width:"100%",height:"130px",objectFit:"cover"}}/>}
                         </div>
                       </div>
@@ -1295,7 +1295,7 @@ export default function KlinikPanel() {
                 <h1 style={{fontSize:"24px",fontWeight:700,color:"#12103a",marginBottom:"8px"}}>{m.mesajlarBaslik}</h1>
                 <p style={{fontSize:"14px",color:"#888",marginBottom:"24px"}}>{m.mesajlarAcik}</p>
                 <a href="/mesajlar" style={{display:"inline-flex",alignItems:"center",gap:"8px",background:"#534AB7",color:"#fff",padding:"12px 24px",borderRadius:"10px",fontSize:"14px",textDecoration:"none",fontWeight:600}}>
-                  💬 Mesajlar Sayfasına Git →
+                  {m.mesajlarGit}
                 </a>
               </div>
             )}
