@@ -760,6 +760,12 @@ export default function KlinikPanel() {
           </a>
           <div style={{fontSize:"11px",color:"#6b6fa8",marginTop:"4px"}}>{m.panel}</div>
         </div>
+        {/* Dil seçici */}
+        <div style={{padding:"8px 16px",borderBottom:"1px solid #1e1b4b",display:"flex",gap:"5px"}}>
+          {(["tr","en","de"] as const).map(d=>(
+            <span key={d} onClick={()=>dilDegistir(d)} style={{fontSize:"10px",padding:"3px 8px",border:`1px solid ${dil===d?"#534AB7":"#2a2a4e"}`,borderRadius:"4px",color:dil===d?"#7F77DD":"#aab4c8",cursor:"pointer",textTransform:"uppercase"}}>{d}</span>
+          ))}
+        </div>
         {kullanici && (
           <div style={{padding:"14px 20px",borderBottom:"1px solid #1e1b4b"}}>
             <div style={{width:"36px",height:"36px",background:"#185FA5",borderRadius:"50%",display:"flex",alignItems:"center",justifyContent:"center",color:"#fff",fontWeight:700,fontSize:"14px",marginBottom:"8px"}}>
