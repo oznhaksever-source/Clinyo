@@ -1,3 +1,4 @@
+
 "use client";
 import { useState, useEffect } from "react";
 import { useDil } from "../locales/context";
@@ -19,6 +20,7 @@ export default function Footer() {
       platform: "PLATFORM",
       destek: "DESTEK",
       takipEdin: "BİZİ TAKİP EDİN",
+      yasal: "YASAL",
       linkler: {
         platform: [
           { ad: "Klinikler", href: "/klinikler" },
@@ -33,6 +35,12 @@ export default function Footer() {
           { ad: "İletişim", href: "/iletisim" },
           { ad: "Blog", href: "/blog" },
         ],
+        yasal: [
+          { ad: "KVKK / Gizlilik", href: "/sozlesmeler" },
+          { ad: "Kullanım Koşulları", href: "/sozlesmeler" },
+          { ad: "Klinik Sözleşmesi", href: "/sozlesmeler" },
+          { ad: "Çerez Politikası", href: "/sozlesmeler" },
+        ],
       },
       telif: "© 2025 Medoqa. Tüm hakları saklıdır.",
     },
@@ -41,6 +49,7 @@ export default function Footer() {
       platform: "PLATFORM",
       destek: "SUPPORT",
       takipEdin: "FOLLOW US",
+      yasal: "LEGAL",
       linkler: {
         platform: [
           { ad: "Clinics", href: "/klinikler" },
@@ -55,6 +64,12 @@ export default function Footer() {
           { ad: "Contact", href: "/iletisim" },
           { ad: "Blog", href: "/blog" },
         ],
+        yasal: [
+          { ad: "Privacy Policy (GDPR)", href: "/sozlesmeler" },
+          { ad: "Terms of Use", href: "/sozlesmeler" },
+          { ad: "Clinic Agreement", href: "/sozlesmeler" },
+          { ad: "Cookie Policy", href: "/sozlesmeler" },
+        ],
       },
       telif: "© 2025 Medoqa. All rights reserved.",
     },
@@ -63,6 +78,7 @@ export default function Footer() {
       platform: "PLATTFORM",
       destek: "SUPPORT",
       takipEdin: "FOLGEN SIE UNS",
+      yasal: "RECHTLICHES",
       linkler: {
         platform: [
           { ad: "Kliniken", href: "/klinikler" },
@@ -77,12 +93,18 @@ export default function Footer() {
           { ad: "Kontakt", href: "/iletisim" },
           { ad: "Blog", href: "/blog" },
         ],
+        yasal: [
+          { ad: "Datenschutzerklärung (DSGVO)", href: "/sozlesmeler" },
+          { ad: "Nutzungsbedingungen", href: "/sozlesmeler" },
+          { ad: "Klinikvertrag", href: "/sozlesmeler" },
+          { ad: "Cookie-Richtlinie", href: "/sozlesmeler" },
+        ],
       },
       telif: "© 2025 Medoqa. Alle Rechte vorbehalten.",
     },
   };
 
-  const ic = icerik[dil];
+  const ic = icerik[dil as keyof typeof icerik] || icerik.tr;
 
   return (
     <footer style={{ background: "#12103a", color: "#fff", padding: mobil ? "40px 16px 24px" : "48px 32px 24px" }}>
@@ -91,11 +113,11 @@ export default function Footer() {
         {/* Üst kısım */}
         <div style={{
           display: "grid",
-          gridTemplateColumns: mobil ? "1fr 1fr" : "2fr 1fr 1fr 1fr",
+          gridTemplateColumns: mobil ? "1fr 1fr" : "2fr 1fr 1fr 1fr 1fr",
           gap: mobil ? "32px 20px" : "40px",
           marginBottom: "40px"
         }}>
-          {/* Logo + Açıklama - mobilde tam genişlik */}
+          {/* Logo + Açıklama */}
           <div style={{ gridColumn: mobil ? "1 / -1" : "auto" }}>
             <div style={{ fontSize: "22px", fontWeight: 700, marginBottom: "14px" }}>
               med<span style={{ color: "#7F77DD", fontWeight: 300 }}>oqa</span>
@@ -110,7 +132,7 @@ export default function Footer() {
             </div>
           </div>
 
-          {/* Platform linkleri */}
+          {/* Platform */}
           <div>
             <div style={{ fontSize: "11px", fontWeight: 700, color: "#4a4a7a", letterSpacing: "1px", marginBottom: "14px" }}>{ic.platform}</div>
             {ic.linkler.platform.map(link => (
@@ -118,7 +140,7 @@ export default function Footer() {
             ))}
           </div>
 
-          {/* Destek linkleri */}
+          {/* Destek */}
           <div>
             <div style={{ fontSize: "11px", fontWeight: 700, color: "#4a4a7a", letterSpacing: "1px", marginBottom: "14px" }}>{ic.destek}</div>
             {ic.linkler.destek.map(link => (
@@ -126,7 +148,15 @@ export default function Footer() {
             ))}
           </div>
 
-          {/* Sosyal medya - mobilde 2. satırda */}
+          {/* Yasal */}
+          <div>
+            <div style={{ fontSize: "11px", fontWeight: 700, color: "#4a4a7a", letterSpacing: "1px", marginBottom: "14px" }}>{ic.yasal}</div>
+            {ic.linkler.yasal.map(link => (
+              <a key={link.ad} href={link.href} style={{ display: "block", color: "#8b8fc8", fontSize: "13px", textDecoration: "none", marginBottom: "10px" }}>{link.ad}</a>
+            ))}
+          </div>
+
+          {/* Sosyal medya */}
           <div>
             <div style={{ fontSize: "11px", fontWeight: 700, color: "#4a4a7a", letterSpacing: "1px", marginBottom: "14px" }}>{ic.takipEdin}</div>
             {[
@@ -143,7 +173,10 @@ export default function Footer() {
         {/* Alt çizgi */}
         <div style={{ borderTop: "1px solid #1e1b4b", paddingTop: "20px", display: "flex", flexDirection: mobil ? "column" : "row", justifyContent: "space-between", alignItems: mobil ? "flex-start" : "center", gap: "12px" }}>
           <div style={{ fontSize: "12px", color: "#4a4a7a" }}>{ic.telif}</div>
-          <div style={{ display: "flex", gap: "16px" }}>
+          <div style={{ display: "flex", gap: "16px", alignItems: "center" }}>
+            <a href="/sozlesmeler" style={{ fontSize: "12px", color: "#4a4a7a", textDecoration: "none" }}>
+              {dil === "tr" ? "Yasal" : dil === "en" ? "Legal" : "Rechtliches"}
+            </a>
             <a href="/giris" style={{ fontSize: "12px", color: "#4a4a7a", textDecoration: "none" }}>
               {dil === "tr" ? "Giriş Yap" : dil === "en" ? "Sign In" : "Anmelden"}
             </a>
