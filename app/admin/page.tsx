@@ -10,6 +10,8 @@ export default function Admin() {
   const [onayMesaj, setOnayMesaj] = useState("");
   const [tumMesajlar, setTumMesajlar] = useState<any[]>([]);
   const [seciliKonusma, setSeciliKonusma] = useState<string | null>(null);
+  const [detayKullanici, setDetayKullanici] = useState<any>(null);
+  const [kullaniciBelgeler, setKullaniciBelgeler] = useState<any[]>([]);
 
   const supabase = createClient();
 
@@ -30,12 +32,13 @@ export default function Admin() {
     await supabase.from("profiles").update({ [alan]: deger }).eq("id", id);
     setOnayMesaj("Guncellendi!");
     setTimeout(() => setOnayMesaj(""), 2000);
+    // Detay kullanıcıyı da anında güncelle
+    setDetayKullanici((prev: any) => prev?.id === id ? { ...prev, [alan]: deger } : prev);
     veriYukle();
   }
 
   async function kullaniciyiSil(id: string) {
     if (!confirm("Bu kullaniciyi silmek istediginize emin misiniz? Bu islem geri alinamaz.")) return;
-    // Hem profiles hem auth.users'dan sil
     await supabase.rpc("delete_user", { user_id: id });
     await supabase.from("profiles").delete().eq("id", id);
     setOnayMesaj("Kullanici basariyla silindi!");
@@ -46,9 +49,6 @@ export default function Admin() {
     await supabase.auth.signOut();
     window.location.href = "/giris";
   }
-
-  const [detayKullanici, setDetayKullanici] = useState<any>(null);
-  const [kullaniciBelgeler, setKullaniciBelgeler] = useState<any[]>([]);
 
   async function detayGoster(kullanici: any) {
     setDetayKullanici(kullanici);
@@ -61,61 +61,6 @@ export default function Admin() {
   const oteller = kullanicilar.filter(k => k.hesap_turu === "otel");
   const transferler = kullanicilar.filter(k => k.hesap_turu === "transfer");
   const bekleyenler = [...klinikler, ...oteller, ...transferler].filter(k => !k.onaylandi && !k.askida);
-
-  function UyeTablosu({ liste, baslik }: { liste: any[], baslik: string }) {
-    return (
-      <div style={{ background: "#fff", border: "1px solid #EEEDFE", borderRadius: "12px", overflow: "hidden", marginBottom: "24px" }}>
-        <div style={{ padding: "16px 20px", borderBottom: "1px solid #EEEDFE", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-          <h3 style={{ fontSize: "15px", fontWeight: 700, color: "#12103a", margin: 0 }}>{baslik} ({liste.length})</h3>
-        </div>
-        <table style={{ width: "100%", borderCollapse: "collapse" }}>
-          <thead>
-            <tr style={{ background: "#f9fafb" }}>
-              <th style={{ padding: "10px 16px", textAlign: "left", fontSize: "12px", color: "#888", fontWeight: 600 }}>Ad / Firma</th>
-              <th style={{ padding: "10px 16px", textAlign: "left", fontSize: "12px", color: "#888", fontWeight: 600 }}>E-posta</th>
-              <th style={{ padding: "10px 16px", textAlign: "left", fontSize: "12px", color: "#888", fontWeight: 600 }}>Durum</th>
-              <th style={{ padding: "10px 16px", textAlign: "left", fontSize: "12px", color: "#888", fontWeight: 600 }}>Islemler</th>
-            </tr>
-          </thead>
-          <tbody>
-            {liste.map((k, i) => (
-              <tr key={k.id} style={{ borderTop: "1px solid #EEEDFE", background: k.askida ? "#fff5f5" : i % 2 === 0 ? "#fff" : "#fafafa" }}>
-                <td style={{ padding: "10px 16px", fontSize: "13px", color: "#12103a" }}>{k.ad} {k.soyad}</td>
-                <td style={{ padding: "10px 16px", fontSize: "13px", color: "#888" }}>{k.email}</td>
-                <td style={{ padding: "10px 16px" }}>
-                  {k.askida ? (
-                    <span style={{ fontSize: "11px", padding: "3px 10px", borderRadius: "20px", background: "#fff0f0", color: "#c00" }}>Askida</span>
-                  ) : k.onaylandi ? (
-                    <span style={{ fontSize: "11px", padding: "3px 10px", borderRadius: "20px", background: "#f0fff4", color: "#0a7a3a" }}>Aktif</span>
-                  ) : (
-                    <span style={{ fontSize: "11px", padding: "3px 10px", borderRadius: "20px", background: "#fff8e1", color: "#BA7517" }}>Bekliyor</span>
-                  )}
-                </td>
-                <td style={{ padding: "10px 16px" }}>
-                  <div style={{ display: "flex", gap: "6px", flexWrap: "wrap" }}>
-                    {!k.onaylandi && !k.askida && (
-                      <button onClick={() => guncelle(k.id, "onaylandi", true)} style={{ background: "#0a7a3a", color: "#fff", border: "none", padding: "4px 10px", borderRadius: "6px", fontSize: "11px", cursor: "pointer" }}>Onayla</button>
-                    )}
-                    {k.onaylandi && !k.askida && (
-                      <button onClick={() => guncelle(k.id, "askida", true)} style={{ background: "#BA7517", color: "#fff", border: "none", padding: "4px 10px", borderRadius: "6px", fontSize: "11px", cursor: "pointer" }}>Askiya Al</button>
-                    )}
-                    {k.askida && (
-                      <button onClick={() => { guncelle(k.id, "askida", false); guncelle(k.id, "onaylandi", true); }} style={{ background: "#185FA5", color: "#fff", border: "none", padding: "4px 10px", borderRadius: "6px", fontSize: "11px", cursor: "pointer" }}>Aktif Et</button>
-                    )}
-                    <button onClick={() => detayGoster(k)} style={{ background: "#185FA5", color: "#fff", border: "none", padding: "4px 10px", borderRadius: "6px", fontSize: "11px", cursor: "pointer" }}>Detay</button>
-                    <button onClick={() => kullaniciyiSil(k.id)} style={{ background: "#c00", color: "#fff", border: "none", padding: "4px 10px", borderRadius: "6px", fontSize: "11px", cursor: "pointer" }}>Sil</button>
-                  </div>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-        {liste.length === 0 && (
-          <div style={{ textAlign: "center", padding: "32px", color: "#888", fontSize: "13px" }}>Kayit yok</div>
-        )}
-      </div>
-    );
-  }
 
   const belgeTurleri: Record<string, { id: string; ad: string }[]> = {
     klinik: [
@@ -146,6 +91,72 @@ export default function Admin() {
 
   const zorunluBelgeler = belgeTurleri[detayKullanici?.hesap_turu] || belgeTurleri.klinik;
 
+  function UyeTablosu({ liste, baslik }: { liste: any[], baslik: string }) {
+    return (
+      <div style={{ background: "#fff", border: "1px solid #EEEDFE", borderRadius: "12px", overflow: "hidden", marginBottom: "24px" }}>
+        <div style={{ padding: "16px 20px", borderBottom: "1px solid #EEEDFE", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+          <h3 style={{ fontSize: "15px", fontWeight: 700, color: "#12103a", margin: 0 }}>{baslik} ({liste.length})</h3>
+        </div>
+        <table style={{ width: "100%", borderCollapse: "collapse" }}>
+          <thead>
+            <tr style={{ background: "#f9fafb" }}>
+              <th style={{ padding: "10px 16px", textAlign: "left", fontSize: "12px", color: "#888", fontWeight: 600 }}>Ad / Firma</th>
+              <th style={{ padding: "10px 16px", textAlign: "left", fontSize: "12px", color: "#888", fontWeight: 600 }}>E-posta</th>
+              <th style={{ padding: "10px 16px", textAlign: "left", fontSize: "12px", color: "#888", fontWeight: 600 }}>Durum</th>
+              {baslik === "Klinikler" && (
+                <th style={{ padding: "10px 16px", textAlign: "left", fontSize: "12px", color: "#888", fontWeight: 600 }}>Uluslararası</th>
+              )}
+              <th style={{ padding: "10px 16px", textAlign: "left", fontSize: "12px", color: "#888", fontWeight: 600 }}>Islemler</th>
+            </tr>
+          </thead>
+          <tbody>
+            {liste.map((k, i) => (
+              <tr key={k.id} style={{ borderTop: "1px solid #EEEDFE", background: k.askida ? "#fff5f5" : i % 2 === 0 ? "#fff" : "#fafafa" }}>
+                <td style={{ padding: "10px 16px", fontSize: "13px", color: "#12103a" }}>{k.ad} {k.soyad}</td>
+                <td style={{ padding: "10px 16px", fontSize: "13px", color: "#888" }}>{k.email}</td>
+                <td style={{ padding: "10px 16px" }}>
+                  {k.askida ? (
+                    <span style={{ fontSize: "11px", padding: "3px 10px", borderRadius: "20px", background: "#fff0f0", color: "#c00" }}>Askida</span>
+                  ) : k.onaylandi ? (
+                    <span style={{ fontSize: "11px", padding: "3px 10px", borderRadius: "20px", background: "#f0fff4", color: "#0a7a3a" }}>Aktif</span>
+                  ) : (
+                    <span style={{ fontSize: "11px", padding: "3px 10px", borderRadius: "20px", background: "#fff8e1", color: "#BA7517" }}>Bekliyor</span>
+                  )}
+                </td>
+                {baslik === "Klinikler" && (
+                  <td style={{ padding: "10px 16px" }}>
+                    {k.uluslararasi_yetki
+                      ? <span style={{ fontSize: "11px", padding: "3px 10px", borderRadius: "20px", background: "#f0eeff", color: "#534AB7" }}>🌍 Yetkili</span>
+                      : <span style={{ fontSize: "11px", padding: "3px 10px", borderRadius: "20px", background: "#f9fafb", color: "#aaa" }}>Yurt içi</span>
+                    }
+                  </td>
+                )}
+                <td style={{ padding: "10px 16px" }}>
+                  <div style={{ display: "flex", gap: "6px", flexWrap: "wrap" }}>
+                    {!k.onaylandi && !k.askida && (
+                      <button onClick={() => guncelle(k.id, "onaylandi", true)} style={{ background: "#0a7a3a", color: "#fff", border: "none", padding: "4px 10px", borderRadius: "6px", fontSize: "11px", cursor: "pointer" }}>Onayla</button>
+                    )}
+                    {k.onaylandi && !k.askida && (
+                      <button onClick={() => guncelle(k.id, "askida", true)} style={{ background: "#BA7517", color: "#fff", border: "none", padding: "4px 10px", borderRadius: "6px", fontSize: "11px", cursor: "pointer" }}>Askiya Al</button>
+                    )}
+                    {k.askida && (
+                      <button onClick={() => { guncelle(k.id, "askida", false); guncelle(k.id, "onaylandi", true); }} style={{ background: "#185FA5", color: "#fff", border: "none", padding: "4px 10px", borderRadius: "6px", fontSize: "11px", cursor: "pointer" }}>Aktif Et</button>
+                    )}
+                    <button onClick={() => detayGoster(k)} style={{ background: "#185FA5", color: "#fff", border: "none", padding: "4px 10px", borderRadius: "6px", fontSize: "11px", cursor: "pointer" }}>Detay</button>
+                    <button onClick={() => kullaniciyiSil(k.id)} style={{ background: "#c00", color: "#fff", border: "none", padding: "4px 10px", borderRadius: "6px", fontSize: "11px", cursor: "pointer" }}>Sil</button>
+                  </div>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+        {liste.length === 0 && (
+          <div style={{ textAlign: "center", padding: "32px", color: "#888", fontSize: "13px" }}>Kayit yok</div>
+        )}
+      </div>
+    );
+  }
+
   return (
     <main style={{ minHeight: "100vh", background: "#f9fafb", fontFamily: "sans-serif", display: "flex" }}>
 
@@ -159,7 +170,7 @@ export default function Admin() {
             </div>
 
             {/* Kullanıcı bilgileri */}
-            <div style={{ background: "#f8f9ff", borderRadius: "12px", padding: "20px", marginBottom: "24px" }}>
+            <div style={{ background: "#f8f9ff", borderRadius: "12px", padding: "20px", marginBottom: "20px" }}>
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px" }}>
                 {[
                   { etiket: "Ad Soyad", deger: `${detayKullanici.ad} ${detayKullanici.soyad}` },
@@ -185,16 +196,60 @@ export default function Admin() {
               )}
             </div>
 
+            {/* ─── ULUSLARARASI YETKİ — sadece klinikler ─── */}
+            {detayKullanici.hesap_turu === "klinik" && (
+              <div style={{
+                background: detayKullanici.uluslararasi_yetki ? "#f0eeff" : "#f9fafb",
+                border: `1px solid ${detayKullanici.uluslararasi_yetki ? "#534AB7" : "#e5e7eb"}`,
+                borderRadius: "12px", padding: "16px 20px", marginBottom: "20px"
+              }}>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: "12px" }}>
+                  <div>
+                    <div style={{ fontSize: "14px", fontWeight: 700, color: "#12103a" }}>🌍 Uluslararası Sağlık Turizmi Yetkisi</div>
+                    <div style={{ fontSize: "12px", color: "#888", marginTop: "4px" }}>
+                      {detayKullanici.uluslararasi_yetki
+                        ? "Bu klinik yurt dışındaki hastalara teklif gönderebilir."
+                        : "Bu klinik sadece Türkiye'deki hastalara görünür."}
+                    </div>
+                  </div>
+                  <button
+                    onClick={() => guncelle(detayKullanici.id, "uluslararasi_yetki", !detayKullanici.uluslararasi_yetki)}
+                    style={{
+                      background: detayKullanici.uluslararasi_yetki ? "#534AB7" : "#e5e7eb",
+                      color: detayKullanici.uluslararasi_yetki ? "#fff" : "#666",
+                      border: "none", padding: "9px 18px", borderRadius: "8px",
+                      fontSize: "13px", cursor: "pointer", fontWeight: 600, flexShrink: 0,
+                      transition: "all 0.2s"
+                    }}
+                  >
+                    {detayKullanici.uluslararasi_yetki ? "✅ Yetkili" : "Yetki Ver"}
+                  </button>
+                </div>
+                {detayKullanici.uluslararasi_yetki && (
+                  <div style={{ marginTop: "12px", display: "flex", gap: "8px", alignItems: "center" }}>
+                    <label style={{ fontSize: "12px", color: "#534AB7", fontWeight: 600, flexShrink: 0 }}>Yetki Belge No:</label>
+                    <input
+                      type="text"
+                      defaultValue={detayKullanici.yetki_belge_no || ""}
+                      placeholder="Örn: SBÜ-2024-12345"
+                      onBlur={e => { if (e.target.value !== (detayKullanici.yetki_belge_no || "")) guncelle(detayKullanici.id, "yetki_belge_no", e.target.value); }}
+                      style={{ flex: 1, border: "1px solid #CECBF6", borderRadius: "6px", padding: "6px 10px", fontSize: "12px", outline: "none" }}
+                    />
+                  </div>
+                )}
+              </div>
+            )}
+
             {/* Kapak fotoğrafı */}
             {detayKullanici.kapak_fotograf && (
-              <div style={{ marginBottom: "24px" }}>
+              <div style={{ marginBottom: "20px" }}>
                 <div style={{ fontSize: "13px", fontWeight: 700, color: "#0f0d2e", marginBottom: "8px" }}>Kapak Fotoğrafı</div>
                 <img src={detayKullanici.kapak_fotograf} alt="Kapak" style={{ width: "100%", height: "160px", objectFit: "cover", borderRadius: "10px" }} />
               </div>
             )}
 
             {/* Belgeler */}
-            <div style={{ marginBottom: "24px" }}>
+            <div style={{ marginBottom: "20px" }}>
               <div style={{ fontSize: "13px", fontWeight: 700, color: "#0f0d2e", marginBottom: "12px" }}>
                 Yüklenen Belgeler ({kullaniciBelgeler.length}/{zorunluBelgeler.length})
               </div>
@@ -219,31 +274,22 @@ export default function Admin() {
             {/* Aksiyon butonları */}
             <div style={{ display: "flex", gap: "10px" }}>
               {!detayKullanici.onaylandi && !detayKullanici.askida && (
-                <button onClick={() => { guncelle(detayKullanici.id, "onaylandi", true); setDetayKullanici(null); }} style={{ flex: 1, background: "#059669", color: "#fff", border: "none", padding: "12px", borderRadius: "10px", fontSize: "14px", cursor: "pointer", fontWeight: 700 }}>
-                  ✅ Onayla
-                </button>
+                <button onClick={() => { guncelle(detayKullanici.id, "onaylandi", true); setDetayKullanici(null); }} style={{ flex: 1, background: "#059669", color: "#fff", border: "none", padding: "12px", borderRadius: "10px", fontSize: "14px", cursor: "pointer", fontWeight: 700 }}>✅ Onayla</button>
               )}
               {detayKullanici.onaylandi && !detayKullanici.askida && (
-                <button onClick={() => { guncelle(detayKullanici.id, "askida", true); setDetayKullanici(null); }} style={{ flex: 1, background: "#D97706", color: "#fff", border: "none", padding: "12px", borderRadius: "10px", fontSize: "14px", cursor: "pointer", fontWeight: 700 }}>
-                  ⏸ Askıya Al
-                </button>
+                <button onClick={() => { guncelle(detayKullanici.id, "askida", true); setDetayKullanici(null); }} style={{ flex: 1, background: "#D97706", color: "#fff", border: "none", padding: "12px", borderRadius: "10px", fontSize: "14px", cursor: "pointer", fontWeight: 700 }}>⏸ Askıya Al</button>
               )}
               {detayKullanici.askida && (
-                <button onClick={() => { guncelle(detayKullanici.id, "askida", false); guncelle(detayKullanici.id, "onaylandi", true); setDetayKullanici(null); }} style={{ flex: 1, background: "#185FA5", color: "#fff", border: "none", padding: "12px", borderRadius: "10px", fontSize: "14px", cursor: "pointer", fontWeight: 700 }}>
-                  ✅ Aktif Et
-                </button>
+                <button onClick={() => { guncelle(detayKullanici.id, "askida", false); guncelle(detayKullanici.id, "onaylandi", true); setDetayKullanici(null); }} style={{ flex: 1, background: "#185FA5", color: "#fff", border: "none", padding: "12px", borderRadius: "10px", fontSize: "14px", cursor: "pointer", fontWeight: 700 }}>✅ Aktif Et</button>
               )}
-              <button onClick={() => { kullaniciyiSil(detayKullanici.id); setDetayKullanici(null); }} style={{ background: "#fff0f0", color: "#c00", border: "1px solid #fcc", padding: "12px 20px", borderRadius: "10px", fontSize: "14px", cursor: "pointer", fontWeight: 600 }}>
-                🗑 Sil
-              </button>
-              <button onClick={() => setDetayKullanici(null)} style={{ background: "#f8f9ff", color: "#64748b", border: "1px solid #eeecff", padding: "12px 20px", borderRadius: "10px", fontSize: "14px", cursor: "pointer" }}>
-                Kapat
-              </button>
+              <button onClick={() => { kullaniciyiSil(detayKullanici.id); setDetayKullanici(null); }} style={{ background: "#fff0f0", color: "#c00", border: "1px solid #fcc", padding: "12px 20px", borderRadius: "10px", fontSize: "14px", cursor: "pointer", fontWeight: 600 }}>🗑 Sil</button>
+              <button onClick={() => setDetayKullanici(null)} style={{ background: "#f8f9ff", color: "#64748b", border: "1px solid #eeecff", padding: "12px 20px", borderRadius: "10px", fontSize: "14px", cursor: "pointer" }}>Kapat</button>
             </div>
           </div>
         </div>
       )}
 
+      {/* Sidebar */}
       <div style={{ width: "220px", background: "#12103a", display: "flex", flexDirection: "column", padding: "24px 0", flexShrink: 0 }}>
         <div style={{ padding: "0 20px 24px", borderBottom: "1px solid #1e1b4b" }}>
           <a href="/" style={{ fontSize: "20px", fontWeight: 700, color: "#fff", textDecoration: "none" }}>
@@ -251,7 +297,6 @@ export default function Admin() {
           </a>
           <div style={{ fontSize: "11px", color: "#6b6fa8", marginTop: "4px" }}>Admin Paneli</div>
         </div>
-
         <div style={{ padding: "20px 12px", flex: 1 }}>
           {[
             { id: "genel", ad: "Genel Ozet", badge: bekleyenler.length },
@@ -260,7 +305,7 @@ export default function Admin() {
             { id: "transferler", ad: "Transfer Sirketleri", badge: transferler.filter(k => !k.onaylandi).length },
             { id: "hastalar", ad: "Hastalar", badge: 0 },
             { id: "talepler", ad: "Teklif Talepleri", badge: 0 },
-{ id: "mesajlar", ad: "💬 Mesajlar", badge: 0 },
+            { id: "mesajlar", ad: "💬 Mesajlar", badge: 0 },
           ].map((m) => (
             <div key={m.id} onClick={() => setAktifMenu(m.id)} style={{ padding: "10px 12px", borderRadius: "8px", cursor: "pointer", marginBottom: "4px", background: aktifMenu === m.id ? "#534AB7" : "transparent", color: aktifMenu === m.id ? "#fff" : "#8b8fc8", fontSize: "13px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
               <span>{m.ad}</span>
@@ -268,21 +313,16 @@ export default function Admin() {
             </div>
           ))}
         </div>
-
         <div style={{ padding: "0 12px 20px" }}>
-          <button onClick={cikisYap} style={{ width: "100%", padding: "10px", background: "transparent", border: "1px solid #2a2a4e", borderRadius: "8px", color: "#8b8fc8", fontSize: "13px", cursor: "pointer" }}>
-            Cikis Yap
-          </button>
+          <button onClick={cikisYap} style={{ width: "100%", padding: "10px", background: "transparent", border: "1px solid #2a2a4e", borderRadius: "8px", color: "#8b8fc8", fontSize: "13px", cursor: "pointer" }}>Cikis Yap</button>
         </div>
       </div>
 
+      {/* İçerik */}
       <div style={{ flex: 1, padding: "32px", overflow: "auto" }}>
         {onayMesaj && (
-          <div style={{ background: "#f0fff4", border: "1px solid #9f9", borderRadius: "8px", padding: "10px 16px", marginBottom: "16px", fontSize: "13px", color: "#0a7a3a" }}>
-            ✓ {onayMesaj}
-          </div>
+          <div style={{ background: "#f0fff4", border: "1px solid #9f9", borderRadius: "8px", padding: "10px 16px", marginBottom: "16px", fontSize: "13px", color: "#0a7a3a" }}>✓ {onayMesaj}</div>
         )}
-
         {yukleniyor ? (
           <div style={{ textAlign: "center", padding: "64px", color: "#888" }}>Veriler yukleniyor...</div>
         ) : (
@@ -303,7 +343,6 @@ export default function Admin() {
                     </div>
                   ))}
                 </div>
-
                 <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "16px", marginBottom: "32px" }}>
                   {[
                     { baslik: "Otel", deger: oteller.length, renk: "#7F77DD" },
@@ -316,7 +355,6 @@ export default function Admin() {
                     </div>
                   ))}
                 </div>
-
                 {bekleyenler.length > 0 && (
                   <div style={{ background: "#fff8e1", border: "1px solid #f0c040", borderRadius: "12px", padding: "20px" }}>
                     <h3 style={{ fontSize: "15px", fontWeight: 700, color: "#BA7517", marginBottom: "12px" }}>⚠ Onay Bekleyenler ({bekleyenler.length})</h3>
@@ -349,10 +387,9 @@ export default function Admin() {
                   <table style={{ width: "100%", borderCollapse: "collapse" }}>
                     <thead>
                       <tr style={{ background: "#f9fafb" }}>
-                        <th style={{ padding: "12px 16px", textAlign: "left", fontSize: "12px", color: "#888", fontWeight: 600 }}>Hasta</th>
-                        <th style={{ padding: "12px 16px", textAlign: "left", fontSize: "12px", color: "#888", fontWeight: 600 }}>Tedavi</th>
-                        <th style={{ padding: "12px 16px", textAlign: "left", fontSize: "12px", color: "#888", fontWeight: 600 }}>Durum</th>
-                        <th style={{ padding: "12px 16px", textAlign: "left", fontSize: "12px", color: "#888", fontWeight: 600 }}>Tarih</th>
+                        {["Hasta","Tedavi","Durum","Tarih"].map(h => (
+                          <th key={h} style={{ padding: "12px 16px", textAlign: "left", fontSize: "12px", color: "#888", fontWeight: 600 }}>{h}</th>
+                        ))}
                       </tr>
                     </thead>
                     <tbody>
@@ -361,26 +398,21 @@ export default function Admin() {
                           <td style={{ padding: "12px 16px", fontSize: "13px", color: "#12103a" }}>{t.profiles?.ad} {t.profiles?.soyad}</td>
                           <td style={{ padding: "12px 16px", fontSize: "13px", color: "#888" }}>{t.tedavi_turu}</td>
                           <td style={{ padding: "12px 16px" }}>
-                            <span style={{ fontSize: "11px", padding: "3px 10px", borderRadius: "20px", background: t.durum === "beklemede" ? "#fff8e1" : "#f0fff4", color: t.durum === "beklemede" ? "#BA7517" : "#0a7a3a" }}>
-                              {t.durum}
-                            </span>
+                            <span style={{ fontSize: "11px", padding: "3px 10px", borderRadius: "20px", background: t.durum === "beklemede" ? "#fff8e1" : "#f0fff4", color: t.durum === "beklemede" ? "#BA7517" : "#0a7a3a" }}>{t.durum}</span>
                           </td>
                           <td style={{ padding: "12px 16px", fontSize: "12px", color: "#888" }}>{new Date(t.olusturma_tarihi).toLocaleDateString("tr-TR")}</td>
                         </tr>
                       ))}
                     </tbody>
                   </table>
-                  {talepler.length === 0 && (
-                    <div style={{ textAlign: "center", padding: "32px", color: "#888", fontSize: "13px" }}>Henuz teklif talebi yok</div>
-                  )}
+                  {talepler.length === 0 && <div style={{ textAlign: "center", padding: "32px", color: "#888", fontSize: "13px" }}>Henuz teklif talebi yok</div>}
                 </div>
               </div>
             )}
-          {aktifMenu === "mesajlar" && (
+
+            {aktifMenu === "mesajlar" && (
               <div>
                 <h1 style={{ fontSize: "24px", fontWeight: 700, color: "#12103a", marginBottom: "24px" }}>💬 Tüm Mesajlaşmalar</h1>
-                
-                {/* Konuşmaları grupla */}
                 {(() => {
                   const konusmalar: Record<string, any[]> = {};
                   tumMesajlar.forEach(msg => {
@@ -388,10 +420,8 @@ export default function Admin() {
                     if (!konusmalar[key]) konusmalar[key] = [];
                     konusmalar[key].push(msg);
                   });
-
                   return (
                     <div style={{ display: "grid", gridTemplateColumns: seciliKonusma ? "300px 1fr" : "1fr", gap: "20px" }}>
-                      {/* Konuşma listesi */}
                       <div style={{ background: "#fff", borderRadius: "16px", border: "1px solid #EEEDFE", overflow: "hidden" }}>
                         <div style={{ padding: "16px 20px", borderBottom: "1px solid #EEEDFE", fontSize: "14px", fontWeight: 700, color: "#12103a" }}>
                           {Object.keys(konusmalar).length} konuşma
@@ -403,15 +433,9 @@ export default function Admin() {
                           return (
                             <div key={key} onClick={() => setSeciliKonusma(seciliKonusma === key ? null : key)} style={{ padding: "14px 20px", cursor: "pointer", borderBottom: "1px solid #f8f9ff", background: seciliKonusma === key ? "#f0eeff" : "#fff" }}>
                               <div style={{ display: "flex", gap: "10px", alignItems: "center", marginBottom: "6px" }}>
-                                <div style={{ width: "32px", height: "32px", borderRadius: "50%", background: "#534AB7", display: "flex", alignItems: "center", justifyContent: "center", color: "#fff", fontSize: "12px", fontWeight: 700, flexShrink: 0 }}>
-                                  {kisi1?.ad?.[0]}
-                                </div>
+                                <div style={{ width: "32px", height: "32px", borderRadius: "50%", background: "#534AB7", display: "flex", alignItems: "center", justifyContent: "center", color: "#fff", fontSize: "12px", fontWeight: 700, flexShrink: 0 }}>{kisi1?.ad?.[0]}</div>
                                 <div style={{ flex: 1, minWidth: 0 }}>
-                                  <div style={{ fontSize: "13px", fontWeight: 700, color: "#0f0d2e" }}>
-                                    {kisi1?.ad} {kisi1?.soyad}
-                                    <span style={{ fontSize: "10px", color: "#94a3b8", marginLeft: "6px" }}>↔</span>
-                                    {kisi2?.ad} {kisi2?.soyad}
-                                  </div>
+                                  <div style={{ fontSize: "13px", fontWeight: 700, color: "#0f0d2e" }}>{kisi1?.ad} {kisi1?.soyad} ↔ {kisi2?.ad} {kisi2?.soyad}</div>
                                   <div style={{ display: "flex", gap: "4px", marginTop: "2px" }}>
                                     <span style={{ fontSize: "10px", background: "#f0eeff", color: "#534AB7", padding: "1px 6px", borderRadius: "8px" }}>{kisi1?.hesap_turu}</span>
                                     <span style={{ fontSize: "10px", background: "#f0eeff", color: "#534AB7", padding: "1px 6px", borderRadius: "8px" }}>{kisi2?.hesap_turu}</span>
@@ -419,43 +443,29 @@ export default function Admin() {
                                 </div>
                                 <span style={{ fontSize: "11px", color: "#94a3b8", flexShrink: 0 }}>{msgs.length} mesaj</span>
                               </div>
-                              <div style={{ fontSize: "12px", color: "#64748b", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", paddingLeft: "42px" }}>
-                                {sonMesaj.mesaj}
-                              </div>
+                              <div style={{ fontSize: "12px", color: "#64748b", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", paddingLeft: "42px" }}>{sonMesaj.mesaj}</div>
                             </div>
                           );
                         })}
-                        {Object.keys(konusmalar).length === 0 && (
-                          <div style={{ textAlign: "center", padding: "48px", color: "#888", fontSize: "13px" }}>Henüz mesajlaşma yok</div>
-                        )}
+                        {Object.keys(konusmalar).length === 0 && <div style={{ textAlign: "center", padding: "48px", color: "#888", fontSize: "13px" }}>Henüz mesajlaşma yok</div>}
                       </div>
-
-                      {/* Seçili konuşma detayı */}
                       {seciliKonusma && konusmalar[seciliKonusma] && (
                         <div style={{ background: "#fff", borderRadius: "16px", border: "1px solid #EEEDFE", display: "flex", flexDirection: "column", overflow: "hidden", maxHeight: "600px" }}>
                           <div style={{ padding: "16px 20px", borderBottom: "1px solid #EEEDFE", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                            <div style={{ fontSize: "14px", fontWeight: 700, color: "#12103a" }}>
-                              {konusmalar[seciliKonusma][0].gonderen?.ad} ↔ {konusmalar[seciliKonusma][0].alici?.ad}
-                            </div>
+                            <div style={{ fontSize: "14px", fontWeight: 700, color: "#12103a" }}>{konusmalar[seciliKonusma][0].gonderen?.ad} ↔ {konusmalar[seciliKonusma][0].alici?.ad}</div>
                             <button onClick={() => setSeciliKonusma(null)} style={{ background: "none", border: "none", cursor: "pointer", color: "#94a3b8", fontSize: "18px" }}>×</button>
                           </div>
                           <div style={{ flex: 1, overflowY: "auto", padding: "16px", display: "flex", flexDirection: "column", gap: "10px" }}>
                             {[...konusmalar[seciliKonusma]].reverse().map(msg => (
-                              <div key={msg.id}>
-                                <div style={{ display: "flex", gap: "8px", alignItems: "flex-start" }}>
-                                  <div style={{ width: "28px", height: "28px", borderRadius: "50%", background: "#534AB7", display: "flex", alignItems: "center", justifyContent: "center", color: "#fff", fontSize: "11px", fontWeight: 700, flexShrink: 0 }}>
-                                    {msg.gonderen?.ad?.[0]}
+                              <div key={msg.id} style={{ display: "flex", gap: "8px", alignItems: "flex-start" }}>
+                                <div style={{ width: "28px", height: "28px", borderRadius: "50%", background: "#534AB7", display: "flex", alignItems: "center", justifyContent: "center", color: "#fff", fontSize: "11px", fontWeight: 700, flexShrink: 0 }}>{msg.gonderen?.ad?.[0]}</div>
+                                <div style={{ flex: 1 }}>
+                                  <div style={{ display: "flex", gap: "8px", alignItems: "center", marginBottom: "4px" }}>
+                                    <span style={{ fontSize: "12px", fontWeight: 700, color: "#0f0d2e" }}>{msg.gonderen?.ad} {msg.gonderen?.soyad}</span>
+                                    <span style={{ fontSize: "10px", background: "#f0eeff", color: "#534AB7", padding: "1px 6px", borderRadius: "8px" }}>{msg.gonderen?.hesap_turu}</span>
+                                    <span style={{ fontSize: "11px", color: "#94a3b8" }}>{new Date(msg.created_at).toLocaleString("tr-TR")}</span>
                                   </div>
-                                  <div style={{ flex: 1 }}>
-                                    <div style={{ display: "flex", gap: "8px", alignItems: "center", marginBottom: "4px" }}>
-                                      <span style={{ fontSize: "12px", fontWeight: 700, color: "#0f0d2e" }}>{msg.gonderen?.ad} {msg.gonderen?.soyad}</span>
-                                      <span style={{ fontSize: "10px", background: "#f0eeff", color: "#534AB7", padding: "1px 6px", borderRadius: "8px" }}>{msg.gonderen?.hesap_turu}</span>
-                                      <span style={{ fontSize: "11px", color: "#94a3b8" }}>{new Date(msg.created_at).toLocaleString("tr-TR")}</span>
-                                    </div>
-                                    <div style={{ background: "#f8f9ff", border: "1px solid #eeecff", borderRadius: "10px", padding: "10px 14px", fontSize: "13px", color: "#374151", lineHeight: 1.6 }}>
-                                      {msg.mesaj}
-                                    </div>
-                                  </div>
+                                  <div style={{ background: "#f8f9ff", border: "1px solid #eeecff", borderRadius: "10px", padding: "10px 14px", fontSize: "13px", color: "#374151", lineHeight: 1.6 }}>{msg.mesaj}</div>
                                 </div>
                               </div>
                             ))}
