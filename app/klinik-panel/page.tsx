@@ -821,7 +821,7 @@ export default function KlinikPanel() {
                   </div>
                 </div>
                 <button onClick={profilKaydet} style={{background:"#534AB7",color:"#fff",border:"none",padding:"12px 32px",borderRadius:"8px",fontSize:"14px",cursor:"pointer",fontWeight:600}}>
-                  Profili Kaydet
+                  {m.kaydet}
                 </button>
               </div>
             )}
@@ -902,7 +902,7 @@ export default function KlinikPanel() {
                     <textarea rows={2} value={yeniHizmet.aciklama} onChange={e=>setYeniHizmet({...yeniHizmet,aciklama:e.target.value})} style={{...inputStyle,resize:"none"}}/>
                   </div>
                   <button onClick={hizmetEkle} style={{background:"#534AB7",color:"#fff",border:"none",padding:"10px 24px",borderRadius:"8px",fontSize:"13px",cursor:"pointer",fontWeight:600}}>
-                    + Hizmet Ekle
+                    {m.hizmetEkleBtn}
                   </button>
                 </div>
 
@@ -1090,7 +1090,7 @@ export default function KlinikPanel() {
                                     </div>
                                   ))}
                                   <div style={{display:"flex",justifyContent:"space-between",padding:"10px 14px",background:"#f0eeff",fontSize:"13px",fontWeight:700}}>
-                                    <span>Toplam Tedavi</span>
+                                    <span>{m.toplam} Tedavi</span>
                                     <span style={{color:"#534AB7",fontSize:"15px"}}>{tedaviDetay.reduce((s,d)=>s+d.fiyat,0)} EUR</span>
                                   </div>
                                 </div>
@@ -1184,7 +1184,7 @@ export default function KlinikPanel() {
                             {t.durum==="onaylandi"?m.onaylandiLabel:t.durum==="reddedildi"?m.reddedildiLabel:m.beklemede}
                           </span>
                           <button onClick={()=>teklifYazdir(t)} style={{background:"#f0eeff",color:"#534AB7",border:"1px solid #EEEDFE",padding:"6px 14px",borderRadius:"8px",fontSize:"12px",cursor:"pointer",fontWeight:600}}>
-                            🖨️ Yazdır
+                            {m.yazdir}
                           </button>
                         </div>
                       </div>
@@ -1260,7 +1260,7 @@ export default function KlinikPanel() {
                             {yuklendi ? m.guncelle : m.yukle}
                             <input type="file" accept=".pdf,.jpg,.jpeg,.png" style={{display:"none"}} onChange={e=>{const f=e.target.files?.[0];if(f)belgeYukle(zb.id,f);}}/>
                           </label>
-                          {yuklendi && <button onClick={()=>belgeSil(yuklendi.id)} style={{background:"#fff0f0",color:"#c00",border:"none",padding:"8px 12px",borderRadius:"8px",fontSize:"12px",cursor:"pointer"}}>Sil</button>}
+                          {yuklendi && <button onClick={()=>belgeSil(yuklendi.id)} style={{background:"#fff0f0",color:"#c00",border:"none",padding:"8px 12px",borderRadius:"8px",fontSize:"12px",cursor:"pointer"}}>{m.sil}</button>}
                         </div>
                       </div>
                     );
@@ -1284,7 +1284,7 @@ export default function KlinikPanel() {
                 <h1 style={{fontSize:"24px",fontWeight:700,color:"#12103a",marginBottom:"8px"}}>{m.mesajlarBaslik}</h1>
                 <p style={{fontSize:"14px",color:"#888",marginBottom:"24px"}}>{m.mesajlarAcik}</p>
                 <a href="/mesajlar" style={{display:"inline-flex",alignItems:"center",gap:"8px",background:"#534AB7",color:"#fff",padding:"12px 24px",borderRadius:"10px",fontSize:"14px",textDecoration:"none",fontWeight:600}}>
-                  💬 Mesajlar Sayfasına Git →
+                  {m.mesajlarGit}
                 </a>
               </div>
             )}
