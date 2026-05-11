@@ -12,16 +12,41 @@ export default function Klinikler() {
   const [arama, setArama] = useState("");
   const [secilenSehir, setSecilenSehir] = useState("");
   const [mobil, setMobil] = useState(false);
+  const [turkiyeKullanici, setTurkiyeKullanici] = useState<boolean|null>(null);
   const { dil } = useDil();
   const supabase = createClient();
 
   const metinler = {
-    tr: { baslik: "Klinikler", altBaslik: "Onaylı kliniklerimizi keşfedin", aramaPlaceholder: "Klinik adı veya şehir ara...", tumSehirler: "Tüm Şehirler", incele: "İncele →", yukleniyor: "Yükleniyor...", bulunamadi: "Klinik bulunamadı", onayBadge: "Onaylı", sonuc: "klinik bulundu" },
-    en: { baslik: "Clinics", altBaslik: "Discover our verified clinics", aramaPlaceholder: "Search clinic name or city...", tumSehirler: "All Cities", incele: "View →", yukleniyor: "Loading...", bulunamadi: "No clinics found", onayBadge: "Verified", sonuc: "clinics found" },
-    de: { baslik: "Kliniken", altBaslik: "Entdecken Sie unsere verifizierten Kliniken", aramaPlaceholder: "Klinikname oder Stadt suchen...", tumSehirler: "Alle Städte", incele: "Ansehen →", yukleniyor: "Wird geladen...", bulunamadi: "Keine Kliniken gefunden", onayBadge: "Verifiziert", sonuc: "Kliniken gefunden" },
+    tr: {
+      baslik: "Klinikler", altBaslik: "Onaylı kliniklerimizi keşfedin",
+      aramaPlaceholder: "Klinik adı veya şehir ara...",
+      tumSehirler: "Tüm Şehirler", incele: "İncele →",
+      yukleniyor: "Yükleniyor...", bulunamadi: "Klinik bulunamadı",
+      onayBadge: "Onaylı", sonuc: "klinik bulundu",
+      uluslararasiBadge: "🌍 Uluslararası",
+      filtreBilgi: "",
+    },
+    en: {
+      baslik: "Clinics", altBaslik: "Discover our verified clinics",
+      aramaPlaceholder: "Search clinic name or city...",
+      tumSehirler: "All Cities", incele: "View →",
+      yukleniyor: "Loading...", bulunamadi: "No clinics found",
+      onayBadge: "Verified", sonuc: "clinics found",
+      uluslararasibadge: "🌍 International",
+      filtreBilgi: "Showing clinics authorized for international patients",
+    },
+    de: {
+      baslik: "Kliniken", altBaslik: "Entdecken Sie unsere verifizierten Kliniken",
+      aramaPlaceholder: "Klinikname oder Stadt suchen...",
+      tumSehirler: "Alle Städte", incele: "Ansehen →",
+      yukleniyor: "Wird geladen...", bulunamadi: "Keine Kliniken gefunden",
+      onayBadge: "Verifiziert", sonuc: "Kliniken gefunden",
+      uluslararasiBadge: "🌍 International",
+      filtreBilgi: "Anzeige von Kliniken, die für internationale Patienten zugelassen sind",
+    },
   };
 
-  const m = metinler[dil];
+  const m = metinler[dil as keyof typeof metinler] || metinler.tr;
   const sehirler = ["İstanbul", "Ankara", "İzmir", "Antalya", "Bursa"];
 
   useEffect(() => {
@@ -31,15 +56,50 @@ export default function Klinikler() {
     return () => window.removeEventListener("resize", kontrol);
   }, []);
 
+  // IP bazlı ülke tespiti
+  useEffect(() => {
+    async function ulkeTespit() {
+      try {
+        const res = await fetch("https://ipapi.co/json/");
+        const data = await res.json();
+        setTurkiyeKullanici(data.country_code === "TR");
+      } catch {
+        // Hata olursa varsayılan: Türkiye değil (güvenli taraf)
+        setTurkiyeKullanici(false);
+      }
+    }
+    ulkeTespit();
+  }, []);
+
   useEffect(() => {
     async function veriYukle() {
-      const { data } = await supabase.from("profiles").select("*, klinik_hizmetler(kategori)").eq("hesap_turu", "klinik").eq("onaylandi", true).eq("askida", false);
+      // Dil EN veya DE ise → sadece uluslararası yetkili klinikler
+      // Türkiye IP değilse → sadece uluslararası yetkili klinikler
+      // Türkiye IP ise → tüm klinikler
+      const yurtDisiKullanici = dil !== "tr" || turkiyeKullanici === false;
+
+      let query = supabase
+        .from("profiles")
+        .select("*")
+        .eq("hesap_turu", "klinik")
+        .eq("onaylandi", true)
+        .eq("askida", false);
+
+      if (yurtDisiKullanici) {
+        query = query.eq("uluslararasi_yetki", true);
+      }
+
+      const { data } = await query;
       setKlinikler(data || []);
       setFiltrelenmis(data || []);
       setYukleniyor(false);
     }
-    veriYukle();
-  }, []);
+
+    // Türkiye tespiti yapıldıktan sonra veriyi yükle
+    if (turkiyeKullanici !== null) {
+      veriYukle();
+    }
+  }, [turkiyeKullanici, dil]);
 
   useEffect(() => {
     let sonuc = klinikler;
@@ -47,6 +107,8 @@ export default function Klinikler() {
     if (secilenSehir) sonuc = sonuc.filter(k => k.konum_adres?.toLowerCase().includes(secilenSehir.toLowerCase()));
     setFiltrelenmis(sonuc);
   }, [arama, secilenSehir, klinikler]);
+
+  const yurtDisiKullanici = dil !== "tr" || turkiyeKullanici === false;
 
   return (
     <main style={{ minHeight: "100vh", background: "#f8f9ff", fontFamily: "'Segoe UI', sans-serif" }}>
@@ -56,6 +118,14 @@ export default function Klinikler() {
       <section style={{ background: "linear-gradient(135deg, #0f0d2e 0%, #1e1b4b 100%)", padding: mobil ? "32px 16px" : "40px 32px" }}>
         <h1 style={{ color: "#fff", fontSize: mobil ? "26px" : "32px", fontWeight: 800, marginBottom: "8px" }}>{m.baslik}</h1>
         <p style={{ color: "#8b8fc8", fontSize: "14px", marginBottom: "20px" }}>{m.altBaslik}</p>
+
+        {/* Uluslararası yetki filtre bilgisi */}
+        {yurtDisiKullanici && (m as any).filtreBilgi && (
+          <div style={{ background: "rgba(83,74,183,0.2)", border: "1px solid rgba(83,74,183,0.4)", borderRadius: "8px", padding: "8px 14px", marginBottom: "14px", fontSize: "12px", color: "#AFA9EC", display: "inline-flex", alignItems: "center", gap: "6px" }}>
+            🌍 {(m as any).filtreBilgi}
+          </div>
+        )}
+
         <div style={{ display: "flex", gap: "10px", flexDirection: mobil ? "column" : "row", flexWrap: "wrap" }}>
           <input
             type="text"
@@ -80,7 +150,7 @@ export default function Klinikler() {
 
       {/* Liste */}
       <section style={{ maxWidth: "1200px", margin: "0 auto", padding: mobil ? "24px 16px" : "40px 32px" }}>
-        {yukleniyor ? (
+        {yukleniyor || turkiyeKullanici === null ? (
           <div style={{ textAlign: "center", padding: "64px", color: "#888" }}>{m.yukleniyor}</div>
         ) : filtrelenmis.length === 0 ? (
           <div style={{ textAlign: "center", padding: "64px", color: "#888" }}>{m.bulunamadi}</div>
@@ -94,14 +164,25 @@ export default function Klinikler() {
                     alt={k.ad}
                     style={{ width: "100%", height: "100%", objectFit: "cover" }}
                   />
+                  {/* Onay badge */}
                   <div style={{ position: "absolute", top: "12px", left: "12px", background: "#059669", color: "#fff", fontSize: "11px", fontWeight: 700, padding: "4px 10px", borderRadius: "20px" }}>
                     ✓ {m.onayBadge}
                   </div>
+                  {/* Uluslararası yetki badge */}
+                  {k.uluslararasi_yetki && (
+                    <div style={{ position: "absolute", top: "12px", right: "12px", background: "#534AB7", color: "#fff", fontSize: "10px", fontWeight: 700, padding: "4px 10px", borderRadius: "20px" }}>
+                      🌍 {dil === "tr" ? "Uluslararası" : dil === "en" ? "International" : "International"}
+                    </div>
+                  )}
                 </div>
                 <div style={{ padding: "16px 20px" }}>
                   <h3 style={{ fontSize: "16px", fontWeight: 700, color: "#0f0d2e", marginBottom: "6px" }}>{k.ad} {k.soyad}</h3>
                   {k.konum_adres && <p style={{ fontSize: "12px", color: "#94a3b8", marginBottom: "10px" }}>📍 {k.konum_adres}</p>}
-                  {k.tanitim_yazisi && <p style={{ fontSize: "12px", color: "#64748b", marginBottom: "14px", lineHeight: 1.5 }}>{k.tanitim_yazisi.slice(0, 80)}...</p>}
+                  {k.tanitim_yazisi && (
+                    <p style={{ fontSize: "12px", color: "#64748b", marginBottom: "14px", lineHeight: 1.5 }}>
+                      {k.tanitim_yazisi.slice(0, 80)}{k.tanitim_yazisi.length > 80 ? "..." : ""}
+                    </p>
+                  )}
                   <a href={`/klinik/${k.id}`} style={{ display: "inline-flex", alignItems: "center", background: "#534AB7", color: "#fff", padding: "8px 18px", borderRadius: "8px", fontSize: "13px", textDecoration: "none", fontWeight: 600 }}>
                     {m.incele}
                   </a>
