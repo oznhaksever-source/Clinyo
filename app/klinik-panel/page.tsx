@@ -433,6 +433,9 @@ export default function KlinikPanel() {
       instagram:p.instagram||"",facebook:p.facebook||"",twitter:p.twitter||"",
       google_maps_url:p.google_maps_url||"",konum_adres:p.konum_adres||"",
     });
+    // Bu kliniğin zaten teklif verdiği talepleri filtrele
+const { data: verilmisler } = await supabase.from("teklifler").select("talep_id").eq("klinik_id", user.id);
+const verilmisTalepIds = (verilmisler || []).map((v: any) => v.talep_id);
 
     const [talepRes,teklifRes,hizmetRes,doktorRes,osRes,belgeRes] = await Promise.all([
       supabase.from("talepler").select("*,profiles(ad,soyad,email)").order("olusturma_tarihi",{ascending:false}),
@@ -443,7 +446,7 @@ export default function KlinikPanel() {
       supabase.from("belgeler").select("*").eq("kullanici_id",user.id),
     ]);
 
-    setTalepler(talepRes.data||[]);
+    setTalepler((talepRes.data||[]).filter((t: any) => !verilmisTalepIds.includes(t.id)));;
     setTeklifler(teklifRes.data||[]);
     setHizmetler(hizmetRes.data||[]);
     setDoktorlar(doktorRes.data||[]);
@@ -603,7 +606,7 @@ export default function KlinikPanel() {
       aciklama:tedaviAciklama,durum:"beklemede",
       otel_dahil:form.otel_dahil,otel_aciklama:form.otel_aciklama,otel_fiyat:otelFiyat,
       transfer_dahil:form.transfer_dahil,transfer_aciklama:form.transfer_aciklama,transfer_fiyat:transferFiyat,
-      toplam_fiyat:toplamFiyat,
+      toplam_fiyat:toplamFiyat,transfer_gerekli: !form.transfer_dahil,
     });
 
     if (error) { mesajGoster("Hata: "+error.message); return; }
@@ -621,7 +624,7 @@ export default function KlinikPanel() {
       });
     }
 
-    mesajGoster(m.teklifGonderildi);
+    mesajGoster(m.teklifGonderildi);setTalepler(prev => prev.filter((t: any) => t.id !== talepId));
     setTeklifFormlar(prev=>{const y={...prev};delete y[talepId];return y;});
     setDisPlanMap(prev=>{const y={...prev};delete y[talepId];return y;});
     setDisTedaviMap(prev=>{const y={...prev};delete y[talepId];return y;});
