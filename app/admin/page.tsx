@@ -565,7 +565,7 @@ export default function Admin() {
               </div>
             )}
 
-
+            {aktifMenu === "mesajlar" && (
               <div>
                 <h1 style={{ fontSize: "24px", fontWeight: 700, color: "#12103a", marginBottom: "24px" }}>💬 Tüm Mesajlaşmalar</h1>
                 {(() => {
