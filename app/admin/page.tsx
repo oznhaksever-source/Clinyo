@@ -12,6 +12,8 @@ export default function Admin() {
   const [seciliKonusma, setSeciliKonusma] = useState<string | null>(null);
   const [detayKullanici, setDetayKullanici] = useState<any>(null);
   const [kullaniciBelgeler, setKullaniciBelgeler] = useState<any[]>([]);
+  const [yorumlar, setYorumlar] = useState<any[]>([]);
+  const [adminNotu, setAdminNotu] = useState<Record<string,string>>({});
 
   const supabase = createClient();
 
@@ -22,10 +24,63 @@ export default function Admin() {
     const { data: k } = await supabase.from("profiles").select("*").order("olusturma_tarihi", { ascending: false });
     const { data: t } = await supabase.from("talepler").select("*, profiles(ad, soyad, email)").order("olusturma_tarihi", { ascending: false });
     const { data: m } = await supabase.from("mesajlar").select("*, gonderen:profiles!mesajlar_gonderen_id_fkey(id, ad, soyad, hesap_turu), alici:profiles!mesajlar_alici_id_fkey(id, ad, soyad, hesap_turu)").order("created_at", { ascending: false });
+    const { data: y } = await supabase.from("yorumlar").select("*, klinik:profiles!yorumlar_klinik_id_fkey(ad, soyad)").order("created_at", { ascending: false });
     setKullanicilar(k || []);
     setTalepler(t || []);
     setTumMesajlar(m || []);
+    setYorumlar(y || []);
     setYukleniyor(false);
+  }
+
+  async function yorumOnayla(yorum: any) {
+    await supabase.from("yorumlar").update({
+      onaylandi: true,
+      gizlendi: false,
+      admin_notu: adminNotu[yorum.id] || null,
+    }).eq("id", yorum.id);
+    // Mail bildirimi
+    if (yorum.hasta_email) {
+      await fetch("/api/bildirim-gonder", {
+        method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          tip: "yorum_onaylandi",
+          hasta_email: yorum.hasta_email,
+          hasta_ad: yorum.hasta_ad,
+          klinik_ad: `${yorum.klinik?.ad} ${yorum.klinik?.soyad}`,
+        }),
+      });
+    }
+    setOnayMesaj("✅ Yorum onaylandı ve hasta bilgilendirildi!");
+    veriYukle();
+  }
+
+  async function yorumGizle(yorum: any) {
+    await supabase.from("yorumlar").update({
+      gizlendi: true,
+      onaylandi: false,
+      admin_notu: adminNotu[yorum.id] || null,
+    }).eq("id", yorum.id);
+    // Mail bildirimi
+    if (yorum.hasta_email) {
+      await fetch("/api/bildirim-gonder", {
+        method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          tip: "yorum_gizlendi",
+          hasta_email: yorum.hasta_email,
+          hasta_ad: yorum.hasta_ad,
+          klinik_ad: `${yorum.klinik?.ad} ${yorum.klinik?.soyad}`,
+          admin_notu: adminNotu[yorum.id] || "",
+        }),
+      });
+    }
+    setOnayMesaj("🚫 Yorum gizlendi ve hasta bilgilendirildi!");
+    veriYukle();
+  }
+
+  async function yorumYayinla(id: string) {
+    await supabase.from("yorumlar").update({ gizlendi: false, onaylandi: true }).eq("id", id);
+    setOnayMesaj("✅ Yorum tekrar yayınlandı!");
+    veriYukle();
   }
 
   async function guncelle(id: string, alan: string, deger: any) {
@@ -305,6 +360,7 @@ export default function Admin() {
             { id: "transferler", ad: "Transfer Sirketleri", badge: transferler.filter(k => !k.onaylandi).length },
             { id: "hastalar", ad: "Hastalar", badge: 0 },
             { id: "talepler", ad: "Teklif Talepleri", badge: 0 },
+            { id: "yorumlar", ad: "⭐ Yorumlar", badge: yorumlar.filter((y:any)=>!y.onaylandi&&!y.gizlendi).length },
             { id: "mesajlar", ad: "💬 Mesajlar", badge: 0 },
           ].map((m) => (
             <div key={m.id} onClick={() => setAktifMenu(m.id)} style={{ padding: "10px 12px", borderRadius: "8px", cursor: "pointer", marginBottom: "4px", background: aktifMenu === m.id ? "#534AB7" : "transparent", color: aktifMenu === m.id ? "#fff" : "#8b8fc8", fontSize: "13px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
@@ -410,7 +466,106 @@ export default function Admin() {
               </div>
             )}
 
-            {aktifMenu === "mesajlar" && (
+            {aktifMenu === "yorumlar" && (
+              <div>
+                <h1 style={{ fontSize: "24px", fontWeight: 700, color: "#12103a", marginBottom: "24px" }}>⭐ Yorum Yönetimi</h1>
+
+                {/* Özet */}
+                <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: "16px", marginBottom: "24px" }}>
+                  {[
+                    { baslik: "Onay Bekleyen", deger: yorumlar.filter((y:any)=>!y.onaylandi&&!y.gizlendi).length, renk: "#BA7517" },
+                    { baslik: "Yayında", deger: yorumlar.filter((y:any)=>y.onaylandi&&!y.gizlendi).length, renk: "#059669" },
+                    { baslik: "Gizlenmiş", deger: yorumlar.filter((y:any)=>y.gizlendi).length, renk: "#c00" },
+                  ].map(k => (
+                    <div key={k.baslik} style={{ background: "#fff", border: "1px solid #EEEDFE", borderRadius: "12px", padding: "20px" }}>
+                      <div style={{ fontSize: "28px", fontWeight: 700, color: k.renk }}>{k.deger}</div>
+                      <div style={{ fontSize: "13px", color: "#888", marginTop: "4px" }}>{k.baslik}</div>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Yorum listesi */}
+                <div style={{ display: "flex", flexDirection: "column", gap: "14px" }}>
+                  {yorumlar.map((y: any) => {
+                    const durum = y.gizlendi ? "gizli" : y.onaylandi ? "yayinda" : "bekliyor";
+                    const durumRenk = durum === "gizli" ? "#c00" : durum === "yayinda" ? "#059669" : "#BA7517";
+                    const durumBg = durum === "gizli" ? "#fff0f0" : durum === "yayinda" ? "#f0fff4" : "#fff8e1";
+                    const durumLabel = durum === "gizli" ? "🚫 Gizli" : durum === "yayinda" ? "✅ Yayında" : "⏳ Bekliyor";
+                    return (
+                      <div key={y.id} style={{ background: "#fff", border: `1px solid ${durum === "bekliyor" ? "#f0c040" : "#EEEDFE"}`, borderRadius: "12px", padding: "20px" }}>
+                        {/* Üst kısım */}
+                        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "12px" }}>
+                          <div>
+                            <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "4px" }}>
+                              <span style={{ fontSize: "14px", fontWeight: 700, color: "#12103a" }}>{y.hasta_ad}</span>
+                              <span style={{ fontSize: "10px", padding: "2px 8px", borderRadius: "10px", background: durumBg, color: durumRenk, fontWeight: 600 }}>{durumLabel}</span>
+                            </div>
+                            <div style={{ fontSize: "12px", color: "#888" }}>
+                              🏥 {y.klinik?.ad} {y.klinik?.soyad}
+                              {y.tedavi_turu && <span style={{ marginLeft: "8px" }}>💊 {y.tedavi_turu}</span>}
+                            </div>
+                            {y.hasta_email && <div style={{ fontSize: "11px", color: "#94a3b8", marginTop: "2px" }}>✉️ {y.hasta_email}</div>}
+                          </div>
+                          <div style={{ textAlign: "right" }}>
+                            <div style={{ display: "flex", gap: "2px", justifyContent: "flex-end", marginBottom: "4px" }}>
+                              {[1,2,3,4,5].map(i=>(
+                                <span key={i} style={{ fontSize: "14px", color: i<=y.puan?"#f59e0b":"#e5e7eb" }}>★</span>
+                              ))}
+                            </div>
+                            <div style={{ fontSize: "11px", color: "#94a3b8" }}>{new Date(y.created_at).toLocaleDateString("tr-TR")}</div>
+                          </div>
+                        </div>
+
+                        {/* Yorum metni */}
+                        <div style={{ background: "#f9fafb", borderRadius: "8px", padding: "12px", marginBottom: "12px", fontSize: "13px", color: "#555", lineHeight: 1.6 }}>
+                          {y.yorum}
+                        </div>
+
+                        {/* Admin notu */}
+                        <div style={{ marginBottom: "12px" }}>
+                          <input
+                            type="text"
+                            placeholder="Admin notu (hastaya mail olarak gönderilir, opsiyonel)"
+                            value={adminNotu[y.id] || ""}
+                            onChange={e => setAdminNotu(prev => ({ ...prev, [y.id]: e.target.value }))}
+                            style={{ width: "100%", border: "1px solid #e5e7eb", borderRadius: "8px", padding: "8px 12px", fontSize: "12px", outline: "none", boxSizing: "border-box" as const }}
+                          />
+                        </div>
+
+                        {/* Aksiyonlar */}
+                        <div style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>
+                          {!y.onaylandi && !y.gizlendi && (
+                            <button onClick={() => yorumOnayla(y)} style={{ background: "#059669", color: "#fff", border: "none", padding: "7px 16px", borderRadius: "8px", fontSize: "12px", cursor: "pointer", fontWeight: 600 }}>
+                              ✅ Onayla
+                            </button>
+                          )}
+                          {!y.gizlendi && (
+                            <button onClick={() => yorumGizle(y)} style={{ background: "#fff0f0", color: "#c00", border: "1px solid #fcc", padding: "7px 16px", borderRadius: "8px", fontSize: "12px", cursor: "pointer", fontWeight: 600 }}>
+                              🚫 Gizle
+                            </button>
+                          )}
+                          {y.gizlendi && (
+                            <button onClick={() => yorumYayinla(y.id)} style={{ background: "#f0eeff", color: "#534AB7", border: "1px solid #CECBF6", padding: "7px 16px", borderRadius: "8px", fontSize: "12px", cursor: "pointer", fontWeight: 600 }}>
+                              👁️ Yeniden Yayınla
+                            </button>
+                          )}
+                          {y.admin_notu && (
+                            <span style={{ fontSize: "11px", color: "#888", alignSelf: "center" }}>📝 Not: {y.admin_notu}</span>
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })}
+                  {yorumlar.length === 0 && (
+                    <div style={{ textAlign: "center", padding: "48px", background: "#fff", borderRadius: "12px", border: "1px solid #EEEDFE", color: "#888", fontSize: "13px" }}>
+                      Henüz yorum yok.
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+
+
               <div>
                 <h1 style={{ fontSize: "24px", fontWeight: 700, color: "#12103a", marginBottom: "24px" }}>💬 Tüm Mesajlaşmalar</h1>
                 {(() => {
