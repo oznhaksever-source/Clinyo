@@ -80,7 +80,7 @@ export default function Klinikler() {
 
       let query = supabase
         .from("profiles")
-        .select("*")
+        .select("*, klinik_hizmetler(hizmet_adi, kategori, aktif)")
         .eq("hesap_turu", "klinik")
         .eq("onaylandi", true)
         .eq("askida", false);
@@ -176,16 +176,37 @@ export default function Klinikler() {
                   )}
                 </div>
                 <div style={{ padding: "16px 20px" }}>
-                  <h3 style={{ fontSize: "16px", fontWeight: 700, color: "#0f0d2e", marginBottom: "6px" }}>{k.ad} {k.soyad}</h3>
-                  {k.konum_adres && <p style={{ fontSize: "12px", color: "#94a3b8", marginBottom: "10px" }}>📍 {k.konum_adres}</p>}
+                  <h3 style={{ fontSize: "16px", fontWeight: 700, color: "#0f0d2e", marginBottom: "4px" }}>{k.ad} {k.soyad}</h3>
+                  {k.konum_adres && <p style={{ fontSize: "12px", color: "#94a3b8", marginBottom: "8px" }}>📍 {k.konum_adres}</p>}
+
+                  {/* Hizmetler — fiyat gizli */}
+                  {k.klinik_hizmetler && k.klinik_hizmetler.filter((h:any)=>h.aktif).length > 0 && (
+                    <div style={{ marginBottom: "10px" }}>
+                      <div style={{ display: "flex", flexWrap: "wrap", gap: "4px" }}>
+                        {[...new Set(k.klinik_hizmetler.filter((h:any)=>h.aktif).map((h:any)=>h.kategori))].slice(0,4).map((kat:any) => (
+                          <span key={kat} style={{ fontSize: "10px", padding: "2px 8px", borderRadius: "10px", background: "#f0eeff", color: "#534AB7", fontWeight: 500 }}>{kat}</span>
+                        ))}
+                        {k.klinik_hizmetler.filter((h:any)=>h.aktif).length > 4 && (
+                          <span style={{ fontSize: "10px", padding: "2px 8px", borderRadius: "10px", background: "#f9fafb", color: "#888" }}>+{k.klinik_hizmetler.filter((h:any)=>h.aktif).length - 4}</span>
+                        )}
+                      </div>
+                    </div>
+                  )}
+
                   {k.tanitim_yazisi && (
-                    <p style={{ fontSize: "12px", color: "#64748b", marginBottom: "14px", lineHeight: 1.5 }}>
-                      {k.tanitim_yazisi.slice(0, 80)}{k.tanitim_yazisi.length > 80 ? "..." : ""}
+                    <p style={{ fontSize: "12px", color: "#64748b", marginBottom: "12px", lineHeight: 1.5 }}>
+                      {k.tanitim_yazisi.slice(0, 70)}{k.tanitim_yazisi.length > 70 ? "..." : ""}
                     </p>
                   )}
-                  <a href={`/klinik/${k.id}`} style={{ display: "inline-flex", alignItems: "center", background: "#534AB7", color: "#fff", padding: "8px 18px", borderRadius: "8px", fontSize: "13px", textDecoration: "none", fontWeight: 600 }}>
-                    {m.incele}
-                  </a>
+
+                  <div style={{ display: "flex", gap: "8px" }}>
+                    <a href={`/klinik/${k.id}`} style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", background: "#f0eeff", color: "#534AB7", padding: "8px 12px", borderRadius: "8px", fontSize: "12px", textDecoration: "none", fontWeight: 600 }}>
+                      {m.incele}
+                    </a>
+                    <a href={`/teklif?klinik=${k.id}`} style={{ flex: 2, display: "flex", alignItems: "center", justifyContent: "center", background: "#534AB7", color: "#fff", padding: "8px 12px", borderRadius: "8px", fontSize: "12px", textDecoration: "none", fontWeight: 700 }}>
+                      {dil==="tr"?"Teklif Al →":dil==="en"?"Get Quote →":"Angebot →"}
+                    </a>
+                  </div>
                 </div>
               </div>
             ))}
