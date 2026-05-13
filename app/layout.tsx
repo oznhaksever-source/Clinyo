@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Script from "next/script";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { DilProvider } from "./locales/context";
@@ -52,6 +53,13 @@ export default function RootLayout({
           {children}
           {/* <AIChat /> */}
         </DilProvider>
+        <Script src="https://www.googletagmanager.com/gtag/js?id=G-JEPYH2JVLX" strategy="afterInteractive"/>
+        <Script id="google-analytics" strategy="afterInteractive">{`
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', 'G-JEPYH2JVLX');
+        `}</Script>
       </body>
     </html>
   );
