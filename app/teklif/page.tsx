@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { createClient } from "../../utils/supabase/client";
 import { useDil } from "../locales/context";
@@ -28,7 +28,7 @@ const HASTALIKLAR = {
   de:["Keine","Diabetes","Hypertonie","Herzerkrankung","Asthma","Schilddrüse","Nierenerkrankung","Lebererkrankung","Krebs (vergangen/aktuell)","Blutgerinnungsstörung","Sonstiges"],
 };
 
-export default function TeklifTalep() {
+function TeklifIcerik() {
   const searchParams = useSearchParams();
   const klinikId = searchParams.get("klinik");
 
@@ -422,5 +422,13 @@ export default function TeklifTalep() {
       </div>
       <Footer/>
     </main>
+  );
+}
+
+export default function TeklifTalep() {
+  return (
+    <Suspense fallback={<div style={{minHeight:"100vh",background:"#0d2144",display:"flex",alignItems:"center",justifyContent:"center",color:"#fff"}}>Yükleniyor...</div>}>
+      <TeklifIcerik />
+    </Suspense>
   );
 }
