@@ -420,7 +420,6 @@ export default function KlinikPanel() {
   const [acikTalep, setAcikTalep] = useState<string|null>(null);
 
   useEffect(() => { 
-  console.log("Panel yükleniyor...");
   veriYukle(); 
 }, []);
 
@@ -449,7 +448,7 @@ const verilmisTalepIds = (verilmisler || []).map((v: any) => v.talep_id);
       supabase.from("belgeler").select("*").eq("kullanici_id",user.id),
     ]);
 
-    console.log("Talepler:", talepRes.data, "Hata:", talepRes.error);
+     
 setTalepler(talepRes.data||[]);
     setTeklifler(teklifRes.data||[]);
     setHizmetler(hizmetRes.data||[]);
