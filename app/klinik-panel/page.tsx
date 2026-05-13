@@ -994,7 +994,7 @@ setTalepler(talepRes.data||[]);
             )}
 
             {/* ── ÖNCE SONRA ── */}
-            {menu==="once-sonra" && (
+            {menu==="onceSonra" && (
               <div>
                 <h1 style={{fontSize:"24px",fontWeight:700,color:"#12103a",marginBottom:"24px"}}>{m.onceSonraBaslik}</h1>
                 <div style={cardStyle}>
