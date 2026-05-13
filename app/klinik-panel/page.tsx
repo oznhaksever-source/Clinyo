@@ -438,7 +438,7 @@ const { data: verilmisler } = await supabase.from("teklifler").select("talep_id"
 const verilmisTalepIds = (verilmisler || []).map((v: any) => v.talep_id);
 
     const [talepRes,teklifRes,hizmetRes,doktorRes,osRes,belgeRes] = await Promise.all([
-      supabase.from("talepler").select("*,profiles(ad,soyad,email)").order("olusturma_tarihi",{ascending:false}),
+      supabase.from("talepler").select("*,profiles(ad,soyad,email)").or(`klinik_id.eq.${user.id},klinik_id.is.null`).order("olusturma_tarihi",{ascending:false}),
       supabase.from("teklifler").select("*,talepler(tedavi_turu)").eq("klinik_id",user.id).order("olusturma_tarihi",{ascending:false}),
       supabase.from("klinik_hizmetler").select("*").eq("klinik_id",user.id).order("kategori"),
       supabase.from("doktorlar").select("*").eq("klinik_id",user.id),
