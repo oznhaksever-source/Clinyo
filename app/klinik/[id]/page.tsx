@@ -291,8 +291,8 @@ export default function KlinikProfil() {
                                   {h.aciklama&&<div style={{fontSize:"11px",color:"#888",marginTop:"2px"}}>{h.aciklama}</div>}
                                 </td>
                                 {h.sure&&<td style={{padding:"10px",fontSize:"12px",color:"#888",textAlign:"center",whiteSpace:"nowrap"}}>{h.sure}</td>}
-                                <td style={{padding:"10px 0",fontSize:"14px",fontWeight:700,color:"#534AB7",textAlign:"right",whiteSpace:"nowrap"}}>{h.fiyat} {h.para_birimi}</td>
-                              </tr>
+                                
+                                  </tr>
                             ))}
                           </tbody>
                         </table>
