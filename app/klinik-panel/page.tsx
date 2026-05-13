@@ -1091,9 +1091,10 @@ setTalepler(talepRes.data||[]);
                                     {m.tedaviListesi} — {tedaviDetay.length} {m.islem}
                                   </div>
                                   {tedaviDetay.map((d,i)=>(
-                                    <div key={i} style={{display:"flex",justifyContent:"space-between",alignItems:"center",padding:"8px 14px",borderBottom:"1px solid #EEEDFE",fontSize:"12px"}}>
-                                      <span><strong>Diş {d.dis}</strong> — {d.hizmet_adi}</span>
-                                      <span style={{fontWeight:700,color:d.fiyat>0?"#534AB7":"#BA7517"}}>{d.fiyat>0?`${d.fiyat} EUR`:"Fiyat yok"}</span>
+                                    <div key={i} style={{display:"flex",justifyContent:"space-between",alignItems:"center",padding:"8px 14px",borderBottom:"1px solid #EEEDFE",fontSize:"12px",gap:"8px"}}>
+                                      <span style={{flex:1}}><strong>Diş {d.dis}</strong> — {d.hizmet_adi}</span>
+                                      <input type="number" value={d.fiyat} onChange={e=>{const yeniFiyat=parseFloat(e.target.value)||0;setDisTedaviMap(prev=>{const yeni=[...(prev[t.id]||[])];yeni[i]={...yeni[i],fiyat:yeniFiyat};const toplam=yeni.reduce((s,x)=>s+x.fiyat,0);setTeklifFormlar(p=>({...p,[t.id]:{...getTeklifForm(t.id),fiyat:toplam.toString()}}));return {...prev,[t.id]:yeni};});}} style={{width:"80px",border:"1px solid #EEEDFE",borderRadius:"6px",padding:"4px 8px",fontSize:"12px",textAlign:"right",outline:"none"}}/>
+                                      <span style={{fontSize:"11px",color:"#888"}}>EUR</span>
                                     </div>
                                   ))}
                                   <div style={{display:"flex",justifyContent:"space-between",padding:"10px 14px",background:"#f0eeff",fontSize:"13px",fontWeight:700}}>
