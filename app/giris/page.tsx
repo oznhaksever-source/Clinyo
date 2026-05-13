@@ -631,7 +631,8 @@ export default function Giris() {
     if (data.user) {
       // Profil kaydet
       await supabase.from("profiles").upsert({
-        id: data.user.id, ad, soyad, email, hesap_turu: hesapTuru
+        id: data.user.id, ad, soyad, email, hesap_turu: hesapTuru,
+        onaylandi: false,
       });
 
       // Onam kaydet
