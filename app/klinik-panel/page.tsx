@@ -419,7 +419,10 @@ export default function KlinikPanel() {
   const [disTedaviMap, setDisTedaviMap] = useState<Record<string,{dis:number,hizmet_adi:string,fiyat:number,kategori:string}[]>>({});
   const [acikTalep, setAcikTalep] = useState<string|null>(null);
 
-  useEffect(() => { veriYukle(); }, []);
+  useEffect(() => { 
+  console.log("Panel yükleniyor...");
+  veriYukle(); 
+}, []);
 
   async function veriYukle() {
     setYukleniyor(true);
