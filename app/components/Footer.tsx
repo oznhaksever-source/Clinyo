@@ -162,6 +162,7 @@ export default function Footer() {
             {[
               { ad: "Instagram", href: "https://www.instagram.com/medoqahealht/" },
               { ad: "Facebook", href: "https://www.facebook.com/profile.php?id=61589616170857" },
+              { ad: "Twitter / X", href: "https://x.com/medoqahealht" },
             ].map(link => (
               <a key={link.ad} href={link.href} target="_blank" rel="noreferrer" style={{ display: "block", color: "#8b8fc8", fontSize: "13px", textDecoration: "none", marginBottom: "10px" }}>{link.ad}</a>
             ))}
