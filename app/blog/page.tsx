@@ -21,7 +21,7 @@ export default function Blog() {
     de: { baslik: "Blog", altBaslik: "Aktuelle Informationen zum Gesundheitstourismus", yaklindaBaslik: "Blogbeiträge demnächst", yaklindaAciklama: "Nützliche Inhalte über Gesundheitstourismus kommen bald.", kategoriler: ["Zahnbehandlung", "Haartransplantation", "Augenoperation", "Patientenerfahrungen", "Reiseführer"] },
   };
 
-  const ic = icerik[dil];
+  const ic = icerik[dil as keyof typeof icerik] || icerik.tr;
 
   return (
     <main style={{ minHeight: "100vh", background: "#f8f9ff", fontFamily: "'Segoe UI', sans-serif" }}>
