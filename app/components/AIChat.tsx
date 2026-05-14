@@ -138,7 +138,7 @@ DEINE REGELN:
         body: JSON.stringify({
           model: "claude-sonnet-4-20250514",
           max_tokens: 400,
-          system: sistemPrompt[dil],
+          system: sistemPrompt[dil as keyof typeof sistemPrompt] || sistemPrompt.tr,
           messages: guncellenmis.map(msg => ({
             role: msg.rol,
             content: msg.icerik,
