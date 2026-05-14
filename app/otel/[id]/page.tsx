@@ -21,7 +21,7 @@ export default function OtelProfil() {
     de: { hakkimizda: "Über uns", odalar: "Zimmer", iletisim: "Kontakt", rezervasyon: "Reservierungsanfrage", googleMaps: "Auf Google Maps ansehen", website: "Website", sosyalMedya: "Soziale Medien", haritaGor: "Auf Karte anzeigen", geceden: "ab pro Nacht", kisi: "Personen", bulunamadi: "Hotel nicht gefunden", yukleniyor: "Wird geladen..." },
   };
 
-  const m = metinler[dil];
+  const m = metinler[dil as keyof typeof metinler] || metinler.tr;
 
   useEffect(() => {
     async function veriYukle() {

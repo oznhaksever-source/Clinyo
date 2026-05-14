@@ -25,7 +25,7 @@ export default function Harita() {
     de: { baslik: "Karte", altBaslik: "Sehen Sie Standorte von Hotels und Kliniken auf der Karte", oteller: "Hotels", klinikler: "Kliniken", yukleniyor: "Karte wird geladen...", konumYok: "Keine Einträge mit Standort gefunden", incele: "Ansehen" },
   };
 
-  const m = metinler[dil];
+  const m = metinler[dil as keyof typeof metinler] || metinler.tr;
 
   useEffect(() => {
     async function veriYukle() {

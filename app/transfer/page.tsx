@@ -20,7 +20,7 @@ export default function Transfer() {
     de: { baslik: "Transferdienste", altBaslik: "Sicherer Transfer vom Flughafen zur Klinik", aramaPlaceholder: "Firmenname suchen...", incele: "Ansehen →", arac: "Fahrzeug", yukleniyor: "Wird geladen...", bulunamadi: "Keine Transferunternehmen gefunden", sonuc: "Unternehmen gefunden" },
   };
 
-  const m = metinler[dil];
+  const m = metinler[dil as keyof typeof metinler] || metinler.tr;
 
   useEffect(() => {
     function kontrol() { setMobil(window.innerWidth < 768); }

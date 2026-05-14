@@ -21,7 +21,7 @@ export default function Oteller() {
     de: { baslik: "Hotels", altBaslik: "Entdecken Sie die besten Hotels für Ihren Aufenthalt", aramaPlaceholder: "Hotelname oder Stadt suchen...", tumSehirler: "Alle Städte", incele: "Ansehen →", yukleniyor: "Wird geladen...", bulunamadi: "Keine Hotels gefunden", sonuc: "Hotels gefunden", geceden: "pro Nacht" },
   };
 
-  const m = metinler[dil];
+  const m = metinler[dil as keyof typeof metinler] || metinler.tr;
   const sehirler = ["İstanbul", "Ankara", "İzmir", "Antalya", "Bursa"];
 
   useEffect(() => {
