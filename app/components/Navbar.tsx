@@ -60,7 +60,7 @@ export default function Navbar() {
           ))}
           <div style={{ width: "1px", height: "16px", background: "#2a2a4e" }} />
           <div style={{ display: "flex", gap: "6px" }}>
-            {(["tr", "en", "de"] as const).map((d) => (
+            {(["tr", "en", "de", "ar", "ru", "fr"] as const).map((d) => (
               <span key={d} onClick={() => dilDegistir(d)} style={{ fontSize: "11px", padding: "3px 8px", border: `1px solid ${dil === d ? "#534AB7" : "#2a2a4e"}`, borderRadius: "4px", color: dil === d ? "#7F77DD" : "#aab4c8", cursor: "pointer", textTransform: "uppercase" }}>
                 {d}
               </span>
@@ -100,7 +100,7 @@ export default function Navbar() {
         <div className="mobile-nav" style={{ display: "none", alignItems: "center", gap: "12px" }}>
           {/* Dil butonları mobilde */}
           <div style={{ display: "flex", gap: "4px" }}>
-            {(["tr", "en", "de"] as const).map((d) => (
+            {(["tr", "en", "de", "ar", "ru", "fr"] as const).map((d) => (
               <span key={d} onClick={() => dilDegistir(d)} style={{ fontSize: "10px", padding: "2px 6px", border: `1px solid ${dil === d ? "#534AB7" : "#2a2a4e"}`, borderRadius: "4px", color: dil === d ? "#7F77DD" : "#aab4c8", cursor: "pointer", textTransform: "uppercase" }}>
                 {d}
               </span>
