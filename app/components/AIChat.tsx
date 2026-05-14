@@ -64,7 +64,7 @@ export default function AIChat() {
     },
   };
 
-  const m = metin[dil];
+  const m = metin[dil as keyof typeof metin] || metin.tr;
 
   const sistemPrompt = {
     tr: `Sen Medoqa sağlık turizmi platformunun AI asistanısın. Görevin hastalara ve platform kullanıcılarına yardımcı olmaktır.

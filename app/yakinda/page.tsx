@@ -69,7 +69,7 @@ export default function Yakinda() {
     },
   };
 
-  const ic = icerik[dil];
+  const ic = icerik[dil as keyof typeof icerik] || icerik.tr;
 
   return (
     <main style={{ minHeight: "100vh", background: "#0f0d2e", fontFamily: "'Segoe UI', system-ui, sans-serif", display: "flex", flexDirection: "column", position: "relative", overflow: "hidden" }}>

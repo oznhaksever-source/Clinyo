@@ -65,7 +65,7 @@ export default function SSS() {
     },
   };
 
-  const ic = icerik[dil];
+  const ic = icerik[dil as keyof typeof icerik] || icerik.tr;
   const filtrelenmis = ic.sorular.filter(s =>
     s.soru.toLowerCase().includes(arama.toLowerCase()) ||
     s.cevap.toLowerCase().includes(arama.toLowerCase())

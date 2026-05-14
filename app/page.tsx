@@ -159,7 +159,7 @@ export default function AnaSayfa() {
     { foto: "https://images.unsplash.com/photo-1551601651-2a8555f1a136?w=400&h=300&fit=crop", tr: "Ortopedi", en: "Orthopedics", de: "Orthopädie", fiyat: "€800+" },
   ];
 
-  const ic = icerik[dil];
+  const ic = icerik[dil as keyof typeof icerik] || icerik.tr;
   const ikonMap: Record<string, () => React.ReactElement> = {
     Lock: Icons.Lock, CheckCircle: Icons.CheckCircle, Scale: Icons.Scale,
     Shield: Icons.Shield, Globe: Icons.Globe, Layers: Icons.Layers,

@@ -25,7 +25,7 @@ export default function Iletisim() {
     de: { baslik: "Kontakt", altBaslik: "Kontaktieren Sie uns bei Fragen", adLabel: "Ihr Name", emailLabel: "E-Mail", mesajLabel: "Ihre Nachricht", gonder: "Nachricht senden", gonderildi: "Nachricht erhalten! Wir melden uns.", etiketler: ["E-Mail", "Telefon", "Adresse", "Arbeitszeiten"], bilgi: { email: "info@medoqa.com", telefon: "+90 850 000 00 00", adres: "Istanbul, Türkei", saat: "Mo-Fr: 09:00 - 18:00" } },
   };
 
-  const ic = icerik[dil];
+  const ic = icerik[dil as keyof typeof icerik] || icerik.tr;
   const inputStyle = { width: "100%", border: "1px solid #e5e7eb", borderRadius: "10px", padding: "12px 14px", fontSize: "14px", boxSizing: "border-box" as const, outline: "none", fontFamily: "inherit" };
 
   return (
