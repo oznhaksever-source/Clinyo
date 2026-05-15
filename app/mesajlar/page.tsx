@@ -22,7 +22,7 @@ export default function Mesajlar() {
     en: { baslik: "Messages", mesajYaz: "Type a message...", gonder: "Send", konusmaYok: "No messages yet.", secin: "Select a conversation", bugun: "Today", onceki: "Earlier", okunmadi: "Unread", geri: "← Back" },
     de: { baslik: "Nachrichten", mesajYaz: "Nachricht schreiben...", gonder: "Senden", konusmaYok: "Noch keine Nachrichten.", secin: "Wählen Sie ein Gespräch", bugun: "Heute", onceki: "Früher", okunmadi: "Ungelesen", geri: "← Zurück" },
   };
-  const m = metin[dil];
+  const m = metin[dil as keyof typeof metin] || metin.tr;
 
   useEffect(() => {
     function kontrol() { setMobil(window.innerWidth < 768); }
