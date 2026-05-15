@@ -23,6 +23,9 @@ export default function Iletisim() {
     tr: { baslik: "İletişim", altBaslik: "Sorularınız için bize ulaşın", adLabel: "Adınız", emailLabel: "E-posta", mesajLabel: "Mesajınız", gonder: "Mesaj Gönder", gonderildi: "Mesajınız alındı! En kısa sürede size döneceğiz.", etiketler: ["E-posta", "Telefon", "Adres", "Çalışma Saatleri"], bilgi: { email: "info@medoqa.com", telefon: "+90 850 000 00 00", adres: "İstanbul, Türkiye", saat: "Pzt-Cum: 09:00 - 18:00" } },
     en: { baslik: "Contact", altBaslik: "Reach us for your questions", adLabel: "Your Name", emailLabel: "Email", mesajLabel: "Your Message", gonder: "Send Message", gonderildi: "Message received! We'll get back to you shortly.", etiketler: ["Email", "Phone", "Address", "Working Hours"], bilgi: { email: "info@medoqa.com", telefon: "+90 850 000 00 00", adres: "Istanbul, Turkey", saat: "Mon-Fri: 09:00 - 18:00" } },
     de: { baslik: "Kontakt", altBaslik: "Kontaktieren Sie uns bei Fragen", adLabel: "Ihr Name", emailLabel: "E-Mail", mesajLabel: "Ihre Nachricht", gonder: "Nachricht senden", gonderildi: "Nachricht erhalten! Wir melden uns.", etiketler: ["E-Mail", "Telefon", "Adresse", "Arbeitszeiten"], bilgi: { email: "info@medoqa.com", telefon: "+90 850 000 00 00", adres: "Istanbul, Türkei", saat: "Mo-Fr: 09:00 - 18:00" } },
+    ar: { baslik: "اتصل بنا", altBaslik: "تواصل معنا لأسئلتك", adLabel: "اسمك", emailLabel: "البريد الإلكتروني", mesajLabel: "رسالتك", gonder: "إرسال الرسالة", gonderildi: "تم استلام رسالتك! سنرد عليك في أقرب وقت.", etiketler: ["البريد الإلكتروني", "الهاتف", "العنوان", "ساعات العمل"], bilgi: { email: "info@medoqa.com", telefon: "+90 850 000 00 00", adres: "إسطنبول، تركيا", saat: "الاثنين-الجمعة: 09:00 - 18:00" } },
+    ru: { baslik: "Контакты", altBaslik: "Свяжитесь с нами по вашим вопросам", adLabel: "Ваше имя", emailLabel: "Электронная почта", mesajLabel: "Ваше сообщение", gonder: "Отправить сообщение", gonderildi: "Сообщение получено! Мы свяжемся с вами в ближайшее время.", etiketler: ["Эл. почта", "Телефон", "Адрес", "Часы работы"], bilgi: { email: "info@medoqa.com", telefon: "+90 850 000 00 00", adres: "Стамбул, Турция", saat: "Пн-Пт: 09:00 - 18:00" } },
+    fr: { baslik: "Contact", altBaslik: "Contactez-nous pour vos questions", adLabel: "Votre nom", emailLabel: "E-mail", mesajLabel: "Votre message", gonder: "Envoyer le message", gonderildi: "Message reçu ! Nous vous répondrons dans les plus brefs délais.", etiketler: ["E-mail", "Téléphone", "Adresse", "Heures de travail"], bilgi: { email: "info@medoqa.com", telefon: "+90 850 000 00 00", adres: "Istanbul, Turquie", saat: "Lun-Ven: 09:00 - 18:00" } },
   };
 
   const ic = icerik[dil as keyof typeof icerik] || icerik.tr;
@@ -35,10 +38,8 @@ export default function Iletisim() {
         <h1 style={{ color: "#fff", fontSize: mobil ? "28px" : "42px", fontWeight: 800, marginBottom: "12px" }}>{ic.baslik}</h1>
         <p style={{ color: "#8b8fc8", fontSize: "16px" }}>{ic.altBaslik}</p>
       </section>
-
       <section style={{ maxWidth: "1000px", margin: "0 auto", padding: mobil ? "32px 16px" : "64px 32px" }}>
         <div style={{ display: "grid", gridTemplateColumns: mobil ? "1fr" : "1fr 1fr", gap: "32px" }}>
-          {/* Form */}
           <div style={{ background: "#fff", borderRadius: "20px", padding: mobil ? "24px" : "32px", border: "1px solid #eeecff" }}>
             {!gonderildi ? (
               <>
@@ -63,8 +64,6 @@ export default function Iletisim() {
               </div>
             )}
           </div>
-
-          {/* İletişim bilgileri */}
           <div style={{ display: "flex", flexDirection: "column", gap: "14px" }}>
             {[
               { icon: "📧", etiket: ic.etiketler[0], deger: ic.bilgi.email },
