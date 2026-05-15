@@ -51,7 +51,7 @@ export default function AnaSayfa() {
         { ikon: "CheckCircle", renk: "#059669", baslik: "Belgeli & Onaylı Klinikler", aciklama: "Her klinik Sağlık Bakanlığı belgelerini sunar, admin incelemesinden geçer. Belgesi olmayan platforma katılamaz." },
         { ikon: "Scale", renk: "#D97706", baslik: "Şeffaf Fiyatlandırma", aciklama: "Klinikler fiyatlarını açıkça belirtir. Gizli ücret yok, son dakika sürprizi yok." },
         { ikon: "Shield", renk: "#DC2626", baslik: "Ek İşlem Güvencesi", aciklama: "Klinik ek işlem önerecekse önce sizin onayınızı almak zorunda. İmzasız hiçbir ek işlem yapılamaz." },
-        { ikon: "Globe", renk: "#0891B2", baslik: "Çok Dilli Platform", aciklama: "Türkçe, İngilizce ve Almanca tam destek. Dünyanın her yerinden hasta ve klinikler için tasarlandı." },
+        { ikon: "Globe", renk: "#0891B2", baslik: "Çok Dilli Platform", aciklama: "Türkçe, İngilizce, Almanca, Arapça, Rusça ve Fransızca tam destek." },
         { ikon: "Layers", renk: "#7C3AED", baslik: "Her Şey Tek Platformda", aciklama: "Klinik, otel ve transfer tek çatı altında. Ayrı ayrı araştırma derdi yok." },
       ],
       adimlarBaslik: "3 Adımda Tedavinizi Planlayın",
@@ -84,13 +84,13 @@ export default function AnaSayfa() {
       tedaviBaslik: "Treatment Categories",
       tedaviAlt: "Choose the right treatment and get quotes from clinics",
       farklarBaslik: "Why Medoqa?",
-      farklarAlt: "Our difference from other platforms is not just being an interface, but protecting you at every step",
+      farklarAlt: "Our difference is not just being an interface, but protecting you at every step",
       farklar: [
         { ikon: "Lock", renk: "#4F46E5", baslik: "Escrow Payment System", aciklama: "Your payment waits in our secure account. It doesn't go to the clinic until your treatment is complete and you approve." },
         { ikon: "CheckCircle", renk: "#059669", baslik: "Documented & Verified Clinics", aciklama: "Every clinic submits Ministry of Health documents and passes admin review. No documentation, no platform access." },
         { ikon: "Scale", renk: "#D97706", baslik: "Transparent Pricing", aciklama: "Clinics clearly state their prices. No hidden fees, no last-minute surprises." },
         { ikon: "Shield", renk: "#DC2626", baslik: "Extra Procedure Protection", aciklama: "If a clinic wants to perform an extra procedure, they must get your approval first." },
-        { ikon: "Globe", renk: "#0891B2", baslik: "Multilingual Platform", aciklama: "Full support in Turkish, English and German. Designed for patients and clinics from around the world." },
+        { ikon: "Globe", renk: "#0891B2", baslik: "Multilingual Platform", aciklama: "Full support in Turkish, English, German, Arabic, Russian and French." },
         { ikon: "Layers", renk: "#7C3AED", baslik: "Everything in One Place", aciklama: "Clinic, hotel and transfer under one roof. No separate research hassle." },
       ],
       adimlarBaslik: "Plan Your Treatment in 3 Steps",
@@ -129,7 +129,7 @@ export default function AnaSayfa() {
         { ikon: "CheckCircle", renk: "#059669", baslik: "Verifizierte Kliniken", aciklama: "Jede Klinik reicht Dokumente ein und durchläuft eine Admin-Prüfung. Ohne Genehmigung kein Zugang." },
         { ikon: "Scale", renk: "#D97706", baslik: "Transparente Preise", aciklama: "Kliniken geben ihre Preise klar an. Keine versteckten Gebühren, keine Überraschungen." },
         { ikon: "Shield", renk: "#DC2626", baslik: "Schutz vor Zusatzeingriffen", aciklama: "Klinik muss Ihre Genehmigung einholen, bevor sie Zusatzeingriffe vorschlägt." },
-        { ikon: "Globe", renk: "#0891B2", baslik: "Mehrsprachige Plattform", aciklama: "Vollständiger Support auf Türkisch, Englisch und Deutsch. Für Patienten aus aller Welt." },
+        { ikon: "Globe", renk: "#0891B2", baslik: "Mehrsprachige Plattform", aciklama: "Vollständiger Support auf Türkisch, Englisch, Deutsch, Arabisch, Russisch und Französisch." },
         { ikon: "Layers", renk: "#7C3AED", baslik: "Alles an einem Ort", aciklama: "Klinik, Hotel und Transfer unter einem Dach. Kein separater Aufwand." },
       ],
       adimlarBaslik: "Behandlung in 3 Schritten",
@@ -148,15 +148,132 @@ export default function AnaSayfa() {
       cagriAlt: "Weltklasse-Behandlung zu wettbewerbsfähigen Preisen. Angebote einholen und das Beste wählen.",
       cagriBtn: "Jetzt kostenloses Angebot",
     },
+    ar: {
+      heroBadge: "منصة السياحة الصحية العالمية",
+      heroBaslik1: "الرعاية الصحية بلا",
+      heroBaslikVurgu: "حدود",
+      heroAlt: "عيادات معتمدة من جميع أنحاء العالم، أسعار شفافة، دفع آمن. أموالك في أمان حتى اكتمال علاجك.",
+      teklifAl: "احصل على عرض مجاني",
+      klinikleriKesf: "استكشف العيادات",
+      guvenBadge1: "🔒 دفع ضمني",
+      guvenBadge2: "✓ عيادات معتمدة",
+      guvenBadge3: "⚖ أسعار شفافة",
+      istatistikler: ["عيادة معتمدة", "مريض مسجل", "فندق شريك", "شركة نقل"],
+      tedaviBaslik: "فئات العلاج",
+      tedaviAlt: "اختر العلاج المناسب واحصل على عروض من العيادات",
+      farklarBaslik: "لماذا Medoqa؟",
+      farklarAlt: "ميزتنا ليست فقط كوننا واجهة، بل حمايتك في كل خطوة",
+      farklar: [
+        { ikon: "Lock", renk: "#4F46E5", baslik: "نظام الدفع الضمني", aciklama: "أموالك تنتظر في حسابنا الآمن. لا تذهب إلى العيادة حتى اكتمال علاجك وموافقتك." },
+        { ikon: "CheckCircle", renk: "#059669", baslik: "عيادات موثقة ومعتمدة", aciklama: "كل عيادة تقدم وثائق وزارة الصحة وتمر بمراجعة الإدارة. بدون وثائق لا يمكن الانضمام." },
+        { ikon: "Scale", renk: "#D97706", baslik: "أسعار شفافة", aciklama: "العيادات تحدد أسعارها بوضوح. لا رسوم خفية ولا مفاجآت." },
+        { ikon: "Shield", renk: "#DC2626", baslik: "ضمان الإجراءات الإضافية", aciklama: "إذا أرادت العيادة إجراءً إضافياً يجب الحصول على موافقتك أولاً." },
+        { ikon: "Globe", renk: "#0891B2", baslik: "منصة متعددة اللغات", aciklama: "دعم كامل بالعربية والتركية والإنجليزية والألمانية والروسية والفرنسية." },
+        { ikon: "Layers", renk: "#7C3AED", baslik: "كل شيء في مكان واحد", aciklama: "العيادة والفندق والنقل تحت سقف واحد. لا حاجة للبحث المنفصل." },
+      ],
+      adimlarBaslik: "خطط لعلاجك في 3 خطوات",
+      adimlar: [
+        { no: "01", baslik: "أنشئ طلب عرض", aciklama: "اختر علاجك، وارفع الصور أو الأشعة. العيادات المعتمدة ترسل عروضاً خلال 2-4 ساعات. مجاناً." },
+        { no: "02", baslik: "قارن العروض", aciklama: "راجع السعر والمحتوى وخبرة الطبيب جنباً إلى جنب. اختر الأفضل بدون ضغط." },
+        { no: "03", baslik: "تعال بأمان", aciklama: "خطط للفندق والنقل. ادفع — الأموال تذهب للعيادة فقط بعد اكتمال علاجك." },
+      ],
+      oneCikanKlinikler: "العيادات المميزة",
+      oneCikanAlt: "عيادات معتمدة من وزارة الصحة، موثقة الملفات",
+      partnerOteller: "الفنادق الشريكة",
+      partnerOtelAlt: "فنادق مختارة بعناية للإقامة خلال علاجك",
+      tumunuGor: "عرض الكل",
+      onayBadge: "معتمد",
+      cagriBaslik: "استثمر في صحتك",
+      cagriAlt: "علاج بمستوى عالمي بأسعار تنافسية. احصل على عروض من عدة عيادات وقارن واختر الأفضل.",
+      cagriBtn: "احصل على عرض مجاني الآن",
+    },
+    ru: {
+      heroBadge: "ГЛОБАЛЬНАЯ ПЛАТФОРМА МЕДИЦИНСКОГО ТУРИЗМА",
+      heroBaslik1: "Здравоохранение без",
+      heroBaslikVurgu: "границ",
+      heroAlt: "Сертифицированные клиники со всего мира, прозрачные цены, безопасная оплата. Ваши деньги в безопасности до завершения лечения.",
+      teklifAl: "Получить бесплатное предложение",
+      klinikleriKesf: "Найти клиники",
+      guvenBadge1: "🔒 Эскроу-платеж",
+      guvenBadge2: "✓ Проверенные клиники",
+      guvenBadge3: "⚖ Прозрачные цены",
+      istatistikler: ["Сертифицированная клиника", "Зарегистрированный пациент", "Партнёрский отель", "Транспортная компания"],
+      tedaviBaslik: "Категории лечения",
+      tedaviAlt: "Выберите подходящее лечение и получите предложения от клиник",
+      farklarBaslik: "Почему Medoqa?",
+      farklarAlt: "Наше отличие — не просто интерфейс, а защита на каждом шагу",
+      farklar: [
+        { ikon: "Lock", renk: "#4F46E5", baslik: "Система эскроу-платежей", aciklama: "Ваш платёж ждёт на нашем защищённом счёте. Клиника получает деньги только после завершения лечения." },
+        { ikon: "CheckCircle", renk: "#059669", baslik: "Сертифицированные клиники", aciklama: "Каждая клиника предоставляет документы и проходит проверку. Без документов — нет доступа." },
+        { ikon: "Scale", renk: "#D97706", baslik: "Прозрачные цены", aciklama: "Клиники указывают цены открыто. Никаких скрытых платежей и сюрпризов." },
+        { ikon: "Shield", renk: "#DC2626", baslik: "Защита от лишних процедур", aciklama: "Клиника обязана получить ваше согласие перед дополнительными процедурами." },
+        { ikon: "Globe", renk: "#0891B2", baslik: "Многоязычная платформа", aciklama: "Полная поддержка на русском, турецком, английском, немецком, арабском и французском." },
+        { ikon: "Layers", renk: "#7C3AED", baslik: "Всё в одном месте", aciklama: "Клиника, отель и трансфер под одной крышей. Никакого отдельного поиска." },
+      ],
+      adimlarBaslik: "Спланируйте лечение за 3 шага",
+      adimlar: [
+        { no: "01", baslik: "Создайте запрос", aciklama: "Выберите лечение, загрузите фото или рентген. Клиники пришлют предложения за 2–4 часа. Бесплатно." },
+        { no: "02", baslik: "Сравните предложения", aciklama: "Сравнивайте цену, содержание и опыт врача. Выберите лучшее без давления." },
+        { no: "03", baslik: "Приезжайте с уверенностью", aciklama: "Организуйте отель и трансфер. Оплатите — деньги поступят клинике только после лечения." },
+      ],
+      oneCikanKlinikler: "Рекомендуемые клиники",
+      oneCikanAlt: "Клиники, одобренные Министерством здравоохранения",
+      partnerOteller: "Партнёрские отели",
+      partnerOtelAlt: "Тщательно отобранные отели для проживания во время лечения",
+      tumunuGor: "Показать все",
+      onayBadge: "Проверено",
+      cagriBaslik: "Инвестируйте в своё здоровье",
+      cagriAlt: "Лечение мирового уровня по конкурентным ценам. Получите предложения, сравните и выберите лучшее.",
+      cagriBtn: "Получить бесплатное предложение",
+    },
+    fr: {
+      heroBadge: "PLATEFORME MONDIALE DE TOURISME MÉDICAL",
+      heroBaslik1: "La santé sans",
+      heroBaslikVurgu: "frontières",
+      heroAlt: "Cliniques vérifiées du monde entier, prix transparents, paiement sécurisé. Votre argent reste en sécurité jusqu'à la fin de votre traitement.",
+      teklifAl: "Obtenir un devis gratuit",
+      klinikleriKesf: "Explorer les cliniques",
+      guvenBadge1: "🔒 Paiement sécurisé",
+      guvenBadge2: "✓ Cliniques vérifiées",
+      guvenBadge3: "⚖ Prix transparents",
+      istatistikler: ["Clinique certifiée", "Patient inscrit", "Hôtel partenaire", "Société de transfert"],
+      tedaviBaslik: "Catégories de traitement",
+      tedaviAlt: "Choisissez le traitement adapté et recevez des devis des cliniques",
+      farklarBaslik: "Pourquoi Medoqa ?",
+      farklarAlt: "Notre différence n'est pas seulement une interface, mais vous protéger à chaque étape",
+      farklar: [
+        { ikon: "Lock", renk: "#4F46E5", baslik: "Système de paiement sécurisé", aciklama: "Votre paiement attend sur notre compte sécurisé. Il ne va à la clinique qu'après votre approbation." },
+        { ikon: "CheckCircle", renk: "#059669", baslik: "Cliniques documentées et vérifiées", aciklama: "Chaque clinique soumet des documents et passe en revue admin. Sans documents, pas d'accès." },
+        { ikon: "Scale", renk: "#D97706", baslik: "Prix transparents", aciklama: "Les cliniques indiquent clairement leurs prix. Pas de frais cachés ni de surprises." },
+        { ikon: "Shield", renk: "#DC2626", baslik: "Protection contre les actes supplémentaires", aciklama: "La clinique doit obtenir votre accord avant tout acte supplémentaire." },
+        { ikon: "Globe", renk: "#0891B2", baslik: "Plateforme multilingue", aciklama: "Support complet en français, turc, anglais, allemand, arabe et russe." },
+        { ikon: "Layers", renk: "#7C3AED", baslik: "Tout en un seul endroit", aciklama: "Clinique, hôtel et transfert sous un même toit. Pas de recherche séparée." },
+      ],
+      adimlarBaslik: "Planifiez votre traitement en 3 étapes",
+      adimlar: [
+        { no: "01", baslik: "Créez une demande de devis", aciklama: "Choisissez votre traitement, téléchargez photos ou radios. Les cliniques envoient des devis en 2–4 heures. Gratuit." },
+        { no: "02", baslik: "Comparez les devis", aciklama: "Examinez prix, contenu et expérience du médecin côte à côte. Choisissez le meilleur sans pression." },
+        { no: "03", baslik: "Venez en toute sécurité", aciklama: "Planifiez hôtel et transfert. Payez — l'argent va à la clinique seulement après votre traitement." },
+      ],
+      oneCikanKlinikler: "Cliniques en vedette",
+      oneCikanAlt: "Cliniques approuvées par le Ministère de la Santé",
+      partnerOteller: "Hôtels partenaires",
+      partnerOtelAlt: "Hôtels soigneusement sélectionnés pour votre séjour",
+      tumunuGor: "Voir tout",
+      onayBadge: "Vérifié",
+      cagriBaslik: "Investissez dans votre santé",
+      cagriAlt: "Traitement de classe mondiale à des prix compétitifs. Obtenez des devis, comparez et choisissez le meilleur.",
+      cagriBtn: "Obtenir un devis gratuit maintenant",
+    },
   };
 
   const tedaviler = [
-    { foto: "https://images.unsplash.com/photo-1606811841689-23dfddce3e95?w=400&h=300&fit=crop", tr: "Diş Tedavisi", en: "Dental", de: "Zahnbehandlung", fiyat: "€200+" },
-    { foto: "https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=400&h=300&fit=crop", tr: "Saç Ekimi", en: "Hair Transplant", de: "Haartransplantation", fiyat: "€1.500+" },
-    { foto: "https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?w=400&h=300&fit=crop", tr: "Göz Ameliyatı", en: "Eye Surgery", de: "Augenoperation", fiyat: "€800+" },
-    { foto: "https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=400&h=300&fit=crop", tr: "Plastik Cerrahi", en: "Plastic Surgery", de: "Plastische Chirurgie", fiyat: "€1.200+" },
-    { foto: "https://images.unsplash.com/photo-1505751172876-fa1923c5c528?w=400&h=300&fit=crop", tr: "Check-Up", en: "Health Check-Up", de: "Check-Up", fiyat: "€150+" },
-    { foto: "https://images.unsplash.com/photo-1551601651-2a8555f1a136?w=400&h=300&fit=crop", tr: "Ortopedi", en: "Orthopedics", de: "Orthopädie", fiyat: "€800+" },
+    { foto: "https://images.unsplash.com/photo-1606811841689-23dfddce3e95?w=400&h=300&fit=crop", tr: "Diş Tedavisi", en: "Dental", de: "Zahnbehandlung", ar: "علاج الأسنان", ru: "Стоматология", fr: "Soins dentaires", fiyat: "€200+" },
+    { foto: "https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=400&h=300&fit=crop", tr: "Saç Ekimi", en: "Hair Transplant", de: "Haartransplantation", ar: "زراعة الشعر", ru: "Пересадка волос", fr: "Greffe de cheveux", fiyat: "€1.500+" },
+    { foto: "https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?w=400&h=300&fit=crop", tr: "Göz Ameliyatı", en: "Eye Surgery", de: "Augenoperation", ar: "جراحة العيون", ru: "Операция на глазах", fr: "Chirurgie oculaire", fiyat: "€800+" },
+    { foto: "https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=400&h=300&fit=crop", tr: "Plastik Cerrahi", en: "Plastic Surgery", de: "Plastische Chirurgie", ar: "الجراحة التجميلية", ru: "Пластическая хирургия", fr: "Chirurgie plastique", fiyat: "€1.200+" },
+    { foto: "https://images.unsplash.com/photo-1505751172876-fa1923c5c528?w=400&h=300&fit=crop", tr: "Check-Up", en: "Health Check-Up", de: "Check-Up", ar: "فحص شامل", ru: "Чек-ап", fr: "Bilan de santé", fiyat: "€150+" },
+    { foto: "https://images.unsplash.com/photo-1551601651-2a8555f1a136?w=400&h=300&fit=crop", tr: "Ortopedi", en: "Orthopedics", de: "Orthopädie", ar: "العظام", ru: "Ортопедия", fr: "Orthopédie", fiyat: "€800+" },
   ];
 
   const ic = icerik[dil as keyof typeof icerik] || icerik.tr;
@@ -230,7 +347,7 @@ export default function AnaSayfa() {
             { sayi: istatistik.otel, etiket: ic.istatistikler[2] },
             { sayi: istatistik.transfer, etiket: ic.istatistikler[3] },
           ].map((s, i) => (
-            <div key={s.etiket} style={{ padding: mobil ? "12px" : "0 24px", borderRight: !mobil && i < 3 ? "1px solid rgba(255,255,255,0.2)" : "none", borderBottom: mobil && i < 2 ? "1px solid rgba(255,255,255,0.2)" : "none" }}>
+            <div key={s.etiket} style={{ padding: mobil ? "12px" : "0 24px", borderRight: !mobil && i < 3 ? "1px solid rgba(255,255,255,0.2)" : "none" }}>
               <div style={{ fontSize: mobil ? "28px" : "36px", fontWeight: 800, color: "#fff" }}>{s.sayi}+</div>
               <div style={{ fontSize: "12px", color: "rgba(255,255,255,0.75)", marginTop: "4px" }}>{s.etiket}</div>
             </div>
@@ -253,7 +370,7 @@ export default function AnaSayfa() {
                 </div>
                 <div style={{ padding: mobil ? "10px" : "14px 12px" }}>
                   <div style={{ fontSize: mobil ? "12px" : "13px", fontWeight: 700, color: "#0f0d2e", marginBottom: "3px" }}>
-                    {dil === "tr" ? t.tr : dil === "en" ? t.en : t.de}
+                    {t[dil as keyof typeof t] || t.en}
                   </div>
                   <div style={{ fontSize: "11px", color: "#534AB7", fontWeight: 700 }}>{t.fiyat}</div>
                 </div>
@@ -288,7 +405,7 @@ export default function AnaSayfa() {
       </section>
 
       {/* NASIL ÇALIŞIR */}
-      <section style={{ padding: sectionPad, background: "#0f0d2e", position: "relative", overflow: "hidden" }}>
+      <section style={{ padding: sectionPad, background: "#0f0d2e" }}>
         <div style={{ maxWidth: "1100px", margin: "0 auto" }}>
           <h2 style={{ fontSize: mobil ? "26px" : "36px", fontWeight: 800, color: "#fff", marginBottom: "40px", textAlign: "center" }}>{ic.adimlarBaslik}</h2>
           <div style={{ display: "grid", gridTemplateColumns: mobil ? "1fr" : "repeat(3, 1fr)", gap: "16px" }}>
