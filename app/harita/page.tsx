@@ -23,6 +23,9 @@ export default function Harita() {
     tr: { baslik: "Harita", altBaslik: "Oteller ve kliniklerin konumlarını harita üzerinde görüntüleyin", oteller: "Oteller", klinikler: "Klinikler", yukleniyor: "Harita yükleniyor...", konumYok: "Konum bilgisi olan kayıt bulunamadı", incele: "İncele" },
     en: { baslik: "Map", altBaslik: "View locations of hotels and clinics on the map", oteller: "Hotels", klinikler: "Clinics", yukleniyor: "Loading map...", konumYok: "No records with location found", incele: "View" },
     de: { baslik: "Karte", altBaslik: "Sehen Sie Standorte von Hotels und Kliniken auf der Karte", oteller: "Hotels", klinikler: "Kliniken", yukleniyor: "Karte wird geladen...", konumYok: "Keine Einträge mit Standort gefunden", incele: "Ansehen" },
+    ar: { baslik: "الخريطة", altBaslik: "اعرض مواقع الفنادق والعيادات على الخريطة", oteller: "الفنادق", klinikler: "العيادات", yukleniyor: "جارٍ تحميل الخريطة...", konumYok: "لم يتم العثور على سجلات بموقع", incele: "عرض" },
+    ru: { baslik: "Карта", altBaslik: "Просматривайте расположение отелей и клиник на карте", oteller: "Отели", klinikler: "Клиники", yukleniyor: "Загрузка карты...", konumYok: "Записи с местоположением не найдены", incele: "Просмотр" },
+    fr: { baslik: "Carte", altBaslik: "Consultez les emplacements des hôtels et cliniques sur la carte", oteller: "Hôtels", klinikler: "Cliniques", yukleniyor: "Chargement de la carte...", konumYok: "Aucun enregistrement avec localisation trouvé", incele: "Voir" },
   };
 
   const m = metinler[dil as keyof typeof metinler] || metinler.tr;
@@ -65,7 +68,6 @@ export default function Harita() {
           </button>
         </div>
       </section>
-
       <div style={{ display: "grid", gridTemplateColumns: "1fr 320px", height: "600px" }}>
         <div style={{ position: "relative" }}>
           {typeof window !== "undefined" && !yukleniyor && (
@@ -81,9 +83,7 @@ export default function Harita() {
                           {item.kapak_fotograf && <img src={item.kapak_fotograf} alt={item.ad} style={{ width: "100%", height: "80px", objectFit: "cover", borderRadius: "6px", marginBottom: "8px" }} />}
                           <div style={{ fontWeight: 700, fontSize: "14px", marginBottom: "4px" }}>{item.ad} {item.soyad}</div>
                           {item.konum_adres && <div style={{ fontSize: "12px", color: "#888", marginBottom: "8px" }}>{item.konum_adres}</div>}
-                          <a href={`/${gosterilen === "oteller" ? "otel" : "klinik"}/${item.id}`} style={{ background: "#534AB7", color: "#fff", padding: "6px 12px", borderRadius: "6px", fontSize: "12px", textDecoration: "none", display: "inline-block" }}>
-                            {m.incele}
-                          </a>
+                          <a href={`/${gosterilen === "oteller" ? "otel" : "klinik"}/${item.id}`} style={{ background: "#534AB7", color: "#fff", padding: "6px 12px", borderRadius: "6px", fontSize: "12px", textDecoration: "none", display: "inline-block" }}>{m.incele}</a>
                         </div>
                       </Popup>
                     </Marker>
@@ -92,33 +92,22 @@ export default function Harita() {
               </MapContainer>
             </>
           )}
-          {yukleniyor && (
-            <div style={{ height: "100%", display: "flex", alignItems: "center", justifyContent: "center", background: "#f0f0f0", color: "#888" }}>
-              {m.yukleniyor}
-            </div>
-          )}
+          {yukleniyor && <div style={{ height: "100%", display: "flex", alignItems: "center", justifyContent: "center", background: "#f0f0f0", color: "#888" }}>{m.yukleniyor}</div>}
         </div>
-
         <div style={{ background: "#fff", borderLeft: "1px solid #EEEDFE", overflow: "auto" }}>
           <div style={{ padding: "16px", borderBottom: "1px solid #EEEDFE" }}>
-            <h3 style={{ fontSize: "14px", fontWeight: 700, color: "#12103a", margin: 0 }}>
-              {gosterilen === "oteller" ? m.oteller : m.klinikler} ({liste.length})
-            </h3>
+            <h3 style={{ fontSize: "14px", fontWeight: 700, color: "#12103a", margin: 0 }}>{gosterilen === "oteller" ? m.oteller : m.klinikler} ({liste.length})</h3>
           </div>
           {liste.length === 0 ? (
-            <div style={{ padding: "32px", textAlign: "center", color: "#888", fontSize: "13px" }}>
-              {yukleniyor ? m.yukleniyor : m.konumYok}
-            </div>
+            <div style={{ padding: "32px", textAlign: "center", color: "#888", fontSize: "13px" }}>{yukleniyor ? m.yukleniyor : m.konumYok}</div>
           ) : (
             liste.map((item) => (
-              <div key={item.id} style={{ padding: "12px 16px", borderBottom: "1px solid #EEEDFE", cursor: "pointer" }}>
+              <div key={item.id} style={{ padding: "12px 16px", borderBottom: "1px solid #EEEDFE" }}>
                 <div style={{ display: "flex", gap: "10px", alignItems: "center" }}>
                   {item.kapak_fotograf ? (
                     <img src={item.kapak_fotograf} alt={item.ad} style={{ width: "48px", height: "48px", objectFit: "cover", borderRadius: "8px", flexShrink: 0 }} />
                   ) : (
-                    <div style={{ width: "48px", height: "48px", background: "#EEEDFE", borderRadius: "8px", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "20px", flexShrink: 0 }}>
-                      {gosterilen === "oteller" ? "🏨" : "🏥"}
-                    </div>
+                    <div style={{ width: "48px", height: "48px", background: "#EEEDFE", borderRadius: "8px", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "20px", flexShrink: 0 }}>{gosterilen === "oteller" ? "🏨" : "🏥"}</div>
                   )}
                   <div>
                     <div style={{ fontSize: "13px", fontWeight: 700, color: "#12103a", marginBottom: "2px" }}>{item.ad} {item.soyad}</div>

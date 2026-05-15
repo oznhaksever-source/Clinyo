@@ -19,6 +19,9 @@ export default function Oteller() {
     tr: { baslik: "Oteller", altBaslik: "Tedaviniz süresince konaklamak için en iyi otelleri keşfedin", aramaPlaceholder: "Otel adı veya şehir ara...", tumSehirler: "Tüm Şehirler", incele: "İncele →", yukleniyor: "Yükleniyor...", bulunamadi: "Otel bulunamadı", sonuc: "otel bulundu", geceden: "gecelik" },
     en: { baslik: "Hotels", altBaslik: "Discover the best hotels to stay during your treatment", aramaPlaceholder: "Search hotel name or city...", tumSehirler: "All Cities", incele: "View →", yukleniyor: "Loading...", bulunamadi: "No hotels found", sonuc: "hotels found", geceden: "per night" },
     de: { baslik: "Hotels", altBaslik: "Entdecken Sie die besten Hotels für Ihren Aufenthalt", aramaPlaceholder: "Hotelname oder Stadt suchen...", tumSehirler: "Alle Städte", incele: "Ansehen →", yukleniyor: "Wird geladen...", bulunamadi: "Keine Hotels gefunden", sonuc: "Hotels gefunden", geceden: "pro Nacht" },
+    ar: { baslik: "الفنادق", altBaslik: "اكتشف أفضل الفنادق للإقامة خلال علاجك", aramaPlaceholder: "ابحث عن اسم الفندق أو المدينة...", tumSehirler: "جميع المدن", incele: "عرض →", yukleniyor: "جارٍ التحميل...", bulunamadi: "لم يتم العثور على فنادق", sonuc: "فندق وجد", geceden: "في الليلة" },
+    ru: { baslik: "Отели", altBaslik: "Откройте лучшие отели для проживания во время лечения", aramaPlaceholder: "Поиск по названию отеля или городу...", tumSehirler: "Все города", incele: "Просмотр →", yukleniyor: "Загрузка...", bulunamadi: "Отели не найдены", sonuc: "отелей найдено", geceden: "за ночь" },
+    fr: { baslik: "Hôtels", altBaslik: "Découvrez les meilleurs hôtels pour séjourner pendant votre traitement", aramaPlaceholder: "Rechercher par nom d'hôtel ou ville...", tumSehirler: "Toutes les villes", incele: "Voir →", yukleniyor: "Chargement...", bulunamadi: "Aucun hôtel trouvé", sonuc: "hôtels trouvés", geceden: "par nuit" },
   };
 
   const m = metinler[dil as keyof typeof metinler] || metinler.tr;
@@ -57,7 +60,6 @@ export default function Oteller() {
   return (
     <main style={{ minHeight: "100vh", background: "#f8f9ff", fontFamily: "'Segoe UI', sans-serif" }}>
       <Navbar />
-
       <section style={{ background: "linear-gradient(135deg, #0f0d2e 0%, #1e1b4b 100%)", padding: mobil ? "32px 16px" : "40px 32px" }}>
         <h1 style={{ color: "#fff", fontSize: mobil ? "26px" : "32px", fontWeight: 800, marginBottom: "8px" }}>{m.baslik}</h1>
         <p style={{ color: "#8b8fc8", fontSize: "14px", marginBottom: "20px" }}>{m.altBaslik}</p>
@@ -70,7 +72,6 @@ export default function Oteller() {
         </div>
         <div style={{ marginTop: "12px", fontSize: "13px", color: "#8b8fc8" }}>{filtrelenmis.length} {m.sonuc}</div>
       </section>
-
       <section style={{ maxWidth: "1200px", margin: "0 auto", padding: mobil ? "24px 16px" : "40px 32px" }}>
         {yukleniyor ? (
           <div style={{ textAlign: "center", padding: "64px", color: "#888" }}>{m.yukleniyor}</div>
@@ -93,9 +94,7 @@ export default function Oteller() {
                         {enUcuz.fiyat} {enUcuz.para_birimi} <span style={{ fontSize: "11px", fontWeight: 400, color: "#888" }}>/ {m.geceden}</span>
                       </div>
                     )}
-                    <a href={`/otel/${o.id}`} style={{ display: "inline-flex", alignItems: "center", background: "#534AB7", color: "#fff", padding: "8px 18px", borderRadius: "8px", fontSize: "13px", textDecoration: "none", fontWeight: 600 }}>
-                      {m.incele}
-                    </a>
+                    <a href={`/otel/${o.id}`} style={{ display: "inline-flex", alignItems: "center", background: "#534AB7", color: "#fff", padding: "8px 18px", borderRadius: "8px", fontSize: "13px", textDecoration: "none", fontWeight: 600 }}>{m.incele}</a>
                   </div>
                 </div>
               );
