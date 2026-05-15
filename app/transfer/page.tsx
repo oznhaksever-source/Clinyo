@@ -18,6 +18,9 @@ export default function Transfer() {
     tr: { baslik: "Transfer Hizmetleri", altBaslik: "Havalimanından kliniğe, otelden tedavi merkezine güvenli transfer", aramaPlaceholder: "Firma adı ara...", incele: "İncele →", arac: "araç", yukleniyor: "Yükleniyor...", bulunamadi: "Transfer firması bulunamadı", sonuc: "firma bulundu" },
     en: { baslik: "Transfer Services", altBaslik: "Safe transfer from airport to clinic, from hotel to treatment center", aramaPlaceholder: "Search company...", incele: "View →", arac: "vehicle", yukleniyor: "Loading...", bulunamadi: "No transfer companies found", sonuc: "companies found" },
     de: { baslik: "Transferdienste", altBaslik: "Sicherer Transfer vom Flughafen zur Klinik", aramaPlaceholder: "Firmenname suchen...", incele: "Ansehen →", arac: "Fahrzeug", yukleniyor: "Wird geladen...", bulunamadi: "Keine Transferunternehmen gefunden", sonuc: "Unternehmen gefunden" },
+    ar: { baslik: "خدمات النقل", altBaslik: "نقل آمن من المطار إلى العيادة ومن الفندق إلى مركز العلاج", aramaPlaceholder: "ابحث عن اسم الشركة...", incele: "عرض →", arac: "مركبة", yukleniyor: "جارٍ التحميل...", bulunamadi: "لم يتم العثور على شركات نقل", sonuc: "شركة وجدت" },
+    ru: { baslik: "Трансферные услуги", altBaslik: "Безопасный трансфер из аэропорта в клинику и из отеля в центр лечения", aramaPlaceholder: "Поиск компании...", incele: "Просмотр →", arac: "автомобиль", yukleniyor: "Загрузка...", bulunamadi: "Транспортные компании не найдены", sonuc: "компаний найдено" },
+    fr: { baslik: "Services de transfert", altBaslik: "Transfert sécurisé de l'aéroport à la clinique et de l'hôtel au centre de traitement", aramaPlaceholder: "Rechercher une entreprise...", incele: "Voir →", arac: "véhicule", yukleniyor: "Chargement...", bulunamadi: "Aucune société de transfert trouvée", sonuc: "sociétés trouvées" },
   };
 
   const m = metinler[dil as keyof typeof metinler] || metinler.tr;
@@ -59,7 +62,6 @@ export default function Transfer() {
         <input type="text" placeholder={m.aramaPlaceholder} value={arama} onChange={e => setArama(e.target.value)} style={{ maxWidth: "400px", width: "100%", border: "none", borderRadius: "10px", padding: "12px 16px", fontSize: "14px", outline: "none" }} />
         <div style={{ marginTop: "12px", fontSize: "13px", color: "#8b8fc8" }}>{filtrelenmis.length} {m.sonuc}</div>
       </section>
-
       <section style={{ maxWidth: "1200px", margin: "0 auto", padding: mobil ? "24px 16px" : "40px 32px" }}>
         {yukleniyor ? (
           <div style={{ textAlign: "center", padding: "64px", color: "#888" }}>{m.yukleniyor}</div>
@@ -80,9 +82,7 @@ export default function Transfer() {
                     {t.konum_adres && <p style={{ fontSize: "12px", color: "#94a3b8", marginBottom: "6px" }}>📍 {t.konum_adres}</p>}
                     <p style={{ fontSize: "12px", color: "#94a3b8", marginBottom: "8px" }}>🚗 {aracSayisi} {m.arac}</p>
                     {enUcuz && <div style={{ fontSize: "15px", fontWeight: 700, color: "#534AB7", marginBottom: "12px" }}>{enUcuz.fiyat} {enUcuz.para_birimi}</div>}
-                    <a href={`/transfer/${t.id}`} style={{ display: "inline-flex", alignItems: "center", background: "#534AB7", color: "#fff", padding: "8px 18px", borderRadius: "8px", fontSize: "13px", textDecoration: "none", fontWeight: 600 }}>
-                      {m.incele}
-                    </a>
+                    <a href={`/transfer/${t.id}`} style={{ display: "inline-flex", alignItems: "center", background: "#534AB7", color: "#fff", padding: "8px 18px", borderRadius: "8px", fontSize: "13px", textDecoration: "none", fontWeight: 600 }}>{m.incele}</a>
                   </div>
                 </div>
               );

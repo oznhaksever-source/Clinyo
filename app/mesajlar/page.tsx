@@ -13,10 +13,6 @@ export default function Mesajlar() {
   const [yukleniyor, setYukleniyor] = useState(true);
   const [mobil, setMobil] = useState(false);
   const [mobilPanel, setMobilPanel] = useState<"liste" | "mesaj">("liste");
-  const [yeniKonusmaAcik, setYeniKonusmaAcik] = useState(false);
-  const [klinikler, setKlinikler] = useState<any[]>([]);
-  const [ceviriYukleniyor, setCeviriYukleniyor] = useState<Record<string, boolean>>({});
-  const [ceviriMetinleri, setCeviriMetinleri] = useState<Record<string, string>>({});
   const altRef = useRef<HTMLDivElement>(null);
   const { dil } = useDil();
   const supabase = createClient();
@@ -26,7 +22,7 @@ export default function Mesajlar() {
     en: { baslik: "Messages", mesajYaz: "Type a message...", gonder: "Send", konusmaYok: "No messages yet.", secin: "Select a conversation", bugun: "Today", onceki: "Earlier", okunmadi: "Unread", geri: "← Back" },
     de: { baslik: "Nachrichten", mesajYaz: "Nachricht schreiben...", gonder: "Senden", konusmaYok: "Noch keine Nachrichten.", secin: "Wählen Sie ein Gespräch", bugun: "Heute", onceki: "Früher", okunmadi: "Ungelesen", geri: "← Zurück" },
   };
-  const m = metin[dil as keyof typeof metin] || metin.tr;
+  const m = metin[dil];
 
   useEffect(() => {
     function kontrol() { setMobil(window.innerWidth < 768); }
@@ -63,13 +59,6 @@ export default function Mesajlar() {
         }
         setKonusmalar(Object.values(gruplar));
       }
-      // Onaylı klinikleri getir
-      const { data: klinikData } = await supabase.from("profiles")
-        .select("id, ad, soyad, hesap_turu")
-        .eq("hesap_turu", "klinik")
-        .eq("onaylandi", true);
-      setKlinikler(klinikData || []);
-
       setYukleniyor(false);
     }
     yukle();
@@ -111,36 +100,6 @@ export default function Mesajlar() {
     }
   }
 
-  async function mesajCevir(mesajId: string, metin: string) {
-    setCeviriYukleniyor(prev => ({ ...prev, [mesajId]: true }));
-    try {
-      const hedefDil = dil === "tr" ? "Türkçe" : dil === "en" ? "English" : "Deutsch";
-      const response = await fetch("https://api.anthropic.com/v1/messages", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "x-api-key": process.env.NEXT_PUBLIC_ANTHROPIC_API_KEY || "",
-          "anthropic-version": "2023-06-01",
-          "anthropic-dangerous-direct-browser-access": "true",
-        },
-        body: JSON.stringify({
-          model: "claude-sonnet-4-20250514",
-          max_tokens: 500,
-          messages: [{
-            role: "user",
-            content: `Translate the following message to ${hedefDil}. Only return the translated text, nothing else:\n\n${metin}`
-          }]
-        })
-      });
-      const data = await response.json();
-      const cevirilen = data.content?.[0]?.text || metin;
-      setCeviriMetinleri(prev => ({ ...prev, [mesajId]: cevirilen }));
-    } catch {
-      setCeviriMetinleri(prev => ({ ...prev, [mesajId]: "Çeviri yapılamadı." }));
-    }
-    setCeviriYukleniyor(prev => ({ ...prev, [mesajId]: false }));
-  }
-
   function zamanFormatla(tarih: string) {
     const d = new Date(tarih);
     const simdi = new Date();
@@ -159,47 +118,6 @@ export default function Mesajlar() {
   return (
     <main style={{ minHeight: "100vh", background: "#f8f9ff", fontFamily: "'Segoe UI', sans-serif" }}>
       <Navbar />
-
-      {/* Yeni Konuşma Modalı */}
-      {yeniKonusmaAcik && (
-        <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.5)", zIndex: 999, display: "flex", alignItems: "center", justifyContent: "center", padding: "24px" }}>
-          <div style={{ background: "#fff", borderRadius: "20px", padding: "32px", width: "100%", maxWidth: "480px" }}>
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "24px" }}>
-              <h2 style={{ fontSize: "18px", fontWeight: 700, color: "#0f0d2e", margin: 0 }}>Yeni Konuşma Başlat</h2>
-              <button onClick={() => setYeniKonusmaAcik(false)} style={{ background: "none", border: "none", fontSize: "22px", cursor: "pointer", color: "#888" }}>×</button>
-            </div>
-            <p style={{ fontSize: "13px", color: "#888", marginBottom: "16px" }}>Mesaj göndermek istediğiniz kliniği seçin:</p>
-            <div style={{ display: "flex", flexDirection: "column", gap: "10px", maxHeight: "300px", overflowY: "auto" }}>
-              {klinikler.map(k => (
-                <div key={k.id} onClick={async () => {
-                  if (!kullanici?.id) { alert("Oturum bulunamadı!"); return; }
-                  const { error } = await supabase.from("mesajlar").insert({
-                    gonderen_id: kullanici.id,
-                    alici_id: k.id,
-                    mesaj: dil === "tr" ? "Merhaba, bilgi almak istiyorum." : dil === "en" ? "Hello, I would like to get some information." : "Hallo, ich möchte gerne Informationen erhalten.",
-                    okundu: false,
-                  });
-                  if (error) { alert("Hata: " + error.message); return; }
-                  setYeniKonusmaAcik(false);
-                  window.location.reload();
-                }} style={{ padding: "14px 16px", border: "1px solid #EEEDFE", borderRadius: "12px", cursor: "pointer", display: "flex", alignItems: "center", gap: "12px", background: "#f8f9ff" }}>
-                  <div style={{ width: "40px", height: "40px", borderRadius: "50%", background: "#534AB7", display: "flex", alignItems: "center", justifyContent: "center", color: "#fff", fontWeight: 700, flexShrink: 0 }}>
-                    {k.ad?.[0]?.toUpperCase()}
-                  </div>
-                  <div>
-                    <div style={{ fontSize: "14px", fontWeight: 700, color: "#0f0d2e" }}>🏥 {k.ad} {k.soyad}</div>
-                    <div style={{ fontSize: "12px", color: "#94a3b8" }}>Klinik</div>
-                  </div>
-                </div>
-              ))}
-              {klinikler.length === 0 && (
-                <div style={{ textAlign: "center", padding: "32px", color: "#94a3b8", fontSize: "13px" }}>Onaylı klinik bulunamadı.</div>
-              )}
-            </div>
-          </div>
-        </div>
-      )}
-
       <div style={{ maxWidth: "1100px", margin: "0 auto", padding: mobil ? "16px" : "32px" }}>
         <h1 style={{ fontSize: mobil ? "22px" : "28px", fontWeight: 800, color: "#0f0d2e", marginBottom: "24px" }}>{m.baslik}</h1>
 
@@ -208,13 +126,8 @@ export default function Mesajlar() {
           {/* Sol: Konuşma listesi */}
           {(!mobil || mobilPanel === "liste") && (
             <div style={{ background: "#fff", borderRadius: "20px", border: "1px solid #eeecff", overflow: "hidden", display: "flex", flexDirection: "column" }}>
-              <div style={{ padding: "20px", borderBottom: "1px solid #f0eeff", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+              <div style={{ padding: "20px", borderBottom: "1px solid #f0eeff" }}>
                 <h2 style={{ fontSize: "15px", fontWeight: 700, color: "#0f0d2e", margin: 0 }}>{m.baslik}</h2>
-                {kullanici?.hesap_turu === "hasta" && (
-                  <button onClick={() => setYeniKonusmaAcik(true)} style={{ background: "#534AB7", color: "#fff", border: "none", padding: "6px 12px", borderRadius: "8px", fontSize: "12px", cursor: "pointer", fontWeight: 600 }}>
-                    + Yeni
-                  </button>
-                )}
               </div>
               <div style={{ flex: 1, overflowY: "auto" }}>
                 {konusmalar.length === 0 ? (
@@ -269,24 +182,13 @@ export default function Mesajlar() {
                     {mesajlar.map(msg => {
                       const benimMi = msg.gonderen_id === kullanici.id;
                       return (
-                        <div key={msg.id} style={{ display: "flex", justifyContent: benimMi ? "flex-end" : "flex-start", flexDirection: "column", alignItems: benimMi ? "flex-end" : "flex-start" }}>
+                        <div key={msg.id} style={{ display: "flex", justifyContent: benimMi ? "flex-end" : "flex-start" }}>
                           <div style={{ maxWidth: "70%", padding: "10px 16px", borderRadius: benimMi ? "18px 18px 4px 18px" : "18px 18px 18px 4px", background: benimMi ? "#534AB7" : "#f8f9ff", color: benimMi ? "#fff" : "#0f0d2e", fontSize: "14px", lineHeight: 1.5, border: benimMi ? "none" : "1px solid #eeecff" }}>
                             {msg.mesaj}
-                            {ceviriMetinleri[msg.id] && (
-                              <div style={{ marginTop: "8px", paddingTop: "8px", borderTop: benimMi ? "1px solid rgba(255,255,255,0.2)" : "1px solid #eeecff", fontSize: "13px", color: benimMi ? "rgba(255,255,255,0.85)" : "#534AB7", fontStyle: "italic" }}>
-                                🌐 {ceviriMetinleri[msg.id]}
-                              </div>
-                            )}
                             <div style={{ fontSize: "10px", color: benimMi ? "rgba(255,255,255,0.6)" : "#94a3b8", marginTop: "4px", textAlign: "right" }}>
                               {zamanFormatla(msg.created_at)}
                             </div>
                           </div>
-                          <button
-                            onClick={() => ceviriMetinleri[msg.id] ? setCeviriMetinleri(prev => { const y = {...prev}; delete y[msg.id]; return y; }) : mesajCevir(msg.id, msg.mesaj)}
-                            style={{ background: "none", border: "none", cursor: "pointer", fontSize: "11px", color: "#94a3b8", padding: "2px 8px", marginTop: "2px" }}
-                          >
-                            {ceviriYukleniyor[msg.id] ? "⏳" : ceviriMetinleri[msg.id] ? "✕ Çeviriyi Gizle" : "🌐 Çevir"}
-                          </button>
                         </div>
                       );
                     })}
