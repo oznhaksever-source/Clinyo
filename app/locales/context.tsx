@@ -27,7 +27,7 @@ const DilContext = createContext<DilContext>({
 });
 
 export function DilProvider({ children }: { children: ReactNode }) {
-  const [dil, setDil] = useState<Dil>("tr");
+  const [dil, setDil] = useState<Dil>("en");
 
   useEffect(() => {
     const kayitliDil = localStorage.getItem("dil") as Dil;
