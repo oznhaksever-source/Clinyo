@@ -22,7 +22,7 @@ const TEDAVI_ACK: Record<string,Record<string,{baslik:string,aciklama:string,sur
   tr:{
     implant:{baslik:"İmplant",aciklama:"Titanyum vida çene kemiğine yerleştirilir.",sure:"2-3 ay"},
     kaplama:{baslik:"Kaplama / Kuron",aciklama:"Diş yüzeyi zirkonyum veya porselen ile kaplanır.",sure:"1-2 seans"},
-    kanal:{baslik:"Kanal Tedavisi",aciklama:"Enfekte sinir dokusu temizlenir, kanal sterilize edilip doldurulur.",sure:"1-2 seans"},
+    kanal:{baslik:"Kanal Tedavisi",aciklama:"Enfekte sinir dokusu temizlenir.",sure:"1-2 seans"},
     dolgu:{baslik:"Dolgu",aciklama:"Çürük alan temizlenir, kompozit malzeme ile doldurulur.",sure:"1 seans"},
     cekim:{baslik:"Diş Çekimi",aciklama:"Hasarlı diş lokal anestezi altında çekilir.",sure:"1 seans"},
     kopru:{baslik:"Köprü",aciklama:"Eksik dişin yanındaki dişlere destek alınarak sabit köprü yapılır.",sure:"2-3 seans"},
@@ -48,18 +48,18 @@ const TEDAVI_ACK: Record<string,Record<string,{baslik:string,aciklama:string,sur
   },
   ar:{
     implant:{baslik:"زرعة",aciklama:"يتم وضع برغي تيتانيوم في عظم الفك.",sure:"2-3 أشهر"},
-    kaplama:{baslik:"تاج / قشرة",aciklama:"يتم تغطية سطح السن بالزركونيا.",sure:"1-2 جلسة"},
+    kaplama:{baslik:"تاج",aciklama:"يتم تغطية سطح السن بالزركونيا.",sure:"1-2 جلسة"},
     kanal:{baslik:"علاج جذر",aciklama:"تتم إزالة الأنسجة العصبية المصابة.",sure:"1-2 جلسة"},
-    dolgu:{baslik:"حشوة",aciklama:"تتم إزالة التسوس وملء المنطقة.",sure:"جلسة واحدة"},
-    cekim:{baslik:"خلع السن",aciklama:"يتم خلع السن التالف تحت التخدير.",sure:"جلسة واحدة"},
+    dolgu:{baslik:"حشوة",aciklama:"تتم إزالة التسوس.",sure:"جلسة واحدة"},
+    cekim:{baslik:"خلع السن",aciklama:"يتم خلع السن التالف.",sure:"جلسة واحدة"},
     kopru:{baslik:"جسر",aciklama:"يتم عمل جسر ثابت.",sure:"2-3 جلسات"},
-    lezyon:{baslik:"علاج آفة",aciklama:"يتم تنظيف الخراج عند طرف الجذر.",sure:"1-2 جلسة"},
+    lezyon:{baslik:"علاج آفة",aciklama:"يتم تنظيف الخراج.",sure:"1-2 جلسة"},
   },
   ru:{
     implant:{baslik:"Имплант",aciklama:"Титановый винт устанавливается в кость.",sure:"2-3 месяца"},
     kaplama:{baslik:"Коронка",aciklama:"Поверхность зуба покрывается цирконием.",sure:"1-2 сеанса"},
     kanal:{baslik:"Лечение канала",aciklama:"Инфицированная ткань удаляется.",sure:"1-2 сеанса"},
-    dolgu:{baslik:"Пломба",aciklama:"Кариозная область очищается и заполняется.",sure:"1 сеанс"},
+    dolgu:{baslik:"Пломба",aciklama:"Кариозная область очищается.",sure:"1 сеанс"},
     cekim:{baslik:"Удаление зуба",aciklama:"Зуб удаляется под анестезией.",sure:"1 сеанс"},
     kopru:{baslik:"Мост",aciklama:"Фиксированный мост.",sure:"2-3 сеанса"},
     lezyon:{baslik:"Лечение очага",aciklama:"Абсцесс у корня удаляется.",sure:"1-2 сеанса"},
@@ -68,7 +68,7 @@ const TEDAVI_ACK: Record<string,Record<string,{baslik:string,aciklama:string,sur
     implant:{baslik:"Implant",aciklama:"Une vis en titane est placée dans l'os.",sure:"2-3 mois"},
     kaplama:{baslik:"Couronne",aciklama:"La surface est recouverte de zircone.",sure:"1-2 séances"},
     kanal:{baslik:"Traitement canalaire",aciklama:"Le tissu nerveux infecté est retiré.",sure:"1-2 séances"},
-    dolgu:{baslik:"Obturation",aciklama:"La zone cariée est nettoyée et obturée.",sure:"1 séance"},
+    dolgu:{baslik:"Obturation",aciklama:"La zone cariée est nettoyée.",sure:"1 séance"},
     cekim:{baslik:"Extraction",aciklama:"La dent est extraite sous anesthésie.",sure:"1 séance"},
     kopru:{baslik:"Bridge",aciklama:"Un bridge fixe est réalisé.",sure:"2-3 séances"},
     lezyon:{baslik:"Traitement de lésion",aciklama:"L'abcès à l'apex est nettoyé.",sure:"1-2 séances"},
@@ -86,6 +86,9 @@ const METINLER = {
     taleplerim:"Teklif Taleplerim",yeniTalepBtn:"+ Yeni Talep",talepYok:"Henüz teklif talebiniz yok",
     gelenTeklifler:"Gelen Teklifler",gelenYok:"Henüz gelen teklif yok.",detayGor:"Detayları gör →",
     onaylandi:"✅ Onaylandı",reddedildi:"❌ Reddedildi",beklemede:"⏳ Beklemede",
+    tedaviTamamlandi:"✅ Tedavi Tamamlandı",tedaviTamamlandiBtn:"🏁 Tedaviyi Tamamladım",
+    tedaviTamamlandiOnay:"Tedaviniz tamamlandı mı? Bu işlem geri alınamaz.",
+    tedaviTamamlandiMesaj:"✅ Tedavi tamamlandı! Deneyiminizi paylaşabilirsiniz.",
     profilim:"Profilim",ad:"Ad",soyad:"Soyad",eposta:"E-posta",hesapTuru:"Hesap Türü",
     mesajlar:"💬 Mesajlar",mesajlarAcik:"Kliniklerle mesajlaşmak için mesajlar sayfasını kullanın.",
     mesajlarGit:"💬 Mesajlar Sayfasına Git →",
@@ -110,7 +113,6 @@ const METINLER = {
     kapat:"Kapat",iptal:"İptal",
     transferDurumu:{beklemede:"⏳ Beklemede",teklif_verildi:"📋 Teklif Geldi",onaylandi:"✅ Onaylandı"},
     transferTeklifGor:"Teklifleri Gör →",
-    yorumYaz:"⭐ Deneyimini Paylaş",
   },
   en:{
     baslik:"Patient Panel",
@@ -122,6 +124,9 @@ const METINLER = {
     taleplerim:"My Quote Requests",yeniTalepBtn:"+ New Request",talepYok:"No quote requests yet",
     gelenTeklifler:"Received Offers",gelenYok:"No offers received yet.",detayGor:"View details →",
     onaylandi:"✅ Approved",reddedildi:"❌ Rejected",beklemede:"⏳ Pending",
+    tedaviTamamlandi:"✅ Treatment Completed",tedaviTamamlandiBtn:"🏁 Mark as Completed",
+    tedaviTamamlandiOnay:"Has your treatment been completed? This action cannot be undone.",
+    tedaviTamamlandiMesaj:"✅ Treatment completed! You can now share your experience.",
     profilim:"My Profile",ad:"First Name",soyad:"Last Name",eposta:"Email",hesapTuru:"Account Type",
     mesajlar:"💬 Messages",mesajlarAcik:"Use the messages page to communicate with clinics.",
     mesajlarGit:"💬 Go to Messages →",
@@ -132,13 +137,13 @@ const METINLER = {
     reddetMesaj:"Are you sure you want to reject this offer?",
     onayBasarili:"✅ Offer approved!",
     transferTalebiOlustur:"🚗 Create Transfer Request",
-    transferUyari:"This offer does not include transfer. Would you like to get a quote from a transfer company?",
+    transferUyari:"This offer does not include transfer.",
     transferlerim:"🚗 My Transfer Requests",transferYok:"No transfer requests yet.",
     transferTalebiBaslik:"Create Transfer Request",
     sehir:"City / Region",havalimani:"Airport",otelAdi:"Hotel Name",
     klinikAdi:"Clinic Name",tedaviBaslangic:"Treatment Start Date",
     tedaviBitis:"Treatment End Date",klinikZiyaret:"Number of Clinic Visits",
-    yolcuSayisi:"Number of Passengers",notlar:"Additional Notes",notlarPlaceholder:"Special requests, assistance needed, etc.",
+    yolcuSayisi:"Number of Passengers",notlar:"Additional Notes",notlarPlaceholder:"Special requests, etc.",
     transferTurleri:"Which transfers do you need?",
     havAlimaniOtel:"✈️ Airport → Hotel",otelKlinik:"🏨 Hotel → Clinic",
     klinikOtel:"🏥 Clinic → Hotel",otelHavAlimani:"🏨 Hotel → Airport",
@@ -146,7 +151,6 @@ const METINLER = {
     kapat:"Close",iptal:"Cancel",
     transferDurumu:{beklemede:"⏳ Pending",teklif_verildi:"📋 Offer Received",onaylandi:"✅ Approved"},
     transferTeklifGor:"View Offers →",
-    yorumYaz:"⭐ Share Your Experience",
   },
   de:{
     baslik:"Patientenbereich",
@@ -158,6 +162,9 @@ const METINLER = {
     taleplerim:"Meine Angebotsanfragen",yeniTalepBtn:"+ Neue Anfrage",talepYok:"Noch keine Anfragen",
     gelenTeklifler:"Erhaltene Angebote",gelenYok:"Noch keine Angebote erhalten.",detayGor:"Details ansehen →",
     onaylandi:"✅ Genehmigt",reddedildi:"❌ Abgelehnt",beklemede:"⏳ Ausstehend",
+    tedaviTamamlandi:"✅ Behandlung abgeschlossen",tedaviTamamlandiBtn:"🏁 Als abgeschlossen markieren",
+    tedaviTamamlandiOnay:"Wurde Ihre Behandlung abgeschlossen? Diese Aktion kann nicht rückgängig gemacht werden.",
+    tedaviTamamlandiMesaj:"✅ Behandlung abgeschlossen! Sie können Ihre Erfahrung teilen.",
     profilim:"Mein Profil",ad:"Vorname",soyad:"Nachname",eposta:"E-Mail",hesapTuru:"Kontotyp",
     mesajlar:"💬 Nachrichten",mesajlarAcik:"Nutzen Sie die Nachrichtenseite für die Kommunikation.",
     mesajlarGit:"💬 Zur Nachrichtenseite →",
@@ -182,7 +189,6 @@ const METINLER = {
     kapat:"Schließen",iptal:"Abbrechen",
     transferDurumu:{beklemede:"⏳ Ausstehend",teklif_verildi:"📋 Angebot erhalten",onaylandi:"✅ Genehmigt"},
     transferTeklifGor:"Angebote ansehen →",
-    yorumYaz:"⭐ Erfahrung teilen",
   },
 };
 
@@ -314,6 +320,15 @@ export default function HastaPanel() {
     setYukleniyor(false);
   }
 
+  async function tedaviTamamla(teklifId:string) {
+    if (!confirm(m.tedaviTamamlandiOnay)) return;
+    const {error} = await supabase.from("teklifler").update({tedavi_tamamlandi:true}).eq("id",teklifId);
+    if (error) {setMesaj("Hata: "+error.message);return;}
+    setMesaj(m.tedaviTamamlandiMesaj);
+    setTimeout(()=>setMesaj(""),5000);
+    veriYukle();
+  }
+
   async function teklifOnayla(t:any) {
     if (!confirm(m.onayMesaj)) return;
     const {error} = await supabase.from("teklifler").update({durum:"onaylandi"}).eq("id",t.id);
@@ -333,8 +348,9 @@ export default function HastaPanel() {
 
   async function cikisYap() { await supabase.auth.signOut(); window.location.href="/giris"; }
 
-  function durumBadge(durum:string) {
-    if (durum==="onaylandi") return {label:m.onaylandi,bg:"#f0fff4",color:"#059669"};
+  function durumBadge(durum:string, tamamlandi:boolean) {
+    if (tamamlandi) return {label:m.tedaviTamamlandi,bg:"#f0fff4",color:"#059669"};
+    if (durum==="onaylandi") return {label:m.onaylandi,bg:"#e0f2fe",color:"#0369a1"};
     if (durum==="reddedildi") return {label:m.reddedildi,bg:"#fff0f0",color:"#c00"};
     return {label:m.beklemede,bg:"#fff8e1",color:"#BA7517"};
   }
@@ -345,7 +361,7 @@ export default function HastaPanel() {
     const klinik = t.profiles;
     const kategoriler = [...new Set(tedaviDetay.map((d:any)=>d.kategori))] as string[];
     const ack = TEDAVI_ACK[dil as keyof typeof TEDAVI_ACK]||TEDAVI_ACK.en;
-    const durum = durumBadge(t.durum);
+    const durum = durumBadge(t.durum, t.tedavi_tamamlandi);
     const transferGerekli = t.transfer_gerekli && !t.transfer_dahil;
     const toothWord = dil==="tr"?"Diş":dil==="de"?"Zahn":dil==="ar"?"سن":dil==="ru"?"Зуб":dil==="fr"?"Dent":"Tooth";
 
@@ -362,6 +378,7 @@ export default function HastaPanel() {
             <button onClick={()=>setAcikTeklif(null)} style={{background:"rgba(255,255,255,.15)",border:"none",color:"#fff",width:"32px",height:"32px",borderRadius:"50%",cursor:"pointer",fontSize:"18px",display:"flex",alignItems:"center",justifyContent:"center"}}>×</button>
           </div>
           <div style={{padding:"24px"}}>
+            {/* Klinik */}
             <div style={{background:"#fff",borderRadius:"14px",padding:"20px",marginBottom:"16px",display:"flex",gap:"14px",alignItems:"center",border:"1px solid #EEEDFE"}}>
               {klinik?.kapak_fotograf?<img src={klinik.kapak_fotograf} alt={klinik.ad} style={{width:"56px",height:"56px",borderRadius:"50%",objectFit:"cover",flexShrink:0}}/>:<div style={{width:"56px",height:"56px",borderRadius:"50%",background:"#EEEDFE",display:"flex",alignItems:"center",justifyContent:"center",fontSize:"20px",fontWeight:700,color:"#534AB7",flexShrink:0}}>{klinik?.ad?.[0]?.toUpperCase()||"K"}</div>}
               <div style={{flex:1}}>
@@ -375,11 +392,13 @@ export default function HastaPanel() {
               </div>
             </div>
 
+            {/* Transfer uyarısı */}
             {transferGerekli&&(<div style={{background:"#fff8e1",border:"1px solid #f59e0b",borderRadius:"12px",padding:"14px 16px",marginBottom:"16px",display:"flex",justifyContent:"space-between",alignItems:"center",gap:"12px"}}>
               <div style={{fontSize:"12px",color:"#78350f"}}>{m.transferUyari}</div>
               <button onClick={()=>{setAcikTeklif(null);setTransferModal(t);}} style={{background:"#f59e0b",color:"#fff",border:"none",padding:"8px 16px",borderRadius:"8px",fontSize:"12px",cursor:"pointer",fontWeight:700,flexShrink:0}}>{m.transferTalebiOlustur}</button>
             </div>)}
 
+            {/* Diş şeması */}
             {Object.keys(disPlan).length>0&&(<div style={{background:"#fff",borderRadius:"14px",padding:"20px",marginBottom:"16px",border:"1px solid #EEEDFE"}}>
               <div style={{fontSize:"15px",fontWeight:700,color:"#12103a",marginBottom:"14px"}}>{m.tedaviPlani}</div>
               <p style={{fontSize:"9px",color:"#94a3b8",textAlign:"center",margin:"0 0 4px",letterSpacing:".6px",textTransform:"uppercase"}}>{m.ustCene}</p>
@@ -389,11 +408,13 @@ export default function HastaPanel() {
               <p style={{fontSize:"9px",color:"#94a3b8",textAlign:"center",margin:"4px 0 10px",letterSpacing:".6px",textTransform:"uppercase"}}>{m.altCene}</p>
             </div>)}
 
+            {/* Tedaviler */}
             {tedaviDetay.length>0&&(<div style={{background:"#fff",borderRadius:"14px",padding:"20px",marginBottom:"16px",border:"1px solid #EEEDFE"}}>
               <div style={{fontSize:"15px",fontWeight:700,color:"#12103a",marginBottom:"14px"}}>{m.tedaviler}</div>
               {tedaviDetay.map((d:any,i:number)=>{const ac=ack[d.kategori];const renk=RENKLER[d.kategori]||RENKLER.default;return(<div key={i} style={{display:"flex",gap:"14px",alignItems:"flex-start",padding:"12px",background:"#f8f9ff",borderRadius:"10px",border:"1px solid #EEEDFE",marginBottom:"8px"}}><div style={{width:"40px",height:"40px",borderRadius:"8px",background:renk+"22",border:`1px solid ${renk}44`,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}><div style={{width:"14px",height:"14px",borderRadius:"3px",background:renk}}/></div><div style={{flex:1}}><div style={{display:"flex",justifyContent:"space-between",marginBottom:"4px"}}><div><span style={{fontSize:"13px",fontWeight:700,color:"#12103a"}}>{toothWord} {d.dis}</span><span style={{fontSize:"12px",color:"#64748b",marginLeft:"6px"}}>— {d.hizmet_adi}</span></div><span style={{fontSize:"14px",fontWeight:700,color:"#534AB7"}}>{d.fiyat} EUR</span></div>{ac&&<div style={{fontSize:"12px",color:"#64748b",lineHeight:1.6,marginBottom:"4px"}}>{ac.aciklama}</div>}{ac&&<span style={{fontSize:"11px",background:"#fff",color:"#94a3b8",padding:"2px 8px",borderRadius:"8px",border:"1px solid #EEEDFE"}}>⏱ {ac.sure}</span>}</div></div>);})}
             </div>)}
 
+            {/* Fiyat */}
             <div style={{background:"#fff",borderRadius:"14px",padding:"20px",marginBottom:"16px",border:"1px solid #EEEDFE"}}>
               <div style={{fontSize:"15px",fontWeight:700,color:"#12103a",marginBottom:"14px"}}>{m.fiyatOzeti}</div>
               {tedaviDetay.length>0?tedaviDetay.map((d:any,i:number)=>(<div key={i} style={{display:"flex",justifyContent:"space-between",padding:"7px 0",borderBottom:"1px solid #f5f5f5",fontSize:"13px"}}><span>{toothWord} {d.dis} — {d.hizmet_adi}</span><span style={{fontWeight:600,color:"#534AB7"}}>{d.fiyat} EUR</span></div>)):(<div style={{display:"flex",justifyContent:"space-between",padding:"7px 0",borderBottom:"1px solid #f5f5f5",fontSize:"13px"}}><span>{m.tedaviUcreti}</span><span style={{fontWeight:600,color:"#534AB7"}}>{t.fiyat} EUR</span></div>)}
@@ -402,13 +423,28 @@ export default function HastaPanel() {
               <div style={{display:"flex",justifyContent:"space-between",padding:"12px 0 0",fontSize:"16px",fontWeight:700}}><span style={{color:"#12103a"}}>{m.toplam}</span><span style={{color:"#534AB7",fontSize:"20px"}}>{t.toplam_fiyat||t.fiyat} EUR</span></div>
             </div>
 
+            {/* Butonlar */}
             {t.durum==="beklemede"&&(<div style={{display:"flex",gap:"10px",marginBottom:"12px"}}>
               <button onClick={()=>teklifOnayla(t)} style={{flex:2,background:"#059669",color:"#fff",border:"none",padding:"13px",borderRadius:"10px",fontSize:"14px",cursor:"pointer",fontWeight:700}}>{m.teklifOnayla}</button>
               <button onClick={()=>teklifReddet(t.id)} style={{flex:1,background:"#fff0f0",color:"#c00",border:"1px solid #fcc",padding:"13px",borderRadius:"10px",fontSize:"13px",cursor:"pointer",fontWeight:600}}>{m.teklifReddet}</button>
             </div>)}
 
-            {t.durum==="onaylandi"&&(
+            {/* Onaylandı ama tedavi tamamlanmadı */}
+            {t.durum==="onaylandi" && !t.tedavi_tamamlandi && (
               <div>
+                <a href="/mesajlar" style={{display:"flex",alignItems:"center",justifyContent:"center",gap:"8px",background:"#534AB7",color:"#fff",padding:"13px",borderRadius:"10px",fontSize:"14px",textDecoration:"none",fontWeight:700,marginBottom:"12px"}}>{m.mesajlas}</a>
+                <button onClick={()=>tedaviTamamla(t.id)} style={{width:"100%",background:"#059669",color:"#fff",border:"none",padding:"13px",borderRadius:"10px",fontSize:"14px",cursor:"pointer",fontWeight:700}}>
+                  {m.tedaviTamamlandiBtn}
+                </button>
+              </div>
+            )}
+
+            {/* Tedavi tamamlandı → yorum formu */}
+            {t.tedavi_tamamlandi && (
+              <div>
+                <div style={{background:"#f0fff4",border:"1px solid #9f9",borderRadius:"10px",padding:"12px 16px",marginBottom:"12px",fontSize:"13px",color:"#059669",fontWeight:600,textAlign:"center"}}>
+                  {m.tedaviTamamlandi} 🎉
+                </div>
                 <a href="/mesajlar" style={{display:"flex",alignItems:"center",justifyContent:"center",gap:"8px",background:"#534AB7",color:"#fff",padding:"13px",borderRadius:"10px",fontSize:"14px",textDecoration:"none",fontWeight:700,marginBottom:"12px"}}>{m.mesajlas}</a>
                 {kullanici && (
                   <YorumFormu
@@ -474,14 +510,13 @@ export default function HastaPanel() {
 
             {aktifMenu==="talepler"&&(<div>
               <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:"24px"}}><h1 style={{fontSize:"24px",fontWeight:700,color:"#12103a"}}>{m.taleplerim}</h1><a href="/teklif" style={{background:"#534AB7",color:"#fff",padding:"10px 20px",borderRadius:"8px",fontSize:"13px",textDecoration:"none"}}>{m.yeniTalepBtn}</a></div>
-              {talepler.length===0?(<div style={{background:"#fff",border:"1px solid #EEEDFE",borderRadius:"12px",padding:"48px",textAlign:"center"}}><div style={{fontSize:"13px",color:"#888"}}>{m.talepYok}</div></div>):(<div style={{display:"flex",flexDirection:"column",gap:"12px"}}>{talepler.map((t:any)=>{const d=durumBadge(t.durum);return(<div key={t.id} style={{background:"#fff",border:"1px solid #EEEDFE",borderRadius:"12px",padding:"20px"}}><div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start"}}><div><div style={{fontSize:"15px",fontWeight:700,color:"#12103a",marginBottom:"4px"}}>{t.tedavi_turu}</div><div style={{fontSize:"13px",color:"#888",marginBottom:"8px"}}>{t.aciklama?.slice(0,80)}{t.aciklama?.length>80?"...":""}</div><div style={{fontSize:"12px",color:"#888"}}>{new Date(t.olusturma_tarihi).toLocaleDateString()}</div></div><span style={{fontSize:"11px",padding:"4px 12px",borderRadius:"20px",background:d.bg,color:d.color}}>{d.label}</span></div></div>);})}</div>)}
+              {talepler.length===0?(<div style={{background:"#fff",border:"1px solid #EEEDFE",borderRadius:"12px",padding:"48px",textAlign:"center"}}><div style={{fontSize:"13px",color:"#888"}}>{m.talepYok}</div></div>):(<div style={{display:"flex",flexDirection:"column",gap:"12px"}}>{talepler.map((t:any)=>{const d=durumBadge(t.durum,t.tedavi_tamamlandi);return(<div key={t.id} style={{background:"#fff",border:"1px solid #EEEDFE",borderRadius:"12px",padding:"20px"}}><div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start"}}><div><div style={{fontSize:"15px",fontWeight:700,color:"#12103a",marginBottom:"4px"}}>{t.tedavi_turu}</div><div style={{fontSize:"13px",color:"#888",marginBottom:"8px"}}>{t.aciklama?.slice(0,80)}{t.aciklama?.length>80?"...":""}</div><div style={{fontSize:"12px",color:"#888"}}>{new Date(t.olusturma_tarihi).toLocaleDateString()}</div></div><span style={{fontSize:"11px",padding:"4px 12px",borderRadius:"20px",background:d.bg,color:d.color}}>{d.label}</span></div></div>);})}</div>)}
             </div>)}
 
             {aktifMenu==="teklifler"&&(<div>
               <h1 style={{fontSize:"24px",fontWeight:700,color:"#12103a",marginBottom:"24px"}}>{m.gelenTeklifler}</h1>
-              {teklifler.length===0?(<div style={{background:"#fff",border:"1px solid #EEEDFE",borderRadius:"12px",padding:"48px",textAlign:"center"}}><div style={{fontSize:"48px",marginBottom:"16px"}}>📋</div><div style={{fontSize:"13px",color:"#888"}}>{m.gelenYok}</div></div>):(<div style={{display:"flex",flexDirection:"column",gap:"12px"}}>{teklifler.map((t:any)=>{const d=durumBadge(t.durum);const transferGerekli=t.transfer_gerekli&&!t.transfer_dahil;return(<div key={t.id} style={{background:"#fff",border:`2px solid ${t.durum==="onaylandi"?"#059669":t.durum==="reddedildi"?"#fcc":"#EEEDFE"}`,borderRadius:"14px",padding:"18px",cursor:"pointer"}} onClick={()=>setAcikTeklif(t)} onMouseEnter={e=>(e.currentTarget.style.transform="scale(1.005)")} onMouseLeave={e=>(e.currentTarget.style.transform="scale(1)")}>
+              {teklifler.length===0?(<div style={{background:"#fff",border:"1px solid #EEEDFE",borderRadius:"12px",padding:"48px",textAlign:"center"}}><div style={{fontSize:"48px",marginBottom:"16px"}}>📋</div><div style={{fontSize:"13px",color:"#888"}}>{m.gelenYok}</div></div>):(<div style={{display:"flex",flexDirection:"column",gap:"12px"}}>{teklifler.map((t:any)=>{const d=durumBadge(t.durum,t.tedavi_tamamlandi);return(<div key={t.id} style={{background:"#fff",border:`2px solid ${t.tedavi_tamamlandi?"#059669":t.durum==="onaylandi"?"#0369a1":t.durum==="reddedildi"?"#fcc":"#EEEDFE"}`,borderRadius:"14px",padding:"18px",cursor:"pointer"}} onClick={()=>setAcikTeklif(t)} onMouseEnter={e=>(e.currentTarget.style.transform="scale(1.005)")} onMouseLeave={e=>(e.currentTarget.style.transform="scale(1)")}>
               <div style={{display:"flex",justifyContent:"space-between",alignItems:"center"}}><div><div style={{fontSize:"15px",fontWeight:700,color:"#12103a",marginBottom:"4px"}}>🏥 {t.profiles?.ad} {t.profiles?.soyad}</div>{t.profiles?.konum_adres&&<div style={{fontSize:"12px",color:"#94a3b8"}}>📍 {t.profiles.konum_adres}</div>}<div style={{fontSize:"12px",color:"#94a3b8",marginTop:"2px"}}>{new Date(t.olusturma_tarihi).toLocaleDateString()}</div></div><div style={{textAlign:"right"}}><div style={{fontSize:"20px",fontWeight:700,color:"#534AB7",marginBottom:"4px"}}>{t.toplam_fiyat||t.fiyat} EUR</div><span style={{fontSize:"11px",padding:"3px 10px",borderRadius:"20px",fontWeight:600,background:d.bg,color:d.color}}>{d.label}</span></div></div>
-              {transferGerekli&&(<div style={{marginTop:"10px",padding:"8px 12px",background:"#fff8e1",borderRadius:"8px",display:"flex",justifyContent:"space-between",alignItems:"center"}}><span style={{fontSize:"12px",color:"#92400e"}}>🚗 {m.transferUyari.slice(0,30)}...</span><span style={{fontSize:"11px",color:"#f59e0b",fontWeight:600}}>{m.transferTeklifGor}</span></div>)}
               <div style={{fontSize:"12px",color:"#534AB7",marginTop:"8px",fontWeight:500}}>{m.detayGor}</div>
             </div>);})}</div>)}
             </div>)}
