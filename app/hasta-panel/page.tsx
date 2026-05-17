@@ -326,6 +326,7 @@ export default function HastaPanel() {
     if (error) {setMesaj("Hata: "+error.message);return;}
     setMesaj(m.tedaviTamamlandiMesaj);
     setTimeout(()=>setMesaj(""),5000);
+    setAcikTeklif(null);
     veriYukle();
   }
 
