@@ -336,6 +336,8 @@ export default function HastaPanel() {
   const [transferModal, setTransferModal] = useState<any>(null);
   const [teklifOnayModal, setTeklifOnayModal] = useState<any>(null);
   const [teklifOnayKutular, setTeklifOnayKutular] = useState<Record<number,boolean>>({});
+  const [tamamlaModal, setTamamlaModal] = useState<string|null>(null);
+  const [tamamlaKutular, setTamamlaKutular] = useState<Record<number,boolean>>({});
   const {dil,dilDegistir} = useDil();
   const m = METINLER[dil as keyof typeof METINLER] || METINLER.en;
   const supabase = createClient();
@@ -389,8 +391,12 @@ export default function HastaPanel() {
     veriYukle();
   }
 
+  function tedaviTamamlaAc(teklifId:string) {
+    setTamamlaKutular({});
+    setTamamlaModal(teklifId);
+  }
+
   async function tedaviTamamla(teklifId:string) {
-    if (!confirm(m.tedaviTamamlandiOnay)) return;
     const {error} = await supabase.from("teklifler").update({tedavi_tamamlandi:true}).eq("id",teklifId);
     if (error) {setMesaj("Hata: "+error.message);return;}
     setMesaj(m.tedaviTamamlandiMesaj);
@@ -503,7 +509,7 @@ export default function HastaPanel() {
             {t.durum==="onaylandi" && !t.tedavi_tamamlandi && (
               <div>
                 <a href="/mesajlar" style={{display:"flex",alignItems:"center",justifyContent:"center",gap:"8px",background:"#534AB7",color:"#fff",padding:"13px",borderRadius:"10px",fontSize:"14px",textDecoration:"none",fontWeight:700,marginBottom:"12px"}}>{m.mesajlas}</a>
-                <button onClick={()=>tedaviTamamla(t.id)} style={{width:"100%",background:"#059669",color:"#fff",border:"none",padding:"13px",borderRadius:"10px",fontSize:"14px",cursor:"pointer",fontWeight:700}}>{m.tedaviTamamlandiBtn}</button>
+                <button onClick={()=>tedaviTamamlaAc(t.id)} style={{width:"100%",background:"#059669",color:"#fff",border:"none",padding:"13px",borderRadius:"10px",fontSize:"14px",cursor:"pointer",fontWeight:700}}>{m.tedaviTamamlandiBtn}</button>
               </div>
             )}
 
@@ -525,6 +531,72 @@ export default function HastaPanel() {
   return (
     <main style={{minHeight:"100vh",background:"#f9fafb",fontFamily:"sans-serif",display:"flex"}}>
       {acikTeklif&&<TeklifModal t={acikTeklif}/>}
+      {tamamlaModal && (
+        <div style={{position:"fixed",inset:0,background:"rgba(0,0,0,0.6)",zIndex:3000,display:"flex",alignItems:"center",justifyContent:"center",padding:"16px"}}>
+          <div style={{background:"#fff",borderRadius:"16px",width:"100%",maxWidth:"500px",maxHeight:"90vh",overflow:"auto"}}>
+            <div style={{background:"#12103a",borderRadius:"16px 16px 0 0",padding:"16px 20px",display:"flex",justifyContent:"space-between",alignItems:"center"}}>
+              <div style={{fontSize:"16px",fontWeight:700,color:"#fff"}}>
+                {dil==="tr"?"🏁 Tedavi Tamamlama Beyanı":dil==="de"?"🏁 Behandlungsabschluss-Erklärung":dil==="ar"?"🏁 إعلان اكتمال العلاج":dil==="ru"?"🏁 Заявление о завершении лечения":dil==="fr"?"🏁 Déclaration de fin de traitement":"🏁 Treatment Completion Declaration"}
+              </div>
+              <button onClick={()=>setTamamlaModal(null)} style={{background:"rgba(255,255,255,.15)",border:"none",color:"#fff",width:"28px",height:"28px",borderRadius:"50%",cursor:"pointer",fontSize:"16px"}}>×</button>
+            </div>
+            <div style={{padding:"24px"}}>
+              <p style={{fontSize:"13px",color:"#888",marginBottom:"20px",lineHeight:1.7}}>
+                {dil==="tr"?"Tedaviyi tamamlamadan önce aşağıdaki beyanları onaylayın:":dil==="de"?"Bitte bestätigen Sie die folgenden Erklärungen:":dil==="ar"?"يرجى تأكيد البيانات التالية قبل إتمام العلاج:":dil==="ru"?"Пожалуйста, подтвердите следующие заявления:":dil==="fr"?"Veuillez confirmer les déclarations suivantes:":"Please confirm the following declarations before completing treatment:"}
+              </p>
+              {(dil==="tr"?[
+                "Tedavimi eksiksiz ve tatmin edici şekilde aldığımı onaylıyorum.",
+                "Klinik tarafından uygulanan tüm işlemlerin tarafıma önceden bildirildiğini ve onayımın alındığını beyan ediyorum.",
+                "Tedavi sürecinde herhangi bir sorun yaşadıysam bunu Medoqa ile paylaştığımı beyan ediyorum.",
+                "Tedavi sonrası herhangi bir sorun yaşarsam öncelikle Medoqa ile iletişime geçeceğimi kabul ediyorum.",
+              ]:dil==="de"?[
+                "Ich bestätige, dass ich meine Behandlung vollständig und zufriedenstellend erhalten habe.",
+                "Ich erkläre, dass alle von der Klinik durchgeführten Eingriffe mir im Voraus mitgeteilt wurden und meine Zustimmung eingeholt wurde.",
+                "Ich erkläre, dass ich etwaige Probleme während des Behandlungsprozesses mit Medoqa geteilt habe.",
+                "Ich akzeptiere, dass ich mich bei Problemen nach der Behandlung zunächst an Medoqa wenden werde.",
+              ]:dil==="ar"?[
+                "أؤكد أنني تلقيت علاجي بشكل كامل ومُرضٍ.",
+                "أُعلن أن جميع الإجراءات التي أجرتها العيادة قد أُبلغت لي مسبقاً وتم الحصول على موافقتي.",
+                "أُعلن أنني شاركت أي مشكلة واجهتها أثناء العلاج مع Medoqa.",
+                "أقبل أن أتواصل أولاً مع Medoqa في حال واجهت أي مشكلة بعد العلاج.",
+              ]:dil==="ru"?[
+                "Я подтверждаю, что получил(а) лечение в полном объёме и остался(ась) доволен(а).",
+                "Я заявляю, что обо всех процедурах, проведённых клиникой, мне было сообщено заранее и моё согласие было получено.",
+                "Я заявляю, что сообщил(а) Medoqa о любых проблемах, возникших в процессе лечения.",
+                "Я принимаю, что при возникновении проблем после лечения обращусь сначала в Medoqa.",
+              ]:dil==="fr"?[
+                "Je confirme avoir reçu mon traitement de manière complète et satisfaisante.",
+                "Je déclare que toutes les procédures effectuées par la clinique m'ont été communiquées à l'avance et que mon consentement a été obtenu.",
+                "Je déclare avoir partagé tout problème rencontré pendant le traitement avec Medoqa.",
+                "J'accepte de contacter Medoqa en priorité en cas de problème après le traitement.",
+              ]:[
+                "I confirm that I have received my treatment completely and satisfactorily.",
+                "I declare that all procedures performed by the clinic were communicated to me in advance and my consent was obtained.",
+                "I declare that I have shared any issues encountered during the treatment process with Medoqa.",
+                "I accept that I will contact Medoqa first if I experience any problems after the treatment.",
+              ]).map((madde,i)=>(
+                <label key={i} onClick={()=>setTamamlaKutular(prev=>({...prev,[i]:!prev[i]}))} style={{display:"flex",alignItems:"flex-start",gap:"12px",marginBottom:"12px",cursor:"pointer",padding:"12px",borderRadius:"8px",background:tamamlaKutular[i]?"#f0fff4":"#f9fafb",border:`1px solid ${tamamlaKutular[i]?"#059669":"#e5e7eb"}`,transition:"all .2s"}}>
+                  <div style={{width:"20px",height:"20px",borderRadius:"4px",border:`2px solid ${tamamlaKutular[i]?"#059669":"#cbd5e1"}`,background:tamamlaKutular[i]?"#059669":"#fff",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0,marginTop:"1px"}}>
+                    {tamamlaKutular[i]&&<span style={{color:"#fff",fontSize:"13px",fontWeight:700}}>✓</span>}
+                  </div>
+                  <span style={{fontSize:"13px",color:"#444",lineHeight:1.6}}>{madde}</span>
+                </label>
+              ))}
+              <div style={{display:"flex",gap:"10px",marginTop:"8px"}}>
+                <button onClick={()=>setTamamlaModal(null)} style={{flex:1,background:"#f9fafb",color:"#555",border:"1px solid #e5e7eb",padding:"11px",borderRadius:"8px",fontSize:"13px",cursor:"pointer"}}>
+                  {dil==="tr"?"İptal":dil==="de"?"Abbrechen":dil==="ar"?"إلغاء":dil==="ru"?"Отмена":dil==="fr"?"Annuler":"Cancel"}
+                </button>
+                <button
+                  disabled={Object.values(tamamlaKutular).filter(Boolean).length < 4}
+                  onClick={()=>{const id=tamamlaModal!;setTamamlaModal(null);tedaviTamamla(id);}}
+                  style={{flex:2,background:Object.values(tamamlaKutular).filter(Boolean).length<4?"#e5e7eb":"#059669",color:Object.values(tamamlaKutular).filter(Boolean).length<4?"#aaa":"#fff",border:"none",padding:"11px",borderRadius:"8px",fontSize:"13px",cursor:Object.values(tamamlaKutular).filter(Boolean).length<4?"not-allowed":"pointer",fontWeight:600}}>
+                  {Object.values(tamamlaKutular).filter(Boolean).length<4?`${Object.values(tamamlaKutular).filter(Boolean).length}/4`:dil==="tr"?"🏁 Tedavimi Tamamladım":dil==="de"?"🏁 Behandlung abgeschlossen":dil==="ar"?"🏁 أكملت علاجي":dil==="ru"?"🏁 Лечение завершено":dil==="fr"?"🏁 Traitement terminé":"🏁 Treatment Completed"}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
       {teklifOnayModal && (
         <div style={{position:"fixed",inset:0,background:"rgba(0,0,0,0.6)",zIndex:3000,display:"flex",alignItems:"center",justifyContent:"center",padding:"16px"}}>
           <div style={{background:"#fff",borderRadius:"16px",width:"100%",maxWidth:"520px",maxHeight:"90vh",overflow:"auto"}}>
