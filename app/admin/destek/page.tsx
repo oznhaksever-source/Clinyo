@@ -5,7 +5,7 @@ import { createClient } from "../../../utils/supabase/client";
 export default function AdminDestek() {
   const supabase = createClient();
   const [talepler, setTalepler] = useState<any[]>([]);
-  const [filtre, setFiltre] = useState<"beklemede"|"yanitlandi"|"hepsi">("bekleyen");
+  const [filtre, setFiltre] = useState<"beklemede"|"yanitlandi"|"hepsi">("beklemede");
   const [yukleniyor, setYukleniyor] = useState(true);
   const [yanitlar, setYanitlar] = useState<Record<string,string>>({});
   const [acikYanit, setAcikYanit] = useState<string|null>(null);
