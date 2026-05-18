@@ -362,6 +362,7 @@ export default function Admin() {
             { id: "talepler", ad: "Teklif Talepleri", badge: 0 },
             { id: "yorumlar", ad: "⭐ Yorumlar", badge: yorumlar.filter((y:any)=>!y.onaylandi&&!y.gizlendi).length },
             { id: "mesajlar", ad: "💬 Mesajlar", badge: 0 },
+            { id: "destek", ad: "🎯 Destek", badge: 0 },
           ].map((m) => (
             <div key={m.id} onClick={() => setAktifMenu(m.id)} style={{ padding: "10px 12px", borderRadius: "8px", cursor: "pointer", marginBottom: "4px", background: aktifMenu === m.id ? "#534AB7" : "transparent", color: aktifMenu === m.id ? "#fff" : "#8b8fc8", fontSize: "13px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
               <span>{m.ad}</span>
@@ -562,6 +563,12 @@ export default function Admin() {
                     </div>
                   )}
                 </div>
+              </div>
+            )}
+
+            {aktifMenu === "destek" && (
+              <div style={{textAlign:"center",padding:"48px"}}>
+                <a href="/admin/destek" style={{background:"#534AB7",color:"#fff",padding:"14px 28px",borderRadius:"10px",fontSize:"14px",textDecoration:"none",fontWeight:700}}>🎯 Destek Taleplerine Git →</a>
               </div>
             )}
 
