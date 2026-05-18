@@ -304,6 +304,8 @@ export default function KlinikPanel() {
   const [disPlanMap, setDisPlanMap] = useState<Record<string,Record<number,string[]>>>({});
   const [disTedaviMap, setDisTedaviMap] = useState<Record<string,{dis:number,hizmet_adi:string,fiyat:number,kategori:string}[]>>({});
   const [acikTalep, setAcikTalep] = useState<string|null>(null);
+  const [onayModal, setOnayModal] = useState<string|null>(null);
+  const [onayKutular, setOnayKutular] = useState<Record<number,boolean>>({});
 
   useEffect(()=>{veriYukle();},[]);
 
@@ -359,6 +361,13 @@ export default function KlinikPanel() {
   function getTeklifForm(talepId:string){return teklifFormlar[talepId]||{fiyat:"",aciklama:"",otel_dahil:false,otel_aciklama:"",otel_fiyat:"",transfer_dahil:false,transfer_aciklama:"",transfer_fiyat:""};}
   function setTeklifForm(talepId:string,data:any){setTeklifFormlar(prev=>({...prev,[talepId]:{...getTeklifForm(talepId),...data}}));}
 
+  function teklifOnayAc(talepId:string){
+    const form=getTeklifForm(talepId);
+    if(!form.fiyat){mesajGoster(m.fiyatZorunlu);return;}
+    setOnayKutular({});
+    setOnayModal(talepId);
+  }
+
   async function teklifGonder(talepId:string){
     const form=getTeklifForm(talepId);
     if(!form.fiyat){mesajGoster(m.fiyatZorunlu);return;}
@@ -409,6 +418,42 @@ export default function KlinikPanel() {
 
   return (
     <main style={{minHeight:"100vh",background:"#f9fafb",fontFamily:"sans-serif",display:"flex"}}>
+      {onayModal && (
+        <div style={{position:"fixed",inset:0,background:"rgba(0,0,0,0.6)",zIndex:3000,display:"flex",alignItems:"center",justifyContent:"center",padding:"16px"}}>
+          <div style={{background:"#fff",borderRadius:"16px",width:"100%",maxWidth:"520px",maxHeight:"90vh",overflow:"auto"}}>
+            <div style={{background:"#12103a",borderRadius:"16px 16px 0 0",padding:"16px 20px",display:"flex",justifyContent:"space-between",alignItems:"center"}}>
+              <div style={{fontSize:"16px",fontWeight:700,color:"#fff"}}>📋 Teklif Gönderme Onayı</div>
+              <button onClick={()=>setOnayModal(null)} style={{background:"rgba(255,255,255,.15)",border:"none",color:"#fff",width:"28px",height:"28px",borderRadius:"50%",cursor:"pointer",fontSize:"16px"}}>×</button>
+            </div>
+            <div style={{padding:"24px"}}>
+              <p style={{fontSize:"13px",color:"#888",marginBottom:"20px",lineHeight:1.7}}>Teklifi göndermeden önce aşağıdaki koşulları onaylayın:</p>
+              {[
+                "Gönderdiğim tedavi planı ve fiyat bilgilerinin doğru ve eksiksiz olduğunu onaylıyorum.",
+                "Ek işlem gerektiğinde hastayı platform üzerinden yazılı olarak bilgilendireceğimi ve onayını alacağımı taahhüt ediyorum.",
+                "Platform dışı ödeme talep etmeyeceğimi kabul ediyorum.",
+                "Medoqa'nın belirlediği kalite standartlarına uymayı taahhüt ediyorum.",
+                "Bu teklifi onayladığımda bir kopyasının Medoqa'ya iletileceğini anlıyorum.",
+              ].map((madde,i)=>(
+                <label key={i} onClick={()=>setOnayKutular(prev=>({...prev,[i]:!prev[i]}))} style={{display:"flex",alignItems:"flex-start",gap:"12px",marginBottom:"14px",cursor:"pointer",padding:"12px",borderRadius:"8px",background:onayKutular[i]?"#f0fff4":"#f9fafb",border:`1px solid ${onayKutular[i]?"#059669":"#e5e7eb"}`,transition:"all .2s"}}>
+                  <div style={{width:"20px",height:"20px",borderRadius:"4px",border:`2px solid ${onayKutular[i]?"#059669":"#cbd5e1"}`,background:onayKutular[i]?"#059669":"#fff",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0,marginTop:"1px"}}>
+                    {onayKutular[i]&&<span style={{color:"#fff",fontSize:"13px",fontWeight:700}}>✓</span>}
+                  </div>
+                  <span style={{fontSize:"13px",color:"#444",lineHeight:1.6}}>{madde}</span>
+                </label>
+              ))}
+              <div style={{display:"flex",gap:"10px",marginTop:"8px"}}>
+                <button onClick={()=>setOnayModal(null)} style={{flex:1,background:"#f9fafb",color:"#555",border:"1px solid #e5e7eb",padding:"11px",borderRadius:"8px",fontSize:"13px",cursor:"pointer"}}>İptal</button>
+                <button
+                  disabled={Object.values(onayKutular).filter(Boolean).length < 5}
+                  onClick={()=>{setOnayModal(null);teklifGonder(onayModal!);}}
+                  style={{flex:2,background:Object.values(onayKutular).filter(Boolean).length<5?"#e5e7eb":"#059669",color:Object.values(onayKutular).filter(Boolean).length<5?"#aaa":"#fff",border:"none",padding:"11px",borderRadius:"8px",fontSize:"13px",cursor:Object.values(onayKutular).filter(Boolean).length<5?"not-allowed":"pointer",fontWeight:600,transition:"all .2s"}}>
+                  {Object.values(onayKutular).filter(Boolean).length<5?`${Object.values(onayKutular).filter(Boolean).length}/5 onaylandı`:"✅ Teklifi Gönder"}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
       <aside style={{width:"230px",background:"#12103a",display:"flex",flexDirection:"column",padding:"24px 0",flexShrink:0}}>
         <div style={{padding:"0 20px 20px",borderBottom:"1px solid #1e1b4b"}}>
           <a href="/" style={{fontSize:"20px",fontWeight:700,color:"#fff",textDecoration:"none"}}>med<span style={{color:"#7F77DD",fontWeight:300}}>oqa</span></a>
@@ -577,7 +622,7 @@ export default function KlinikPanel() {
                       </div>
                       <div style={{display:"flex",justifyContent:"space-between",alignItems:"center"}}>
                         {form.fiyat&&(<div style={{fontSize:"15px",fontWeight:700,color:"#534AB7"}}>{m.toplam}: {((parseFloat(form.fiyat)||0)+(form.otel_dahil?parseFloat(form.otel_fiyat)||0:0)+(form.transfer_dahil?parseFloat(form.transfer_fiyat)||0:0)).toFixed(0)} EUR</div>)}
-                        <button onClick={()=>teklifGonder(t.id)} style={{background:"#059669",color:"#fff",border:"none",padding:"11px 28px",borderRadius:"10px",fontSize:"13px",cursor:"pointer",fontWeight:700,marginLeft:"auto"}}>{m.teklifGonder}</button>
+                        <button onClick={()=>teklifOnayAc(t.id)} style={{background:"#059669",color:"#fff",border:"none",padding:"11px 28px",borderRadius:"10px",fontSize:"13px",cursor:"pointer",fontWeight:700,marginLeft:"auto"}}>{m.teklifGonder}</button>
                       </div>
                     </div>)}
                   </div>);
