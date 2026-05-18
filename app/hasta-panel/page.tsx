@@ -82,7 +82,7 @@ const METINLER = {
     talepSayisi:"Teklif Talebim",teklifSayisi:"Gelen Teklif",bekleyen:"Bekleyen",
     teklifYok:"Henüz teklif talebiniz yok",teklifYokAcik:"İlk teklif talebinizi oluşturun.",
     teklifOlustur:"Teklif Talebi Oluştur",yeniTalep:"+ Yeni Teklif Talebi",cikisYap:"Çıkış Yap",
-    menu:{ozet:"Genel Özet",talepler:"Teklif Taleplerim",teklifler:"Gelen Teklifler",transferler:"🚗 Transferlerim",profil:"Profilim",mesajlar:"💬 Mesajlar"},
+    menu:{ozet:"Genel Özet",talepler:"Teklif Taleplerim",teklifler:"Gelen Teklifler",transferler:"🚗 Transferlerim",destek:"🎯 Medoqa Destek",profil:"Profilim",mesajlar:"💬 Mesajlar"},
     taleplerim:"Teklif Taleplerim",yeniTalepBtn:"+ Yeni Talep",talepYok:"Henüz teklif talebiniz yok",
     gelenTeklifler:"Gelen Teklifler",gelenYok:"Henüz gelen teklif yok.",detayGor:"Detayları gör →",
     onaylandi:"✅ Onaylandı",reddedildi:"❌ Reddedildi",beklemede:"⏳ Beklemede",
@@ -113,6 +113,19 @@ const METINLER = {
     kapat:"Kapat",iptal:"İptal",
     transferDurumu:{beklemede:"⏳ Beklemede",teklif_verildi:"📋 Teklif Geldi",onaylandi:"✅ Onaylandı"},
     transferTeklifGor:"Teklifleri Gör →",
+    // Destek
+    destekBaslik:"🎯 Medoqa Destek",
+    destekAcik:"Koordinatörlerimiz size yardımcı olmak için burada. Sorularınızı, şikayetlerinizi veya tedavi öncesi danışma taleplerinizi iletebilirsiniz.",
+    destekKonu:"Konu",
+    destekKonular:{genel:"Genel Soru",teklif:"Teklif Hakkında",sikayet:"Şikayet",danisma:"Tedavi Öncesi Danışma",diger:"Diğer"},
+    destekMesaj:"Mesajınız",
+    destekMesajPlaceholder:"Sorunuzu veya talebinizi detaylı olarak yazın...",
+    destekGonder:"📨 Gönder",
+    destekGonderildi:"✅ Mesajınız alındı! Koordinatörümüz en kısa sürede dönüş yapacak.",
+    destekTaleplerim:"Destek Taleplerim",
+    destekYok:"Henüz destek talebiniz yok.",
+    destekDurum:{beklemede:"⏳ Beklemede",yanitlandi:"✅ Yanıtlandı",kapandi:"🔒 Kapandı"},
+    destekYanitBaslik:"Koordinatör Yanıtı",
   },
   en:{
     baslik:"Patient Panel",
@@ -120,7 +133,7 @@ const METINLER = {
     talepSayisi:"My Requests",teklifSayisi:"Received Offers",bekleyen:"Pending",
     teklifYok:"No quote requests yet",teklifYokAcik:"Create your first quote request.",
     teklifOlustur:"Create Quote Request",yeniTalep:"+ New Quote Request",cikisYap:"Sign Out",
-    menu:{ozet:"Overview",talepler:"My Requests",teklifler:"Received Offers",transferler:"🚗 My Transfers",profil:"My Profile",mesajlar:"💬 Messages"},
+    menu:{ozet:"Overview",talepler:"My Requests",teklifler:"Received Offers",transferler:"🚗 My Transfers",destek:"🎯 Medoqa Support",profil:"My Profile",mesajlar:"💬 Messages"},
     taleplerim:"My Quote Requests",yeniTalepBtn:"+ New Request",talepYok:"No quote requests yet",
     gelenTeklifler:"Received Offers",gelenYok:"No offers received yet.",detayGor:"View details →",
     onaylandi:"✅ Approved",reddedildi:"❌ Rejected",beklemede:"⏳ Pending",
@@ -151,6 +164,18 @@ const METINLER = {
     kapat:"Close",iptal:"Cancel",
     transferDurumu:{beklemede:"⏳ Pending",teklif_verildi:"📋 Offer Received",onaylandi:"✅ Approved"},
     transferTeklifGor:"View Offers →",
+    destekBaslik:"🎯 Medoqa Support",
+    destekAcik:"Our coordinators are here to help you. You can send your questions, complaints or pre-treatment consultation requests.",
+    destekKonu:"Subject",
+    destekKonular:{genel:"General Question",teklif:"About an Offer",sikayet:"Complaint",danisma:"Pre-Treatment Consultation",diger:"Other"},
+    destekMesaj:"Your Message",
+    destekMesajPlaceholder:"Please describe your question or request in detail...",
+    destekGonder:"📨 Send",
+    destekGonderildi:"✅ Your message has been received! Our coordinator will get back to you shortly.",
+    destekTaleplerim:"My Support Requests",
+    destekYok:"No support requests yet.",
+    destekDurum:{beklemede:"⏳ Pending",yanitlandi:"✅ Answered",kapandi:"🔒 Closed"},
+    destekYanitBaslik:"Coordinator Response",
   },
   de:{
     baslik:"Patientenbereich",
@@ -158,7 +183,7 @@ const METINLER = {
     talepSayisi:"Meine Anfragen",teklifSayisi:"Erhaltene Angebote",bekleyen:"Ausstehend",
     teklifYok:"Noch keine Angebotsanfragen",teklifYokAcik:"Erstellen Sie Ihre erste Anfrage.",
     teklifOlustur:"Angebotsanfrage erstellen",yeniTalep:"+ Neue Anfrage",cikisYap:"Abmelden",
-    menu:{ozet:"Übersicht",talepler:"Meine Anfragen",teklifler:"Erhaltene Angebote",transferler:"🚗 Meine Transfers",profil:"Mein Profil",mesajlar:"💬 Nachrichten"},
+    menu:{ozet:"Übersicht",talepler:"Meine Anfragen",teklifler:"Erhaltene Angebote",transferler:"🚗 Meine Transfers",destek:"🎯 Medoqa Support",profil:"Mein Profil",mesajlar:"💬 Nachrichten"},
     taleplerim:"Meine Angebotsanfragen",yeniTalepBtn:"+ Neue Anfrage",talepYok:"Noch keine Anfragen",
     gelenTeklifler:"Erhaltene Angebote",gelenYok:"Noch keine Angebote erhalten.",detayGor:"Details ansehen →",
     onaylandi:"✅ Genehmigt",reddedildi:"❌ Abgelehnt",beklemede:"⏳ Ausstehend",
@@ -189,6 +214,18 @@ const METINLER = {
     kapat:"Schließen",iptal:"Abbrechen",
     transferDurumu:{beklemede:"⏳ Ausstehend",teklif_verildi:"📋 Angebot erhalten",onaylandi:"✅ Genehmigt"},
     transferTeklifGor:"Angebote ansehen →",
+    destekBaslik:"🎯 Medoqa Support",
+    destekAcik:"Unsere Koordinatoren sind für Sie da. Sie können Ihre Fragen, Beschwerden oder Beratungsanfragen senden.",
+    destekKonu:"Betreff",
+    destekKonular:{genel:"Allgemeine Frage",teklif:"Über ein Angebot",sikayet:"Beschwerde",danisma:"Beratung vor der Behandlung",diger:"Sonstiges"},
+    destekMesaj:"Ihre Nachricht",
+    destekMesajPlaceholder:"Bitte beschreiben Sie Ihre Frage oder Anfrage...",
+    destekGonder:"📨 Senden",
+    destekGonderildi:"✅ Ihre Nachricht wurde empfangen! Unser Koordinator wird sich in Kürze melden.",
+    destekTaleplerim:"Meine Support-Anfragen",
+    destekYok:"Noch keine Support-Anfragen.",
+    destekDurum:{beklemede:"⏳ Ausstehend",yanitlandi:"✅ Beantwortet",kapandi:"🔒 Geschlossen"},
+    destekYanitBaslik:"Koordinator-Antwort",
   },
 };
 
@@ -292,6 +329,7 @@ export default function HastaPanel() {
   const [talepler, setTalepler] = useState<any[]>([]);
   const [teklifler, setTeklifler] = useState<any[]>([]);
   const [transferTalepleri, setTransferTalepleri] = useState<any[]>([]);
+  const [destekTalepleri, setDestekTalepleri] = useState<any[]>([]);
   const [yukleniyor, setYukleniyor] = useState(true);
   const [mesaj, setMesaj] = useState("");
   const [acikTeklif, setAcikTeklif] = useState<any>(null);
@@ -299,6 +337,12 @@ export default function HastaPanel() {
   const {dil,dilDegistir} = useDil();
   const m = METINLER[dil as keyof typeof METINLER] || METINLER.en;
   const supabase = createClient();
+
+  // Destek formu state
+  const [destekKonu, setDestekKonu] = useState("genel");
+  const [destekMesajText, setDestekMesajText] = useState("");
+  const [destekYukleniyor, setDestekYukleniyor] = useState(false);
+  const [destekBasarili, setDestekBasarili] = useState(false);
 
   useEffect(()=>{veriYukle();},[]);
 
@@ -317,7 +361,30 @@ export default function HastaPanel() {
     }
     const {data:trData} = await supabase.from("transfer_talepleri").select("*").eq("hasta_id",user.id).order("created_at",{ascending:false});
     setTransferTalepleri(trData||[]);
+    const {data:destekData} = await supabase.from("destek_talepleri").select("*").eq("hasta_id",user.id).order("olusturma_tarihi",{ascending:false});
+    setDestekTalepleri(destekData||[]);
     setYukleniyor(false);
+  }
+
+  async function destekGonder() {
+    if (!destekMesajText.trim()) return;
+    setDestekYukleniyor(true);
+    const {data:{user}} = await supabase.auth.getUser();
+    const {error} = await supabase.from("destek_talepleri").insert({
+      hasta_id: user?.id,
+      hasta_ad: `${kullanici?.ad} ${kullanici?.soyad}`,
+      hasta_email: kullanici?.email,
+      konu: destekKonu,
+      mesaj: destekMesajText.trim(),
+      durum: "beklemede",
+    });
+    if (error) { setMesaj("Hata: "+error.message); setDestekYukleniyor(false); return; }
+    setDestekBasarili(true);
+    setDestekMesajText("");
+    setDestekKonu("genel");
+    setTimeout(()=>setDestekBasarili(false), 5000);
+    setDestekYukleniyor(false);
+    veriYukle();
   }
 
   async function tedaviTamamla(teklifId:string) {
@@ -356,6 +423,8 @@ export default function HastaPanel() {
     return {label:m.beklemede,bg:"#fff8e1",color:"#BA7517"};
   }
 
+  const bekleyenDestek = destekTalepleri.filter((d:any)=>d.durum==="beklemede").length;
+
   function TeklifModal({t}:{t:any}) {
     const disPlan:Record<number,string[]> = t.dis_plani?JSON.parse(t.dis_plani):{};
     const tedaviDetay:{dis:number,hizmet_adi:string,fiyat:number,kategori:string}[] = t.tedavi_detaylari?JSON.parse(t.tedavi_detaylari):[];
@@ -379,7 +448,6 @@ export default function HastaPanel() {
             <button onClick={()=>setAcikTeklif(null)} style={{background:"rgba(255,255,255,.15)",border:"none",color:"#fff",width:"32px",height:"32px",borderRadius:"50%",cursor:"pointer",fontSize:"18px",display:"flex",alignItems:"center",justifyContent:"center"}}>×</button>
           </div>
           <div style={{padding:"24px"}}>
-            {/* Klinik */}
             <div style={{background:"#fff",borderRadius:"14px",padding:"20px",marginBottom:"16px",display:"flex",gap:"14px",alignItems:"center",border:"1px solid #EEEDFE"}}>
               {klinik?.kapak_fotograf?<img src={klinik.kapak_fotograf} alt={klinik.ad} style={{width:"56px",height:"56px",borderRadius:"50%",objectFit:"cover",flexShrink:0}}/>:<div style={{width:"56px",height:"56px",borderRadius:"50%",background:"#EEEDFE",display:"flex",alignItems:"center",justifyContent:"center",fontSize:"20px",fontWeight:700,color:"#534AB7",flexShrink:0}}>{klinik?.ad?.[0]?.toUpperCase()||"K"}</div>}
               <div style={{flex:1}}>
@@ -393,13 +461,11 @@ export default function HastaPanel() {
               </div>
             </div>
 
-            {/* Transfer uyarısı */}
             {transferGerekli&&(<div style={{background:"#fff8e1",border:"1px solid #f59e0b",borderRadius:"12px",padding:"14px 16px",marginBottom:"16px",display:"flex",justifyContent:"space-between",alignItems:"center",gap:"12px"}}>
               <div style={{fontSize:"12px",color:"#78350f"}}>{m.transferUyari}</div>
               <button onClick={()=>{setAcikTeklif(null);setTransferModal(t);}} style={{background:"#f59e0b",color:"#fff",border:"none",padding:"8px 16px",borderRadius:"8px",fontSize:"12px",cursor:"pointer",fontWeight:700,flexShrink:0}}>{m.transferTalebiOlustur}</button>
             </div>)}
 
-            {/* Diş şeması */}
             {Object.keys(disPlan).length>0&&(<div style={{background:"#fff",borderRadius:"14px",padding:"20px",marginBottom:"16px",border:"1px solid #EEEDFE"}}>
               <div style={{fontSize:"15px",fontWeight:700,color:"#12103a",marginBottom:"14px"}}>{m.tedaviPlani}</div>
               <p style={{fontSize:"9px",color:"#94a3b8",textAlign:"center",margin:"0 0 4px",letterSpacing:".6px",textTransform:"uppercase"}}>{m.ustCene}</p>
@@ -409,13 +475,11 @@ export default function HastaPanel() {
               <p style={{fontSize:"9px",color:"#94a3b8",textAlign:"center",margin:"4px 0 10px",letterSpacing:".6px",textTransform:"uppercase"}}>{m.altCene}</p>
             </div>)}
 
-            {/* Tedaviler */}
             {tedaviDetay.length>0&&(<div style={{background:"#fff",borderRadius:"14px",padding:"20px",marginBottom:"16px",border:"1px solid #EEEDFE"}}>
               <div style={{fontSize:"15px",fontWeight:700,color:"#12103a",marginBottom:"14px"}}>{m.tedaviler}</div>
               {tedaviDetay.map((d:any,i:number)=>{const ac=ack[d.kategori];const renk=RENKLER[d.kategori]||RENKLER.default;return(<div key={i} style={{display:"flex",gap:"14px",alignItems:"flex-start",padding:"12px",background:"#f8f9ff",borderRadius:"10px",border:"1px solid #EEEDFE",marginBottom:"8px"}}><div style={{width:"40px",height:"40px",borderRadius:"8px",background:renk+"22",border:`1px solid ${renk}44`,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}><div style={{width:"14px",height:"14px",borderRadius:"3px",background:renk}}/></div><div style={{flex:1}}><div style={{display:"flex",justifyContent:"space-between",marginBottom:"4px"}}><div><span style={{fontSize:"13px",fontWeight:700,color:"#12103a"}}>{toothWord} {d.dis}</span><span style={{fontSize:"12px",color:"#64748b",marginLeft:"6px"}}>— {d.hizmet_adi}</span></div><span style={{fontSize:"14px",fontWeight:700,color:"#534AB7"}}>{d.fiyat} EUR</span></div>{ac&&<div style={{fontSize:"12px",color:"#64748b",lineHeight:1.6,marginBottom:"4px"}}>{ac.aciklama}</div>}{ac&&<span style={{fontSize:"11px",background:"#fff",color:"#94a3b8",padding:"2px 8px",borderRadius:"8px",border:"1px solid #EEEDFE"}}>⏱ {ac.sure}</span>}</div></div>);})}
             </div>)}
 
-            {/* Fiyat */}
             <div style={{background:"#fff",borderRadius:"14px",padding:"20px",marginBottom:"16px",border:"1px solid #EEEDFE"}}>
               <div style={{fontSize:"15px",fontWeight:700,color:"#12103a",marginBottom:"14px"}}>{m.fiyatOzeti}</div>
               {tedaviDetay.length>0?tedaviDetay.map((d:any,i:number)=>(<div key={i} style={{display:"flex",justifyContent:"space-between",padding:"7px 0",borderBottom:"1px solid #f5f5f5",fontSize:"13px"}}><span>{toothWord} {d.dis} — {d.hizmet_adi}</span><span style={{fontWeight:600,color:"#534AB7"}}>{d.fiyat} EUR</span></div>)):(<div style={{display:"flex",justifyContent:"space-between",padding:"7px 0",borderBottom:"1px solid #f5f5f5",fontSize:"13px"}}><span>{m.tedaviUcreti}</span><span style={{fontWeight:600,color:"#534AB7"}}>{t.fiyat} EUR</span></div>)}
@@ -424,40 +488,23 @@ export default function HastaPanel() {
               <div style={{display:"flex",justifyContent:"space-between",padding:"12px 0 0",fontSize:"16px",fontWeight:700}}><span style={{color:"#12103a"}}>{m.toplam}</span><span style={{color:"#534AB7",fontSize:"20px"}}>{t.toplam_fiyat||t.fiyat} EUR</span></div>
             </div>
 
-            {/* Butonlar */}
             {t.durum==="beklemede"&&(<div style={{display:"flex",gap:"10px",marginBottom:"12px"}}>
               <button onClick={()=>teklifOnayla(t)} style={{flex:2,background:"#059669",color:"#fff",border:"none",padding:"13px",borderRadius:"10px",fontSize:"14px",cursor:"pointer",fontWeight:700}}>{m.teklifOnayla}</button>
               <button onClick={()=>teklifReddet(t.id)} style={{flex:1,background:"#fff0f0",color:"#c00",border:"1px solid #fcc",padding:"13px",borderRadius:"10px",fontSize:"13px",cursor:"pointer",fontWeight:600}}>{m.teklifReddet}</button>
             </div>)}
 
-            {/* Onaylandı ama tedavi tamamlanmadı */}
             {t.durum==="onaylandi" && !t.tedavi_tamamlandi && (
               <div>
                 <a href="/mesajlar" style={{display:"flex",alignItems:"center",justifyContent:"center",gap:"8px",background:"#534AB7",color:"#fff",padding:"13px",borderRadius:"10px",fontSize:"14px",textDecoration:"none",fontWeight:700,marginBottom:"12px"}}>{m.mesajlas}</a>
-                <button onClick={()=>tedaviTamamla(t.id)} style={{width:"100%",background:"#059669",color:"#fff",border:"none",padding:"13px",borderRadius:"10px",fontSize:"14px",cursor:"pointer",fontWeight:700}}>
-                  {m.tedaviTamamlandiBtn}
-                </button>
+                <button onClick={()=>tedaviTamamla(t.id)} style={{width:"100%",background:"#059669",color:"#fff",border:"none",padding:"13px",borderRadius:"10px",fontSize:"14px",cursor:"pointer",fontWeight:700}}>{m.tedaviTamamlandiBtn}</button>
               </div>
             )}
 
-            {/* Tedavi tamamlandı → yorum formu */}
             {t.tedavi_tamamlandi && (
               <div>
-                <div style={{background:"#f0fff4",border:"1px solid #9f9",borderRadius:"10px",padding:"12px 16px",marginBottom:"12px",fontSize:"13px",color:"#059669",fontWeight:600,textAlign:"center"}}>
-                  {m.tedaviTamamlandi} 🎉
-                </div>
+                <div style={{background:"#f0fff4",border:"1px solid #9f9",borderRadius:"10px",padding:"12px 16px",marginBottom:"12px",fontSize:"13px",color:"#059669",fontWeight:600,textAlign:"center"}}>{m.tedaviTamamlandi} 🎉</div>
                 <a href="/mesajlar" style={{display:"flex",alignItems:"center",justifyContent:"center",gap:"8px",background:"#534AB7",color:"#fff",padding:"13px",borderRadius:"10px",fontSize:"14px",textDecoration:"none",fontWeight:700,marginBottom:"12px"}}>{m.mesajlas}</a>
-                {kullanici && (
-                  <YorumFormu
-                    klinikId={t.klinik_id}
-                    tedaviTuru={t.talepler?.tedavi_turu||""}
-                    hastaId={kullanici.id}
-                    hastaAd={`${kullanici.ad} ${kullanici.soyad}`}
-                    hastaEmail={kullanici.email}
-                    teklifId={t.id}
-                    onTamamlandi={()=>setAcikTeklif(null)}
-                  />
-                )}
+                {kullanici && (<YorumFormu klinikId={t.klinik_id} tedaviTuru={t.talepler?.tedavi_turu||""} hastaId={kullanici.id} hastaAd={`${kullanici.ad} ${kullanici.soyad}`} hastaEmail={kullanici.email} teklifId={t.id} onTamamlandi={()=>setAcikTeklif(null)}/>)}
               </div>
             )}
           </div>
@@ -465,6 +512,8 @@ export default function HastaPanel() {
       </div>
     );
   }
+
+  const inputStyle: React.CSSProperties = {width:"100%",border:"1px solid #e5e7eb",borderRadius:"8px",padding:"10px 12px",fontSize:"13px",outline:"none",boxSizing:"border-box"};
 
   return (
     <main style={{minHeight:"100vh",background:"#f9fafb",fontFamily:"sans-serif",display:"flex"}}>
@@ -485,9 +534,10 @@ export default function HastaPanel() {
           {(["tr","en","de","ar","ru","fr"] as const).map(d=>(<span key={d} onClick={()=>dilDegistir(d)} style={{fontSize:"10px",padding:"3px 8px",border:`1px solid ${dil===d?"#534AB7":"#2a2a4e"}`,borderRadius:"4px",color:dil===d?"#7F77DD":"#aab4c8",cursor:"pointer",textTransform:"uppercase"}}>{d}</span>))}
         </div>
         <div style={{padding:"16px 12px",flex:1}}>
-          {(["ozet","talepler","teklifler","transferler","profil","mesajlar"] as const).map(id=>(<div key={id} onClick={()=>setAktifMenu(id)} style={{padding:"10px 12px",borderRadius:"8px",cursor:"pointer",marginBottom:"4px",background:aktifMenu===id?"#534AB7":"transparent",color:aktifMenu===id?"#fff":"#8b8fc8",fontSize:"13px",display:"flex",alignItems:"center",justifyContent:"space-between"}}>
+          {(["ozet","talepler","teklifler","transferler","destek","profil","mesajlar"] as const).map(id=>(<div key={id} onClick={()=>setAktifMenu(id)} style={{padding:"10px 12px",borderRadius:"8px",cursor:"pointer",marginBottom:"4px",background:aktifMenu===id?"#534AB7":"transparent",color:aktifMenu===id?"#fff":"#8b8fc8",fontSize:"13px",display:"flex",alignItems:"center",justifyContent:"space-between"}}>
             <span>{m.menu[id]}</span>
             {id==="transferler"&&transferTalepleri.length>0&&(<span style={{background:"#BA7517",color:"#fff",fontSize:"10px",padding:"1px 6px",borderRadius:"10px"}}>{transferTalepleri.filter((t:any)=>t.durum==="beklemede").length||""}</span>)}
+            {id==="destek"&&bekleyenDestek>0&&(<span style={{background:"#BA7517",color:"#fff",fontSize:"10px",padding:"1px 6px",borderRadius:"10px"}}>{bekleyenDestek}</span>)}
           </div>))}
         </div>
         <div style={{padding:"0 12px 20px"}}>
@@ -525,6 +575,67 @@ export default function HastaPanel() {
             {aktifMenu==="transferler"&&(<div>
               <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:"24px"}}><h1 style={{fontSize:"24px",fontWeight:700,color:"#12103a"}}>{m.transferlerim}</h1><button onClick={()=>setTransferModal({})} style={{background:"#534AB7",color:"#fff",border:"none",padding:"10px 20px",borderRadius:"8px",fontSize:"13px",cursor:"pointer"}}>+ {m.transferTalebiBaslik}</button></div>
               {transferTalepleri.length===0?(<div style={{background:"#fff",border:"1px solid #EEEDFE",borderRadius:"12px",padding:"48px",textAlign:"center"}}><div style={{fontSize:"48px",marginBottom:"16px"}}>🚗</div><div style={{fontSize:"13px",color:"#888"}}>{m.transferYok}</div></div>):(<div style={{display:"flex",flexDirection:"column",gap:"12px"}}>{transferTalepleri.map((tr:any)=>{const durumLabel=(m.transferDurumu as any)[tr.durum]||tr.durum;const durumRenk=tr.durum==="onaylandi"?"#059669":tr.durum==="teklif_verildi"?"#534AB7":"#BA7517";const durumBg=tr.durum==="onaylandi"?"#f0fff4":tr.durum==="teklif_verildi"?"#f0eeff":"#fff8e1";return(<div key={tr.id} style={{background:"#fff",border:"1px solid #EEEDFE",borderRadius:"12px",padding:"20px"}}><div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:"12px"}}><div><div style={{fontSize:"15px",fontWeight:700,color:"#12103a",marginBottom:"4px"}}>🚗 {tr.sehir} — {tr.havalimani||"—"}</div><div style={{fontSize:"12px",color:"#888"}}>📅 {tr.tedavi_baslangic}</div></div><span style={{fontSize:"11px",padding:"4px 12px",borderRadius:"20px",fontWeight:600,background:durumBg,color:durumRenk}}>{durumLabel}</span></div></div>);})}</div>)}
+            </div>)}
+
+            {/* ── MEDOQA DESTEK ── */}
+            {aktifMenu==="destek"&&(<div>
+              <h1 style={{fontSize:"24px",fontWeight:700,color:"#12103a",marginBottom:"8px"}}>{m.destekBaslik}</h1>
+              <p style={{fontSize:"14px",color:"#888",marginBottom:"24px"}}>{m.destekAcik}</p>
+
+              {/* Yeni destek talebi formu */}
+              <div style={{background:"#fff",border:"1px solid #EEEDFE",borderRadius:"12px",padding:"24px",marginBottom:"24px"}}>
+                <h2 style={{fontSize:"16px",fontWeight:700,color:"#12103a",marginBottom:"16px"}}>📨 Yeni Destek Talebi</h2>
+
+                {destekBasarili && (<div style={{background:"#f0fff4",border:"1px solid #9f9",borderRadius:"8px",padding:"12px 16px",marginBottom:"16px",fontSize:"13px",color:"#0a7a3a",fontWeight:600}}>{m.destekGonderildi}</div>)}
+
+                <div style={{marginBottom:"12px"}}>
+                  <label style={{fontSize:"12px",color:"#888",display:"block",marginBottom:"6px"}}>{m.destekKonu}</label>
+                  <select value={destekKonu} onChange={e=>setDestekKonu(e.target.value)} style={{...inputStyle,background:"#fff"}}>
+                    {Object.entries(m.destekKonular).map(([k,v])=>(<option key={k} value={k}>{v as string}</option>))}
+                  </select>
+                </div>
+
+                <div style={{marginBottom:"16px"}}>
+                  <label style={{fontSize:"12px",color:"#888",display:"block",marginBottom:"6px"}}>{m.destekMesaj} *</label>
+                  <textarea rows={5} placeholder={m.destekMesajPlaceholder} value={destekMesajText} onChange={e=>setDestekMesajText(e.target.value)} style={{...inputStyle,resize:"none"}}/>
+                </div>
+
+                <button onClick={destekGonder} disabled={destekYukleniyor||!destekMesajText.trim()} style={{width:"100%",background:"#534AB7",color:"#fff",border:"none",padding:"13px",borderRadius:"10px",fontSize:"14px",cursor:"pointer",fontWeight:700,opacity:(destekYukleniyor||!destekMesajText.trim())?0.6:1}}>
+                  {destekYukleniyor?"⏳ Gönderiliyor...":m.destekGonder}
+                </button>
+              </div>
+
+              {/* Geçmiş destek talepleri */}
+              <h2 style={{fontSize:"16px",fontWeight:700,color:"#12103a",marginBottom:"16px"}}>{m.destekTaleplerim}</h2>
+              {destekTalepleri.length===0?(
+                <div style={{background:"#fff",border:"1px solid #EEEDFE",borderRadius:"12px",padding:"32px",textAlign:"center",color:"#888",fontSize:"13px"}}>{m.destekYok}</div>
+              ):(
+                <div style={{display:"flex",flexDirection:"column",gap:"12px"}}>
+                  {destekTalepleri.map((d:any)=>{
+                    const durumLabel = (m.destekDurum as any)[d.durum]||d.durum;
+                    const durumBg = d.durum==="yanitlandi"?"#f0fff4":d.durum==="kapandi"?"#f0f0f0":"#fff8e1";
+                    const durumRenk = d.durum==="yanitlandi"?"#059669":d.durum==="kapandi"?"#888":"#BA7517";
+                    return(
+                      <div key={d.id} style={{background:"#fff",border:`1px solid ${d.durum==="yanitlandi"?"#059669":"#EEEDFE"}`,borderRadius:"12px",padding:"20px"}}>
+                        <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:"10px"}}>
+                          <div>
+                            <div style={{fontSize:"13px",fontWeight:600,color:"#12103a"}}>{(m.destekKonular as any)[d.konu]||d.konu}</div>
+                            <div style={{fontSize:"11px",color:"#888",marginTop:"2px"}}>{new Date(d.olusturma_tarihi).toLocaleDateString()}</div>
+                          </div>
+                          <span style={{fontSize:"11px",padding:"3px 10px",borderRadius:"20px",fontWeight:600,background:durumBg,color:durumRenk}}>{durumLabel}</span>
+                        </div>
+                        <p style={{fontSize:"13px",color:"#444",lineHeight:1.6,margin:"0 0 10px",background:"#f9fafb",padding:"10px 12px",borderRadius:"8px"}}>{d.mesaj}</p>
+                        {d.admin_yanit && (
+                          <div style={{background:"#f0eeff",borderRadius:"8px",padding:"12px",borderLeft:"3px solid #534AB7"}}>
+                            <div style={{fontSize:"11px",fontWeight:600,color:"#534AB7",marginBottom:"4px"}}>🎯 {m.destekYanitBaslik}</div>
+                            <p style={{fontSize:"12px",color:"#555",lineHeight:1.6,margin:0}}>{d.admin_yanit}</p>
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
             </div>)}
 
             {aktifMenu==="profil"&&(<div>
