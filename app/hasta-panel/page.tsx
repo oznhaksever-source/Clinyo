@@ -334,6 +334,8 @@ export default function HastaPanel() {
   const [mesaj, setMesaj] = useState("");
   const [acikTeklif, setAcikTeklif] = useState<any>(null);
   const [transferModal, setTransferModal] = useState<any>(null);
+  const [teklifOnayModal, setTeklifOnayModal] = useState<any>(null);
+  const [teklifOnayKutular, setTeklifOnayKutular] = useState<Record<number,boolean>>({});
   const {dil,dilDegistir} = useDil();
   const m = METINLER[dil as keyof typeof METINLER] || METINLER.en;
   const supabase = createClient();
@@ -395,6 +397,11 @@ export default function HastaPanel() {
     setTimeout(()=>setMesaj(""),5000);
     setAcikTeklif(null);
     veriYukle();
+  }
+
+  function teklifOnayAc(t:any) {
+    setTeklifOnayKutular({});
+    setTeklifOnayModal(t);
   }
 
   async function teklifOnayla(t:any) {
@@ -489,7 +496,7 @@ export default function HastaPanel() {
             </div>
 
             {t.durum==="beklemede"&&(<div style={{display:"flex",gap:"10px",marginBottom:"12px"}}>
-              <button onClick={()=>teklifOnayla(t)} style={{flex:2,background:"#059669",color:"#fff",border:"none",padding:"13px",borderRadius:"10px",fontSize:"14px",cursor:"pointer",fontWeight:700}}>{m.teklifOnayla}</button>
+              <button onClick={()=>teklifOnayAc(t)} style={{flex:2,background:"#059669",color:"#fff",border:"none",padding:"13px",borderRadius:"10px",fontSize:"14px",cursor:"pointer",fontWeight:700}}>{m.teklifOnayla}</button>
               <button onClick={()=>teklifReddet(t.id)} style={{flex:1,background:"#fff0f0",color:"#c00",border:"1px solid #fcc",padding:"13px",borderRadius:"10px",fontSize:"13px",cursor:"pointer",fontWeight:600}}>{m.teklifReddet}</button>
             </div>)}
 
@@ -518,6 +525,44 @@ export default function HastaPanel() {
   return (
     <main style={{minHeight:"100vh",background:"#f9fafb",fontFamily:"sans-serif",display:"flex"}}>
       {acikTeklif&&<TeklifModal t={acikTeklif}/>}
+      {teklifOnayModal && (
+        <div style={{position:"fixed",inset:0,background:"rgba(0,0,0,0.6)",zIndex:3000,display:"flex",alignItems:"center",justifyContent:"center",padding:"16px"}}>
+          <div style={{background:"#fff",borderRadius:"16px",width:"100%",maxWidth:"520px",maxHeight:"90vh",overflow:"auto"}}>
+            <div style={{background:"#12103a",borderRadius:"16px 16px 0 0",padding:"16px 20px",display:"flex",justifyContent:"space-between",alignItems:"center"}}>
+              <div style={{fontSize:"16px",fontWeight:700,color:"#fff"}}>📋 Tedavi Teklifi Kabul Beyanı</div>
+              <button onClick={()=>setTeklifOnayModal(null)} style={{background:"rgba(255,255,255,.15)",border:"none",color:"#fff",width:"28px",height:"28px",borderRadius:"50%",cursor:"pointer",fontSize:"16px"}}>×</button>
+            </div>
+            <div style={{padding:"24px"}}>
+              <p style={{fontSize:"13px",color:"#888",marginBottom:"20px",lineHeight:1.7}}>Teklifi onaylamadan önce aşağıdaki koşulları okuyun ve kabul edin:</p>
+              {[
+                "Kliniğin sunduğu tedavi teklifini, fiyatı ve tedavi kapsamını eksiksiz okudum ve anladım.",
+                "Medoqa ekibinin gelen teklifleri değerlendirdiğini ve makul fiyat aralığı dışındaki teklifler için beni bilgilendireceğini anlıyorum.",
+                "Tedavi sırasında öngörülemeyen ek işlemler gerekebileceğini, bu durumda klinik tarafından yazılı olarak bilgilendirileceğimi ve onayım alınmadan ek işlem uygulanmayacağını kabul ediyorum.",
+                "Ek işlem tekliflerini Medoqa platformu üzerinden onaylayacağımı ve platform dışı ek ücret taleplerini Medoqa'ya bildireceğimi kabul ediyorum.",
+                "Tedavi sürecinde yaşadığım her türlü sorunu öncelikle Medoqa'ya ileteceğimi ve Medoqa'nın arabuluculuk hizmeti sunacağını anlıyorum.",
+                "Kişisel sağlık verilerimin yalnızca tedavi amacıyla ilgili klinikle paylaşılacağını ve üçüncü taraflarla paylaşılmayacağını anlıyorum.",
+                "Bu onayın bir kopyasının mail adresime gönderileceğini anlıyorum.",
+              ].map((madde,i)=>(
+                <label key={i} onClick={()=>setTeklifOnayKutular(prev=>({...prev,[i]:!prev[i]}))} style={{display:"flex",alignItems:"flex-start",gap:"12px",marginBottom:"12px",cursor:"pointer",padding:"12px",borderRadius:"8px",background:teklifOnayKutular[i]?"#f0fff4":"#f9fafb",border:`1px solid ${teklifOnayKutular[i]?"#059669":"#e5e7eb"}`,transition:"all .2s"}}>
+                  <div style={{width:"20px",height:"20px",borderRadius:"4px",border:`2px solid ${teklifOnayKutular[i]?"#059669":"#cbd5e1"}`,background:teklifOnayKutular[i]?"#059669":"#fff",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0,marginTop:"1px"}}>
+                    {teklifOnayKutular[i]&&<span style={{color:"#fff",fontSize:"13px",fontWeight:700}}>✓</span>}
+                  </div>
+                  <span style={{fontSize:"13px",color:"#444",lineHeight:1.6}}>{madde}</span>
+                </label>
+              ))}
+              <div style={{display:"flex",gap:"10px",marginTop:"8px"}}>
+                <button onClick={()=>setTeklifOnayModal(null)} style={{flex:1,background:"#f9fafb",color:"#555",border:"1px solid #e5e7eb",padding:"11px",borderRadius:"8px",fontSize:"13px",cursor:"pointer"}}>İptal</button>
+                <button
+                  disabled={Object.values(teklifOnayKutular).filter(Boolean).length < 7}
+                  onClick={()=>{const t=teklifOnayModal;setTeklifOnayModal(null);setAcikTeklif(null);teklifOnayla(t);}}
+                  style={{flex:2,background:Object.values(teklifOnayKutular).filter(Boolean).length<7?"#e5e7eb":"#059669",color:Object.values(teklifOnayKutular).filter(Boolean).length<7?"#aaa":"#fff",border:"none",padding:"11px",borderRadius:"8px",fontSize:"13px",cursor:Object.values(teklifOnayKutular).filter(Boolean).length<7?"not-allowed":"pointer",fontWeight:600}}>
+                  {Object.values(teklifOnayKutular).filter(Boolean).length<7?`${Object.values(teklifOnayKutular).filter(Boolean).length}/7 onaylandı`:"✅ Teklifi Onayla"}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
       {transferModal&&(<TransferModal teklif={transferModal} m={m} supabase={supabase} onKapat={()=>setTransferModal(null)} onGonderildi={()=>{setTransferModal(null);setMesaj(m.talepGonderildi);setTimeout(()=>setMesaj(""),4000);setAktifMenu("transferler");veriYukle();}}/>)}
 
       <div style={{width:"220px",background:"#12103a",display:"flex",flexDirection:"column",padding:"24px 0",flexShrink:0}}>
