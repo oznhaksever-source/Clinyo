@@ -1,0 +1,21 @@
+User-agent: *
+Allow: /
+
+# Admin ve panel sayfaları indexlenmesin
+Disallow: /admin
+Disallow: /admin/
+Disallow: /hasta-panel
+Disallow: /hasta-panel/
+Disallow: /klinik-panel
+Disallow: /klinik-panel/
+Disallow: /otel-panel
+Disallow: /otel-panel/
+Disallow: /transfer-panel
+Disallow: /transfer-panel/
+Disallow: /mesajlar
+Disallow: /mesajlar/
+Disallow: /api/
+Disallow: /giris
+
+# Sitemap
+Sitemap: https://www.medoqa.com/sitemap.xml
