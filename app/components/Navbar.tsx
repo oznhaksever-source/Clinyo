@@ -36,12 +36,16 @@ export default function Navbar() {
     return "/hasta-panel";
   }
 
+  const dilMetin: Record<string, string> = {
+    tr: "Hakkımızda", en: "About", de: "Über uns",
+    ar: "من نحن", ru: "О нас", fr: "À propos",
+  };
   const linkler = [
     { href: "/klinikler", label: t.nav.klinikler },
     { href: "/tedaviler", label: t.nav.tedaviler },
     { href: "/oteller", label: t.nav.oteller },
     { href: "/transfer", label: t.nav.transfer },
-    { href: "/harita", label: t.nav.harita },
+    { href: "/hakkimizda", label: dilMetin[dil] || "About" },
     { href: "/nasil-calisir", label: t.nav.nasilCalisir },
   ];
 
