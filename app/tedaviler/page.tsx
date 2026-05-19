@@ -1,143 +1,167 @@
 "use client";
-import { useState, useEffect } from "react";
 import { useDil } from "../locales/context";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 
-export default function Tedaviler() {
+const TEDAVILER = [
+  {
+    id: "dis-tedavisi",
+    ikon: "🦷",
+    foto: "https://images.unsplash.com/photo-1606811841689-23dfddce3e95?w=600&h=400&fit=crop",
+    renk: "#534AB7",
+    tr: { baslik: "Diş Tedavisi", aciklama: "Türkiye'de dünya standartlarında diş tedavisi. Avrupa fiyatlarının çok altında implant, kaplama, veneer ve daha fazlası.", alt: ["Diş İmplantı", "Zirkonyum Kron", "Veneer", "Kanal Tedavisi", "Gülüş Tasarımı", "Diş Beyazlatma"], fiyat: "€200'den başlayan" },
+    en: { baslik: "Dental Treatment", aciklama: "World-class dental care in Turkey. Implants, crowns, veneers and more at a fraction of European prices.", alt: ["Dental Implant", "Zirconia Crown", "Veneers", "Root Canal", "Smile Design", "Teeth Whitening"], fiyat: "From €200" },
+    de: { baslik: "Zahnbehandlung", aciklama: "Zahnpflege auf Weltniveau in der Türkei. Implantate, Kronen, Veneers und mehr.", alt: ["Zahnimplantat", "Zirkonkrone", "Veneers", "Wurzelkanal", "Smile Design", "Bleaching"], fiyat: "Ab €200" },
+    ar: { baslik: "علاج الأسنان", aciklama: "رعاية أسنان عالمية في تركيا. زراعة وتيجان وقشور وأكثر.", alt: ["زراعة الأسنان", "تاج زركوني", "قشور", "علاج العصب", "تصميم الابتسامة", "تبييض"], fiyat: "من €200" },
+    ru: { baslik: "Стоматология", aciklama: "Стоматология мирового уровня в Турции. Импланты, коронки, виниры и многое другое.", alt: ["Имплант", "Циркониевая коронка", "Виниры", "Канал", "Дизайн улыбки", "Отбеливание"], fiyat: "От €200" },
+    fr: { baslik: "Soins dentaires", aciklama: "Soins dentaires de classe mondiale en Turquie. Implants, couronnes, facettes et plus.", alt: ["Implant dentaire", "Couronne zircone", "Facettes", "Canal", "Smile Design", "Blanchiment"], fiyat: "À partir de €200" },
+  },
+  {
+    id: "sac-ekimi",
+    ikon: "💇",
+    foto: "https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=600&h=400&fit=crop",
+    renk: "#059669",
+    tr: { baslik: "Saç Ekimi", aciklama: "Türkiye dünyada saç ekiminde 1 numara. FUE, DHI ve Safir tekniklerle kalıcı, doğal sonuçlar.", alt: ["FUE Saç Ekimi", "DHI Tekniği", "Safir FUE", "Sakal Ekimi", "Kaş Ekimi", "PRP Tedavisi"], fiyat: "€1.500'den başlayan" },
+    en: { baslik: "Hair Transplant", aciklama: "Turkey is the world's #1 destination for hair transplants. FUE, DHI and Sapphire techniques.", alt: ["FUE Hair Transplant", "DHI Technique", "Sapphire FUE", "Beard Transplant", "Eyebrow Transplant", "PRP Treatment"], fiyat: "From €1,500" },
+    de: { baslik: "Haartransplantation", aciklama: "Die Türkei ist weltweit führend bei Haartransplantationen. FUE, DHI und Saphir-Techniken.", alt: ["FUE Haartransplantation", "DHI-Technik", "Saphir FUE", "Barttransplantation", "Brauentransplantation", "PRP-Behandlung"], fiyat: "Ab €1.500" },
+    ar: { baslik: "زراعة الشعر", aciklama: "تركيا الأولى عالمياً في زراعة الشعر. تقنيات FUE وDHI والسافير.", alt: ["زراعة FUE", "تقنية DHI", "سافير FUE", "زراعة اللحية", "زراعة الحواجب", "علاج PRP"], fiyat: "من €1,500" },
+    ru: { baslik: "Пересадка волос", aciklama: "Турция — лидер в пересадке волос. Техники FUE, DHI и сапфировый FUE.", alt: ["FUE пересадка", "DHI техника", "Сапфировый FUE", "Пересадка бороды", "Пересадка бровей", "PRP терапия"], fiyat: "От €1.500" },
+    fr: { baslik: "Greffe de cheveux", aciklama: "La Turquie est la destination n°1 mondiale pour la greffe de cheveux. FUE, DHI et Saphir.", alt: ["Greffe FUE", "Technique DHI", "FUE Saphir", "Greffe de barbe", "Greffe de sourcils", "Traitement PRP"], fiyat: "À partir de €1.500" },
+  },
+  {
+    id: "goz-ameliyati",
+    ikon: "👁️",
+    foto: "https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?w=600&h=400&fit=crop",
+    renk: "#0891B2",
+    tr: { baslik: "Göz Ameliyatı", aciklama: "Lazer göz ameliyatı ile gözlük ve lenslerden kurtulun. Lasik, Lasek, Smile Pro ve ICL seçenekleri.", alt: ["Lasik", "Lasek", "Smile Pro", "ICL Lens", "Katarakt", "Multifokal Lens"], fiyat: "€800'den başlayan" },
+    en: { baslik: "Eye Surgery", aciklama: "Say goodbye to glasses with laser eye surgery. Lasik, Lasek, Smile Pro and ICL options.", alt: ["Lasik", "Lasek", "Smile Pro", "ICL Lens", "Cataract", "Multifocal Lens"], fiyat: "From €800" },
+    de: { baslik: "Augenchirurgie", aciklama: "Verabschieden Sie sich von Brillen mit Laseraugenchirurgie. Lasik, Lasek, Smile Pro und ICL.", alt: ["Lasik", "Lasek", "Smile Pro", "ICL-Linse", "Katarakt", "Multifokal-Linse"], fiyat: "Ab €800" },
+    ar: { baslik: "جراحة العيون", aciklama: "ودّع النظارات مع جراحة العيون بالليزر. خيارات لاسيك ولاسيك وسمايل برو و ICL.", alt: ["لاسيك", "لاسيك", "سمايل برو", "عدسة ICL", "ماء أبيض", "عدسة متعددة البؤر"], fiyat: "من €800" },
+    ru: { baslik: "Операция на глазах", aciklama: "Попрощайтесь с очками с лазерной хирургией глаз. Ласик, Ласек, Smile Pro и ICL.", alt: ["Ласик", "Ласек", "Smile Pro", "ICL линза", "Катаракта", "Мультифокальная линза"], fiyat: "От €800" },
+    fr: { baslik: "Chirurgie oculaire", aciklama: "Dites adieu aux lunettes avec la chirurgie laser. Lasik, Lasek, Smile Pro et ICL.", alt: ["Lasik", "Lasek", "Smile Pro", "Lentille ICL", "Cataracte", "Lentille multifocale"], fiyat: "À partir de €800" },
+  },
+  {
+    id: "plastik-cerrahi",
+    ikon: "✨",
+    foto: "https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=600&h=400&fit=crop",
+    renk: "#D97706",
+    tr: { baslik: "Plastik Cerrahi", aciklama: "Burun estetiği, yüz germe, meme estetiği ve daha fazlası. Deneyimli cerrahlar, modern klinikler.", alt: ["Burun Estetiği", "Yüz Germe", "Göz Kapağı", "Meme Büyütme", "Liposuction", "Karın Germe"], fiyat: "€1.200'den başlayan" },
+    en: { baslik: "Plastic Surgery", aciklama: "Rhinoplasty, face lift, breast aesthetics and more. Experienced surgeons, modern clinics.", alt: ["Rhinoplasty", "Face Lift", "Eyelid Surgery", "Breast Augmentation", "Liposuction", "Tummy Tuck"], fiyat: "From €1,200" },
+    de: { baslik: "Plastische Chirurgie", aciklama: "Nasenkorrektur, Facelifting, Brustästhetik und mehr. Erfahrene Chirurgen, moderne Kliniken.", alt: ["Nasenkorrektur", "Facelifting", "Lidkorrektur", "Brustvergrößerung", "Liposuktion", "Bauchdeckenstraffung"], fiyat: "Ab €1.200" },
+    ar: { baslik: "الجراحة التجميلية", aciklama: "تجميل الأنف وشد الوجه وجماليات الثدي والمزيد. جراحون متمرسون وعيادات حديثة.", alt: ["تجميل الأنف", "شد الوجه", "جفن العين", "تكبير الثدي", "شفط الدهون", "شد البطن"], fiyat: "من €1,200" },
+    ru: { baslik: "Пластическая хирургия", aciklama: "Ринопластика, подтяжка лица, эстетика груди и многое другое.", alt: ["Ринопластика", "Подтяжка лица", "Блефаропластика", "Увеличение груди", "Липосакция", "Абдоминопластика"], fiyat: "От €1.200" },
+    fr: { baslik: "Chirurgie plastique", aciklama: "Rhinoplastie, lifting, esthétique mammaire et plus. Chirurgiens expérimentés, cliniques modernes.", alt: ["Rhinoplastie", "Lifting", "Blépharoplastie", "Augmentation mammaire", "Liposuccion", "Abdominoplastie"], fiyat: "À partir de €1.200" },
+  },
+  {
+    id: "check-up",
+    ikon: "🩺",
+    foto: "https://images.unsplash.com/photo-1505751172876-fa1923c5c528?w=600&h=400&fit=crop",
+    renk: "#7C3AED",
+    tr: { baslik: "Check-Up", aciklama: "Kapsamlı sağlık taraması ile sağlığınızı kontrol altına alın. Temel ve kapsamlı check-up paketleri.", alt: ["Temel Check-Up", "Kapsamlı Check-Up", "Kardiyoloji Check-Up", "Onkoloji Tarama", "Kan Testleri", "Görüntüleme"], fiyat: "€150'den başlayan" },
+    en: { baslik: "Health Check-Up", aciklama: "Take control of your health with a comprehensive screening. Basic and comprehensive check-up packages.", alt: ["Basic Check-Up", "Comprehensive Check-Up", "Cardiology Check-Up", "Oncology Screening", "Blood Tests", "Imaging"], fiyat: "From €150" },
+    de: { baslik: "Gesundheits-Check-Up", aciklama: "Behalten Sie Ihre Gesundheit mit einer umfassenden Untersuchung im Griff.", alt: ["Basis-Check-Up", "Umfassender Check-Up", "Kardiologie Check-Up", "Onkologie-Screening", "Bluttests", "Bildgebung"], fiyat: "Ab €150" },
+    ar: { baslik: "فحص شامل", aciklama: "تحكم في صحتك مع فحص شامل. باقات فحص أساسية وشاملة.", alt: ["فحص أساسي", "فحص شامل", "فحص قلبي", "فحص أورام", "اختبارات دم", "تصوير"], fiyat: "من €150" },
+    ru: { baslik: "Чек-ап", aciklama: "Возьмите здоровье под контроль с комплексным обследованием.", alt: ["Базовый чек-ап", "Комплексный чек-ап", "Кардиологический", "Онкоскрининг", "Анализы крови", "Визуализация"], fiyat: "От €150" },
+    fr: { baslik: "Bilan de santé", aciklama: "Prenez le contrôle de votre santé avec un bilan complet.", alt: ["Bilan de base", "Bilan complet", "Bilan cardiologique", "Dépistage oncologique", "Analyses sanguines", "Imagerie"], fiyat: "À partir de €150" },
+  },
+  {
+    id: "ortopedi",
+    ikon: "🦴",
+    foto: "https://images.unsplash.com/photo-1551601651-2a8555f1a136?w=600&h=400&fit=crop",
+    renk: "#DC2626",
+    tr: { baslik: "Ortopedi", aciklama: "Diz protezi, kalça protezi, omurga cerrahisi ve spor yaralanmaları tedavisi.", alt: ["Diz Protezi", "Kalça Protezi", "Omurga Cerrahisi", "Artroskopi", "Spor Yaralanması", "Kıkırdak Tedavisi"], fiyat: "€2.000'den başlayan" },
+    en: { baslik: "Orthopedics", aciklama: "Knee replacement, hip replacement, spine surgery and sports injury treatment.", alt: ["Knee Replacement", "Hip Replacement", "Spine Surgery", "Arthroscopy", "Sports Injury", "Cartilage Treatment"], fiyat: "From €2,000" },
+    de: { baslik: "Orthopädie", aciklama: "Knieersatz, Hüftersatz, Wirbelsäulenchirurgie und Sportverletzungsbehandlung.", alt: ["Knieersatz", "Hüftersatz", "Wirbelsäulenchirurgie", "Arthroskopie", "Sportverletzung", "Knorpelbehandlung"], fiyat: "Ab €2.000" },
+    ar: { baslik: "العظام", aciklama: "استبدال الركبة والورك وجراحة العمود الفقري وعلاج إصابات الرياضة.", alt: ["استبدال الركبة", "استبدال الورك", "جراحة العمود الفقري", "تنظير المفاصل", "إصابة رياضية", "علاج الغضروف"], fiyat: "من €2,000" },
+    ru: { baslik: "Ортопедия", aciklama: "Замена колена, тазобедренного сустава, хирургия позвоночника и спортивные травмы.", alt: ["Замена колена", "Замена тазобедренного", "Хирургия позвоночника", "Артроскопия", "Спортивная травма", "Лечение хряща"], fiyat: "От €2.000" },
+    fr: { baslik: "Orthopédie", aciklama: "Prothèse de genou, de hanche, chirurgie de la colonne vertébrale et traumatologie sportive.", alt: ["Prothèse genou", "Prothèse hanche", "Chirurgie colonne", "Arthroscopie", "Traumatologie sportive", "Traitement cartilage"], fiyat: "À partir de €2.000" },
+  },
+];
+
+export default function TedavilerPage() {
   const { dil } = useDil();
-  const [mobil, setMobil] = useState(false);
 
-  useEffect(() => {
-    function kontrol() { setMobil(window.innerWidth < 768); }
-    kontrol();
-    window.addEventListener("resize", kontrol);
-    return () => window.removeEventListener("resize", kontrol);
-  }, []);
+  const baslik = { tr: "Tedavi Kategorileri", en: "Treatment Categories", de: "Behandlungskategorien", ar: "فئات العلاج", ru: "Категории лечения", fr: "Catégories de traitement" };
+  const alt = { tr: "Türkiye'de yaptırabileceğiniz tüm tedaviler için ücretsiz teklif alın.", en: "Get free quotes for all treatments you can have in Turkey.", de: "Holen Sie sich kostenlose Angebote für alle Behandlungen in der Türkei.", ar: "احصل على عروض مجانية لجميع العلاجات في تركيا.", ru: "Получите бесплатные предложения по всем видам лечения в Турции.", fr: "Obtenez des devis gratuits pour tous les traitements en Turquie." };
+  const teklifBtn = { tr: "Teklif Al", en: "Get Quote", de: "Angebot", ar: "عرض", ru: "Предложение", fr: "Devis" };
+  const detayBtn = { tr: "Alt Kategoriler", en: "Sub-categories", de: "Unterkategorien", ar: "الفئات الفرعية", ru: "Подкатегории", fr: "Sous-catégories" };
+  const fiyatLabel = { tr: "Başlangıç fiyatı", en: "Starting price", de: "Startpreis", ar: "السعر الابتدائي", ru: "Начальная цена", fr: "Prix de départ" };
 
-  const icerik = {
-    tr: {
-      baslik: "Tedavi Kategorileri", altBaslik: "İhtiyacınıza uygun tedaviyi seçin ve onaylı kliniklerden ücretsiz teklif alın", teklifAl: "Ücretsiz Teklif Al →",
-      kategoriler: [
-        { foto: "https://images.unsplash.com/photo-1606811841689-23dfddce3e95?w=800&h=400&fit=crop", baslik: "Diş Tedavisi", aciklama: "Diş implantından zirkonyum kaplamaya, diş beyazlatmadan ortodontiye kadar kapsamlı diş tedavileri.", tedaviler: ["İmplant","Zirkonyum Kaplama","Lamine Veneer","Diş Beyazlatma","Kanal Tedavisi","Ortodonti","All-on-4 / All-on-6","Gülüş Tasarımı"], renk: "#0891B2" },
-        { foto: "https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=800&h=400&fit=crop", baslik: "Saç Ekimi", aciklama: "FUE, DHI ve Safir yöntemleriyle kalıcı saç ekimi çözümleri.", tedaviler: ["FUE Saç Ekimi","DHI Saç Ekimi","Safir FUE","Sakal Ekimi","Kaş Ekimi","PRP Tedavisi"], renk: "#7C3AED" },
-        { foto: "https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?w=800&h=400&fit=crop", baslik: "Göz Ameliyatı", aciklama: "Lasik, Lasek ve lens tedavileriyle kalıcı görüş çözümleri.", tedaviler: ["Lasik","Lasek","PRK","Smile Pro","Göz İçi Lens","Katarakt Ameliyatı"], renk: "#059669" },
-        { foto: "https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=800&h=400&fit=crop", baslik: "Plastik Cerrahi", aciklama: "Yüz, burun ve vücut estetiğinde uzman klinikler.", tedaviler: ["Burun Estetiği","Yüz Germe","Göz Kapağı Estetiği","Meme Büyütme","Liposuction","Karın Germe","Botoks","Dolgu"], renk: "#DC2626" },
-        { foto: "https://images.unsplash.com/photo-1505751172876-fa1923c5c528?w=800&h=400&fit=crop", baslik: "Genel Sağlık & Check-Up", aciklama: "Kapsamlı check-up ve genel sağlık hizmetleri.", tedaviler: ["Temel Check-Up","Kapsamlı Check-Up","Kardiyoloji","Onkoloji Taraması","Dermatoloji","Gastroloji"], renk: "#D97706" },
-        { foto: "https://images.unsplash.com/photo-1551601651-2a8555f1a136?w=800&h=400&fit=crop", baslik: "Ortopedi", aciklama: "Diz, kalça ve omurga tedavilerinde uzman klinikler.", tedaviler: ["Diz Protezi","Kalça Protezi","Omurga Cerrahisi","Spor Yaralanmaları","Artroskopi"], renk: "#4F46E5" },
-      ],
-    },
-    en: {
-      baslik: "Treatment Categories", altBaslik: "Choose the right treatment and get free quotes from verified clinics", teklifAl: "Get Free Quote →",
-      kategoriler: [
-        { foto: "https://images.unsplash.com/photo-1606811841689-23dfddce3e95?w=800&h=400&fit=crop", baslik: "Dental Treatment", aciklama: "Comprehensive dental treatments from implants to zirconia crowns.", tedaviler: ["Implant","Zirconia Crown","Laminate Veneer","Teeth Whitening","Root Canal","Orthodontics","All-on-4 / All-on-6","Smile Design"], renk: "#0891B2" },
-        { foto: "https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=800&h=400&fit=crop", baslik: "Hair Transplant", aciklama: "Permanent hair transplant solutions with FUE, DHI and Sapphire methods.", tedaviler: ["FUE Hair Transplant","DHI Hair Transplant","Sapphire FUE","Beard Transplant","Eyebrow Transplant","PRP Treatment"], renk: "#7C3AED" },
-        { foto: "https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?w=800&h=400&fit=crop", baslik: "Eye Surgery", aciklama: "Permanent vision solutions with Lasik, Lasek and lens treatments.", tedaviler: ["Lasik","Lasek","PRK","Smile Pro","Intraocular Lens","Cataract Surgery"], renk: "#059669" },
-        { foto: "https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=800&h=400&fit=crop", baslik: "Plastic Surgery", aciklama: "Expert clinics in facial, nose and body aesthetics.", tedaviler: ["Rhinoplasty","Face Lift","Eyelid Surgery","Breast Augmentation","Liposuction","Tummy Tuck","Botox","Filler"], renk: "#DC2626" },
-        { foto: "https://images.unsplash.com/photo-1505751172876-fa1923c5c528?w=800&h=400&fit=crop", baslik: "General Health & Check-Up", aciklama: "Comprehensive check-up and general health services.", tedaviler: ["Basic Check-Up","Comprehensive Check-Up","Cardiology","Oncology Screening","Dermatology","Gastrology"], renk: "#D97706" },
-        { foto: "https://images.unsplash.com/photo-1551601651-2a8555f1a136?w=800&h=400&fit=crop", baslik: "Orthopedics", aciklama: "Expert clinics in knee, hip and spine treatments.", tedaviler: ["Knee Prosthesis","Hip Prosthesis","Spine Surgery","Sports Injuries","Arthroscopy"], renk: "#4F46E5" },
-      ],
-    },
-    de: {
-      baslik: "Behandlungskategorien", altBaslik: "Wählen Sie die richtige Behandlung und holen Sie kostenlose Angebote ein", teklifAl: "Kostenloses Angebot →",
-      kategoriler: [
-        { foto: "https://images.unsplash.com/photo-1606811841689-23dfddce3e95?w=800&h=400&fit=crop", baslik: "Zahnbehandlung", aciklama: "Umfassende Zahnbehandlungen von Implantaten bis Zirkonkronen.", tedaviler: ["Implantat","Zirkonkrone","Laminat Veneer","Zahnaufhellung","Wurzelkanal","Kieferorthopädie","All-on-4 / All-on-6","Lächeldesign"], renk: "#0891B2" },
-        { foto: "https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=800&h=400&fit=crop", baslik: "Haartransplantation", aciklama: "Dauerhafte Haartransplantationslösungen mit FUE, DHI und Saphir.", tedaviler: ["FUE Haartransplantation","DHI Haartransplantation","Saphir FUE","Barttransplantation","Augenbrauentransplantation","PRP Behandlung"], renk: "#7C3AED" },
-        { foto: "https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?w=800&h=400&fit=crop", baslik: "Augenoperation", aciklama: "Dauerhafte Sehlösungen mit Lasik, Lasek und Linsenbehandlungen.", tedaviler: ["Lasik","Lasek","PRK","Smile Pro","Intraokulare Linse","Kataraktoperation"], renk: "#059669" },
-        { foto: "https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=800&h=400&fit=crop", baslik: "Plastische Chirurgie", aciklama: "Expertenkliniken für Gesichts-, Nasen- und Körperästhetik.", tedaviler: ["Rhinoplastik","Gesichtslifting","Lidchirurgie","Brustvergrößerung","Liposuktion","Bauchdeckenstraffung","Botox","Filler"], renk: "#DC2626" },
-        { foto: "https://images.unsplash.com/photo-1505751172876-fa1923c5c528?w=800&h=400&fit=crop", baslik: "Allgemeine Gesundheit & Check-Up", aciklama: "Umfassende Check-up und allgemeine Gesundheitsdienstleistungen.", tedaviler: ["Basis Check-Up","Umfassender Check-Up","Kardiologie","Onkologie-Screening","Dermatologie","Gastrologie"], renk: "#D97706" },
-        { foto: "https://images.unsplash.com/photo-1551601651-2a8555f1a136?w=800&h=400&fit=crop", baslik: "Orthopädie", aciklama: "Expertenkliniken für Knie-, Hüft- und Wirbelsäulenbehandlungen.", tedaviler: ["Knieprothese","Hüftprothese","Wirbelsäulenchirurgie","Sportverletzungen","Arthroskopie"], renk: "#4F46E5" },
-      ],
-    },
-    ar: {
-      baslik: "فئات العلاج", altBaslik: "اختر العلاج المناسب واحصل على عروض مجانية من العيادات المعتمدة", teklifAl: "احصل على عرض مجاني →",
-      kategoriler: [
-        { foto: "https://images.unsplash.com/photo-1606811841689-23dfddce3e95?w=800&h=400&fit=crop", baslik: "علاج الأسنان", aciklama: "علاجات أسنان شاملة من الزرعات إلى التيجان الزركونية.", tedaviler: ["زرعة أسنان","تاج زركوني","لامينات","تبييض الأسنان","علاج الجذور","تقويم الأسنان","All-on-4","تصميم الابتسامة"], renk: "#0891B2" },
-        { foto: "https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=800&h=400&fit=crop", baslik: "زراعة الشعر", aciklama: "حلول زراعة شعر دائمة بتقنيات FUE وDHI والياقوت.", tedaviler: ["FUE","DHI","سافير FUE","زراعة اللحية","زراعة الحواجب","علاج PRP"], renk: "#7C3AED" },
-        { foto: "https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?w=800&h=400&fit=crop", baslik: "جراحة العيون", aciklama: "حلول رؤية دائمة مع ليزك وليزيك وعلاجات العدسات.", tedaviler: ["Lasik","Lasek","PRK","Smile Pro","عدسة داخل العين","جراحة الكتاراكت"], renk: "#059669" },
-        { foto: "https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=800&h=400&fit=crop", baslik: "الجراحة التجميلية", aciklama: "عيادات متخصصة في جماليات الوجه والأنف والجسم.", tedaviler: ["تجميل الأنف","شد الوجه","جراحة الجفن","تكبير الثدي","شفط الدهون","شد البطن","بوتوكس","فيلر"], renk: "#DC2626" },
-        { foto: "https://images.unsplash.com/photo-1505751172876-fa1923c5c528?w=800&h=400&fit=crop", baslik: "الصحة العامة وفحص شامل", aciklama: "فحوصات شاملة وخدمات صحة عامة.", tedaviler: ["فحص أساسي","فحص شامل","قلبية","فحص الأورام","جلدية","أمراض الجهاز الهضمي"], renk: "#D97706" },
-        { foto: "https://images.unsplash.com/photo-1551601651-2a8555f1a136?w=800&h=400&fit=crop", baslik: "العظام والمفاصل", aciklama: "عيادات متخصصة في علاجات الركبة والورك والعمود الفقري.", tedaviler: ["بروتيز الركبة","بروتيز الورك","جراحة العمود الفقري","إصابات رياضية","تنظير المفاصل"], renk: "#4F46E5" },
-      ],
-    },
-    ru: {
-      baslik: "Категории лечения", altBaslik: "Выберите подходящее лечение и получите бесплатные предложения от клиник", teklifAl: "Получить бесплатное предложение →",
-      kategoriler: [
-        { foto: "https://images.unsplash.com/photo-1606811841689-23dfddce3e95?w=800&h=400&fit=crop", baslik: "Стоматология", aciklama: "Комплексное стоматологическое лечение от имплантов до циркониевых коронок.", tedaviler: ["Имплант","Циркониевая коронка","Ламинат","Отбеливание","Лечение каналов","Ортодонтия","All-on-4","Дизайн улыбки"], renk: "#0891B2" },
-        { foto: "https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=800&h=400&fit=crop", baslik: "Пересадка волос", aciklama: "Постоянные решения по пересадке волос методами FUE, DHI и Сапфир.", tedaviler: ["FUE","DHI","Сапфир FUE","Пересадка бороды","Пересадка бровей","PRP терапия"], renk: "#7C3AED" },
-        { foto: "https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?w=800&h=400&fit=crop", baslik: "Операция на глазах", aciklama: "Постоянные решения для зрения с Lasik, Lasek и линзами.", tedaviler: ["Lasik","Lasek","PRK","Smile Pro","Внутриглазная линза","Операция катаракты"], renk: "#059669" },
-        { foto: "https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=800&h=400&fit=crop", baslik: "Пластическая хирургия", aciklama: "Экспертные клиники по эстетике лица, носа и тела.", tedaviler: ["Ринопластика","Подтяжка лица","Блефаропластика","Увеличение груди","Липосакция","Абдоминопластика","Ботокс","Филлер"], renk: "#DC2626" },
-        { foto: "https://images.unsplash.com/photo-1505751172876-fa1923c5c528?w=800&h=400&fit=crop", baslik: "Общее здоровье и чек-ап", aciklama: "Комплексные чек-апы и общие медицинские услуги.", tedaviler: ["Базовый чек-ап","Комплексный чек-ап","Кардиология","Онкологический скрининг","Дерматология","Гастрология"], renk: "#D97706" },
-        { foto: "https://images.unsplash.com/photo-1551601651-2a8555f1a136?w=800&h=400&fit=crop", baslik: "Ортопедия", aciklama: "Экспертные клиники по лечению колена, бедра и позвоночника.", tedaviler: ["Протез колена","Протез бедра","Хирургия позвоночника","Спортивные травмы","Артроскопия"], renk: "#4F46E5" },
-      ],
-    },
-    fr: {
-      baslik: "Catégories de traitement", altBaslik: "Choisissez le traitement adapté et obtenez des devis gratuits", teklifAl: "Obtenir un devis gratuit →",
-      kategoriler: [
-        { foto: "https://images.unsplash.com/photo-1606811841689-23dfddce3e95?w=800&h=400&fit=crop", baslik: "Soins dentaires", aciklama: "Traitements dentaires complets des implants aux couronnes en zircone.", tedaviler: ["Implant","Couronne zircone","Facette","Blanchiment","Dévitalisation","Orthodontie","All-on-4","Design sourire"], renk: "#0891B2" },
-        { foto: "https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=800&h=400&fit=crop", baslik: "Greffe de cheveux", aciklama: "Solutions permanentes de greffe de cheveux FUE, DHI et Saphir.", tedaviler: ["FUE","DHI","Saphir FUE","Greffe barbe","Greffe sourcils","Traitement PRP"], renk: "#7C3AED" },
-        { foto: "https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?w=800&h=400&fit=crop", baslik: "Chirurgie oculaire", aciklama: "Solutions visuelles permanentes avec Lasik, Lasek et lentilles.", tedaviler: ["Lasik","Lasek","PRK","Smile Pro","Lentille intraoculaire","Chirurgie cataracte"], renk: "#059669" },
-        { foto: "https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=800&h=400&fit=crop", baslik: "Chirurgie plastique", aciklama: "Cliniques expertes en esthétique faciale, nasale et corporelle.", tedaviler: ["Rhinoplastie","Lifting visage","Blépharoplastie","Augmentation mammaire","Liposuccion","Abdominoplastie","Botox","Filler"], renk: "#DC2626" },
-        { foto: "https://images.unsplash.com/photo-1505751172876-fa1923c5c528?w=800&h=400&fit=crop", baslik: "Santé générale & Bilan", aciklama: "Bilans de santé complets et services médicaux généraux.", tedaviler: ["Bilan de base","Bilan complet","Cardiologie","Dépistage oncologie","Dermatologie","Gastrologie"], renk: "#D97706" },
-        { foto: "https://images.unsplash.com/photo-1551601651-2a8555f1a136?w=800&h=400&fit=crop", baslik: "Orthopédie", aciklama: "Cliniques expertes en traitements du genou, hanche et colonne.", tedaviler: ["Prothèse genou","Prothèse hanche","Chirurgie colonne","Blessures sportives","Arthroscopie"], renk: "#4F46E5" },
-      ],
-    },
-  };
-
-  const ic = icerik[dil as keyof typeof icerik] || icerik.tr;
+  const d = dil as keyof typeof baslik;
 
   return (
-    <main style={{ minHeight: "100vh", background: "#f8f9ff", fontFamily: "'Segoe UI', system-ui, sans-serif" }}>
+    <main style={{ minHeight: "100vh", fontFamily: "'Segoe UI', system-ui, sans-serif" }}>
       <Navbar />
-      <section style={{ background: "linear-gradient(135deg, #0f0d2e 0%, #1e1b4b 100%)", padding: mobil ? "40px 20px" : "64px 32px", textAlign: "center" }}>
-        <h1 style={{ color: "#fff", fontSize: mobil ? "26px" : "42px", fontWeight: 800, marginBottom: "12px" }}>{ic.baslik}</h1>
-        <p style={{ color: "#8b8fc8", fontSize: mobil ? "14px" : "17px", maxWidth: "600px", margin: "0 auto" }}>{ic.altBaslik}</p>
-      </section>
-      <section style={{ maxWidth: "1200px", margin: "0 auto", padding: mobil ? "32px 16px" : "64px 32px" }}>
-        <div style={{ display: "flex", flexDirection: "column", gap: mobil ? "20px" : "32px" }}>
-          {ic.kategoriler.map((kat, i) => (
-            <div key={kat.baslik} style={{ background: "#fff", borderRadius: mobil ? "16px" : "24px", overflow: "hidden", border: "1px solid #eeecff", display: "grid", gridTemplateColumns: mobil ? "1fr" : (i % 2 === 0 ? "400px 1fr" : "1fr 400px") }}>
-              {mobil ? (
-                <>
-                  <div style={{ height: "200px", overflow: "hidden" }}><img src={kat.foto} alt={kat.baslik} style={{ width: "100%", height: "100%", objectFit: "cover" }} /></div>
-                  <div style={{ padding: "20px" }}>
-                    <h2 style={{ fontSize: "20px", fontWeight: 800, color: "#0f0d2e", marginBottom: "10px" }}>{kat.baslik}</h2>
-                    <p style={{ fontSize: "14px", color: "#64748b", lineHeight: 1.7, marginBottom: "16px" }}>{kat.aciklama}</p>
-                    <div style={{ display: "flex", flexWrap: "wrap", gap: "6px", marginBottom: "20px" }}>
-                      {kat.tedaviler.map(t => (<span key={t} style={{ background: "#f8f9ff", border: `1px solid ${kat.renk}30`, color: "#0f0d2e", padding: "4px 10px", borderRadius: "20px", fontSize: "12px", fontWeight: 500 }}>{t}</span>))}
-                    </div>
-                    <a href="/teklif" style={{ display: "inline-flex", alignItems: "center", gap: "6px", background: kat.renk, color: "#fff", padding: "10px 20px", borderRadius: "10px", fontSize: "13px", textDecoration: "none", fontWeight: 700 }}>{ic.teklifAl}</a>
-                  </div>
-                </>
-              ) : i % 2 === 0 ? (
-                <>
-                  <div style={{ height: "280px", overflow: "hidden" }}><img src={kat.foto} alt={kat.baslik} style={{ width: "100%", height: "100%", objectFit: "cover" }} /></div>
-                  <div style={{ padding: "40px" }}>
-                    <h2 style={{ fontSize: "26px", fontWeight: 800, color: "#0f0d2e", marginBottom: "12px" }}>{kat.baslik}</h2>
-                    <p style={{ fontSize: "15px", color: "#64748b", lineHeight: 1.75, marginBottom: "24px" }}>{kat.aciklama}</p>
-                    <div style={{ display: "flex", flexWrap: "wrap", gap: "8px", marginBottom: "28px" }}>
-                      {kat.tedaviler.map(t => (<span key={t} style={{ background: "#f8f9ff", border: `1px solid ${kat.renk}30`, color: "#0f0d2e", padding: "5px 14px", borderRadius: "20px", fontSize: "13px", fontWeight: 500 }}>{t}</span>))}
-                    </div>
-                    <a href="/teklif" style={{ display: "inline-flex", alignItems: "center", gap: "8px", background: kat.renk, color: "#fff", padding: "12px 24px", borderRadius: "10px", fontSize: "14px", textDecoration: "none", fontWeight: 700 }}>{ic.teklifAl}</a>
-                  </div>
-                </>
-              ) : (
-                <>
-                  <div style={{ padding: "40px" }}>
-                    <h2 style={{ fontSize: "26px", fontWeight: 800, color: "#0f0d2e", marginBottom: "12px" }}>{kat.baslik}</h2>
-                    <p style={{ fontSize: "15px", color: "#64748b", lineHeight: 1.75, marginBottom: "24px" }}>{kat.aciklama}</p>
-                    <div style={{ display: "flex", flexWrap: "wrap", gap: "8px", marginBottom: "28px" }}>
-                      {kat.tedaviler.map(t => (<span key={t} style={{ background: "#f8f9ff", border: `1px solid ${kat.renk}30`, color: "#0f0d2e", padding: "5px 14px", borderRadius: "20px", fontSize: "13px", fontWeight: 500 }}>{t}</span>))}
-                    </div>
-                    <a href="/teklif" style={{ display: "inline-flex", alignItems: "center", gap: "8px", background: kat.renk, color: "#fff", padding: "12px 24px", borderRadius: "10px", fontSize: "14px", textDecoration: "none", fontWeight: 700 }}>{ic.teklifAl}</a>
-                  </div>
-                  <div style={{ height: "280px", overflow: "hidden" }}><img src={kat.foto} alt={kat.baslik} style={{ width: "100%", height: "100%", objectFit: "cover" }} /></div>
-                </>
-              )}
-            </div>
-          ))}
+
+      {/* Hero */}
+      <section style={{ background: "linear-gradient(135deg, #0f0d2e 0%, #1e1b4b 100%)", padding: "80px 16px 64px", textAlign: "center" }}>
+        <div style={{ maxWidth: "700px", margin: "0 auto" }}>
+          <h1 style={{ fontSize: "42px", fontWeight: 800, color: "#fff", marginBottom: "16px" }}>{baslik[d]}</h1>
+          <p style={{ fontSize: "18px", color: "rgba(255,255,255,0.7)", lineHeight: 1.7 }}>{alt[d]}</p>
         </div>
       </section>
+
+      {/* Tedavi Kartları */}
+      <section style={{ padding: "64px 16px", background: "#f8f9ff" }}>
+        <div style={{ maxWidth: "1100px", margin: "0 auto", display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))", gap: "24px" }}>
+          {TEDAVILER.map(t => {
+            const ic = t[d] || t.en;
+            return (
+              <div key={t.id} style={{ background: "#fff", borderRadius: "20px", overflow: "hidden", border: "1px solid #e8e6ff", display: "flex", flexDirection: "column" }}>
+                {/* Fotoğraf */}
+                <div style={{ position: "relative", height: "200px", overflow: "hidden" }}>
+                  <img src={t.foto} alt={ic.baslik} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                  <div style={{ position: "absolute", inset: 0, background: `linear-gradient(to top, ${t.renk}cc, transparent)` }} />
+                  <div style={{ position: "absolute", bottom: "16px", left: "16px", display: "flex", alignItems: "center", gap: "8px" }}>
+                    <span style={{ fontSize: "28px" }}>{t.ikon}</span>
+                    <h2 style={{ fontSize: "20px", fontWeight: 800, color: "#fff", margin: 0 }}>{ic.baslik}</h2>
+                  </div>
+                </div>
+
+                {/* İçerik */}
+                <div style={{ padding: "20px", flex: 1, display: "flex", flexDirection: "column" }}>
+                  <p style={{ fontSize: "14px", color: "#64748b", lineHeight: 1.7, marginBottom: "16px" }}>{ic.aciklama}</p>
+
+                  {/* Alt kategoriler */}
+                  <div style={{ marginBottom: "16px" }}>
+                    <div style={{ fontSize: "11px", fontWeight: 700, color: "#94a3b8", letterSpacing: "1px", marginBottom: "8px" }}>{detayBtn[d]}</div>
+                    <div style={{ display: "flex", flexWrap: "wrap", gap: "6px" }}>
+                      {ic.alt.map((a: string, i: number) => (
+                        <span key={i} style={{ background: `${t.renk}15`, color: t.renk, fontSize: "11px", padding: "3px 10px", borderRadius: "20px", fontWeight: 500 }}>{a}</span>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Fiyat ve buton */}
+                  <div style={{ marginTop: "auto", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                    <div>
+                      <div style={{ fontSize: "11px", color: "#94a3b8" }}>{fiyatLabel[d]}</div>
+                      <div style={{ fontSize: "16px", fontWeight: 700, color: t.renk }}>{ic.fiyat}</div>
+                    </div>
+                    <a href="/teklif" style={{ background: t.renk, color: "#fff", padding: "10px 20px", borderRadius: "10px", fontSize: "13px", textDecoration: "none", fontWeight: 700 }}>{teklifBtn[d]}</a>
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </section>
+
+      {/* CTA */}
+      <section style={{ background: "#534AB7", padding: "64px 16px", textAlign: "center" }}>
+        <div style={{ maxWidth: "600px", margin: "0 auto" }}>
+          <h2 style={{ fontSize: "32px", fontWeight: 800, color: "#fff", marginBottom: "12px" }}>
+            {d === "tr" ? "Hangi Tedaviyi Arıyorsunuz?" : d === "de" ? "Welche Behandlung suchen Sie?" : d === "ar" ? "أي علاج تبحث عنه؟" : d === "ru" ? "Какое лечение вы ищете?" : d === "fr" ? "Quel traitement cherchez-vous ?" : "What Treatment Are You Looking For?"}
+          </h2>
+          <p style={{ fontSize: "15px", color: "rgba(255,255,255,0.8)", marginBottom: "24px" }}>
+            {d === "tr" ? "Listede göremediğiniz bir tedavi için de teklif alabilirsiniz." : d === "de" ? "Sie können auch ein Angebot für eine Behandlung einholen, die nicht aufgelistet ist." : d === "ar" ? "يمكنك أيضاً الحصول على عرض لعلاج غير مدرج." : d === "ru" ? "Вы также можете получить предложение по лечению, которого нет в списке." : d === "fr" ? "Vous pouvez également obtenir un devis pour un traitement non listé." : "You can also get a quote for a treatment not listed above."}
+          </p>
+          <a href="/teklif" style={{ display: "inline-block", background: "#fff", color: "#534AB7", padding: "14px 36px", borderRadius: "12px", fontSize: "15px", textDecoration: "none", fontWeight: 700 }}>
+            {teklifBtn[d]}
+          </a>
+        </div>
+      </section>
+
       <Footer />
     </main>
   );
