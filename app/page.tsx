@@ -370,7 +370,7 @@ export default function AnaSayfa() {
                 </div>
                 <div style={{ padding: mobil ? "10px" : "14px 12px" }}>
                   <div style={{ fontSize: mobil ? "12px" : "13px", fontWeight: 700, color: "#0f0d2e", marginBottom: "3px" }}>
-                    {(t as any)[dil] || t.en}
+                    {(t as any)[dil] ?? (t as any)['en']}
                   </div>
                   <div style={{ fontSize: "11px", color: "#534AB7", fontWeight: 700 }}>{t.fiyat}</div>
                 </div>
