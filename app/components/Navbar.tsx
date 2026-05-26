@@ -40,6 +40,7 @@ export default function Navbar() {
     tr: "Hakkımızda", en: "About", de: "Über uns",
     ar: "من نحن", ru: "О нас", fr: "À propos",
   };
+
   const linkler = [
     { href: "/klinikler", label: t.nav.klinikler },
     { href: "/tedaviler", label: t.nav.tedaviler },
@@ -47,7 +48,11 @@ export default function Navbar() {
     { href: "/transfer", label: t.nav.transfer },
     { href: "/hakkimizda", label: dilMetin[dil] || "About" },
     { href: "/nasil-calisir", label: t.nav.nasilCalisir },
+    { href: "/blog", label: dil === "tr" ? "Blog" : dil === "ar" ? "المدونة" : dil === "ru" ? "Блог" : "Blog" },
   ];
+
+  // EN DE FR AR RU TR sıralaması
+  const DILLER = ["en", "de", "fr", "ar", "ru", "tr"] as const;
 
   return (
     <>
@@ -64,7 +69,7 @@ export default function Navbar() {
           ))}
           <div style={{ width: "1px", height: "16px", background: "#2a2a4e" }} />
           <div style={{ display: "flex", gap: "6px" }}>
-            {(["tr", "en", "de", "ar", "ru", "fr"] as const).map((d) => (
+            {DILLER.map((d) => (
               <span key={d} onClick={() => dilDegistir(d)} style={{ fontSize: "11px", padding: "3px 8px", border: `1px solid ${dil === d ? "#534AB7" : "#2a2a4e"}`, borderRadius: "4px", color: dil === d ? "#7F77DD" : "#aab4c8", cursor: "pointer", textTransform: "uppercase" }}>
                 {d}
               </span>
@@ -87,8 +92,8 @@ export default function Navbar() {
                   </div>
                   <a href={panelLinki()} style={{ display: "block", padding: "10px 16px", fontSize: "13px", color: "#534AB7", textDecoration: "none", borderBottom: "1px solid #f0f0f0" }}>{t.nav.panelim}</a>
                   {kullanici?.hesap_turu === "hasta" && (
-  <a href="/teklif" style={{ display: "block", padding: "10px 16px", fontSize: "13px", color: "#555", textDecoration: "none", borderBottom: "1px solid #f0f0f0" }}>{t.nav.teklifAl}</a>
-)}
+                    <a href="/teklif" style={{ display: "block", padding: "10px 16px", fontSize: "13px", color: "#555", textDecoration: "none", borderBottom: "1px solid #f0f0f0" }}>{t.nav.teklifAl}</a>
+                  )}
                   <button onClick={cikisYap} style={{ display: "block", width: "100%", textAlign: "left", padding: "10px 16px", fontSize: "13px", color: "#c00", background: "none", border: "none", cursor: "pointer" }}>{t.nav.cikisYap}</button>
                 </div>
               )}
@@ -102,15 +107,13 @@ export default function Navbar() {
 
         {/* Mobile Sağ */}
         <div className="mobile-nav" style={{ display: "none", alignItems: "center", gap: "12px" }}>
-          {/* Dil butonları mobilde */}
           <div style={{ display: "flex", gap: "4px" }}>
-            {(["tr", "en", "de", "ar", "ru", "fr"] as const).map((d) => (
+            {DILLER.map((d) => (
               <span key={d} onClick={() => dilDegistir(d)} style={{ fontSize: "10px", padding: "2px 6px", border: `1px solid ${dil === d ? "#534AB7" : "#2a2a4e"}`, borderRadius: "4px", color: dil === d ? "#7F77DD" : "#aab4c8", cursor: "pointer", textTransform: "uppercase" }}>
                 {d}
               </span>
             ))}
           </div>
-          {/* Hamburger */}
           <button onClick={() => setMobileAcik(!mobileAcik)} style={{ background: "none", border: "none", cursor: "pointer", padding: "4px", display: "flex", flexDirection: "column", gap: "5px" }}>
             <span style={{ display: "block", width: "22px", height: "2px", background: "#fff", borderRadius: "2px", transition: "all 0.3s", transform: mobileAcik ? "rotate(45deg) translate(5px, 5px)" : "none" }} />
             <span style={{ display: "block", width: "22px", height: "2px", background: "#fff", borderRadius: "2px", opacity: mobileAcik ? 0 : 1, transition: "all 0.3s" }} />

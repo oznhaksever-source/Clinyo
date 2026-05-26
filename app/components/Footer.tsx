@@ -18,7 +18,7 @@ export default function Footer() {
       aciklama: "Güvenli, şeffaf ve karşılaştırılabilir sağlık turizmi platformu.",
       platform: "PLATFORM", destek: "DESTEK", takipEdin: "BİZİ TAKİP EDİN", yasal: "YASAL",
       linkler: {
-        platform: [{ad:"Klinikler",href:"/klinikler"},{ad:"Tedaviler",href:"/tedaviler"},{ad:"Oteller",href:"/oteller"},{ad:"Transfer",href:"/transfer"},{ad:"Harita",href:"/harita"}],
+        platform: [{ad:"Klinikler",href:"/klinikler"},{ad:"Tedaviler",href:"/tedaviler"},{ad:"Oteller",href:"/oteller"},{ad:"Transfer",href:"/transfer"},{ad:"Harita",href:"/harita"},{ad:"Blog",href:"/blog"}],
         destek: [{ad:"Nasıl Çalışır",href:"/nasil-calisir"},{ad:"SSS",href:"/sss"},{ad:"İletişim",href:"/iletisim"},{ad:"Hakkımızda",href:"/hakkimizda"}],
         yasal: [{ad:"Gizlilik Politikası",href:"/gizlilik"},{ad:"SSS",href:"/sss"},{ad:"Hakkımızda",href:"/hakkimizda"}]
       },
@@ -28,7 +28,7 @@ export default function Footer() {
       aciklama: "Safe, transparent and comparable health tourism platform.",
       platform: "PLATFORM", destek: "SUPPORT", takipEdin: "FOLLOW US", yasal: "LEGAL",
       linkler: {
-        platform: [{ad:"Clinics",href:"/klinikler"},{ad:"Treatments",href:"/tedaviler"},{ad:"Hotels",href:"/oteller"},{ad:"Transfer",href:"/transfer"},{ad:"Map",href:"/harita"}],
+        platform: [{ad:"Clinics",href:"/klinikler"},{ad:"Treatments",href:"/tedaviler"},{ad:"Hotels",href:"/oteller"},{ad:"Transfer",href:"/transfer"},{ad:"Map",href:"/harita"},{ad:"Blog",href:"/blog"}],
         destek: [{ad:"How It Works",href:"/nasil-calisir"},{ad:"FAQ",href:"/sss"},{ad:"Contact",href:"/iletisim"},{ad:"About Us",href:"/hakkimizda"}],
         yasal: [{ad:"Privacy Policy",href:"/gizlilik"},{ad:"FAQ",href:"/sss"},{ad:"About Us",href:"/hakkimizda"}]
       },
@@ -38,7 +38,7 @@ export default function Footer() {
       aciklama: "Sichere, transparente und vergleichbare Gesundheitstourismusplattform.",
       platform: "PLATTFORM", destek: "SUPPORT", takipEdin: "FOLGEN SIE UNS", yasal: "RECHTLICHES",
       linkler: {
-        platform: [{ad:"Kliniken",href:"/klinikler"},{ad:"Behandlungen",href:"/tedaviler"},{ad:"Hotels",href:"/oteller"},{ad:"Transfer",href:"/transfer"},{ad:"Karte",href:"/harita"}],
+        platform: [{ad:"Kliniken",href:"/klinikler"},{ad:"Behandlungen",href:"/tedaviler"},{ad:"Hotels",href:"/oteller"},{ad:"Transfer",href:"/transfer"},{ad:"Karte",href:"/harita"},{ad:"Blog",href:"/blog"}],
         destek: [{ad:"Wie es funktioniert",href:"/nasil-calisir"},{ad:"FAQ",href:"/sss"},{ad:"Kontakt",href:"/iletisim"},{ad:"Über uns",href:"/hakkimizda"}],
         yasal: [{ad:"Datenschutzrichtlinie",href:"/gizlilik"},{ad:"FAQ",href:"/sss"},{ad:"Über uns",href:"/hakkimizda"}]
       },
@@ -48,7 +48,7 @@ export default function Footer() {
       aciklama: "منصة سياحة صحية آمنة وشفافة وقابلة للمقارنة.",
       platform: "المنصة", destek: "الدعم", takipEdin: "تابعنا", yasal: "قانوني",
       linkler: {
-        platform: [{ad:"العيادات",href:"/klinikler"},{ad:"العلاجات",href:"/tedaviler"},{ad:"الفنادق",href:"/oteller"},{ad:"النقل",href:"/transfer"},{ad:"الخريطة",href:"/harita"}],
+        platform: [{ad:"العيادات",href:"/klinikler"},{ad:"العلاجات",href:"/tedaviler"},{ad:"الفنادق",href:"/oteller"},{ad:"النقل",href:"/transfer"},{ad:"الخريطة",href:"/harita"},{ad:"المدونة",href:"/blog"}],
         destek: [{ad:"كيف يعمل",href:"/nasil-calisir"},{ad:"الأسئلة الشائعة",href:"/sss"},{ad:"اتصل بنا",href:"/iletisim"},{ad:"من نحن",href:"/hakkimizda"}],
         yasal: [{ad:"سياسة الخصوصية",href:"/gizlilik"},{ad:"الأسئلة الشائعة",href:"/sss"},{ad:"من نحن",href:"/hakkimizda"}]
       },
@@ -58,7 +58,7 @@ export default function Footer() {
       aciklama: "Безопасная, прозрачная и сравнимая платформа медицинского туризма.",
       platform: "ПЛАТФОРМА", destek: "ПОДДЕРЖКА", takipEdin: "ПОДПИСЫВАЙТЕСЬ", yasal: "ПРАВОВОЕ",
       linkler: {
-        platform: [{ad:"Клиники",href:"/klinikler"},{ad:"Лечение",href:"/tedaviler"},{ad:"Отели",href:"/oteller"},{ad:"Трансфер",href:"/transfer"},{ad:"Карта",href:"/harita"}],
+        platform: [{ad:"Клиники",href:"/klinikler"},{ad:"Лечение",href:"/tedaviler"},{ad:"Отели",href:"/oteller"},{ad:"Трансфер",href:"/transfer"},{ad:"Карта",href:"/harita"},{ad:"Блог",href:"/blog"}],
         destek: [{ad:"Как это работает",href:"/nasil-calisir"},{ad:"FAQ",href:"/sss"},{ad:"Контакты",href:"/iletisim"},{ad:"О нас",href:"/hakkimizda"}],
         yasal: [{ad:"Политика конфиденциальности",href:"/gizlilik"},{ad:"FAQ",href:"/sss"},{ad:"О нас",href:"/hakkimizda"}]
       },
@@ -68,7 +68,7 @@ export default function Footer() {
       aciklama: "Plateforme de tourisme médical sûre, transparente et comparable.",
       platform: "PLATEFORME", destek: "SUPPORT", takipEdin: "SUIVEZ-NOUS", yasal: "LÉGAL",
       linkler: {
-        platform: [{ad:"Cliniques",href:"/klinikler"},{ad:"Traitements",href:"/tedaviler"},{ad:"Hôtels",href:"/oteller"},{ad:"Transfert",href:"/transfer"},{ad:"Carte",href:"/harita"}],
+        platform: [{ad:"Cliniques",href:"/klinikler"},{ad:"Traitements",href:"/tedaviler"},{ad:"Hôtels",href:"/oteller"},{ad:"Transfert",href:"/transfer"},{ad:"Carte",href:"/harita"},{ad:"Blog",href:"/blog"}],
         destek: [{ad:"Comment ça marche",href:"/nasil-calisir"},{ad:"FAQ",href:"/sss"},{ad:"Contact",href:"/iletisim"},{ad:"À propos",href:"/hakkimizda"}],
         yasal: [{ad:"Politique de confidentialité",href:"/gizlilik"},{ad:"FAQ",href:"/sss"},{ad:"À propos",href:"/hakkimizda"}]
       },
@@ -76,7 +76,7 @@ export default function Footer() {
     },
   };
 
-  const ic = icerik[dil as keyof typeof icerik] || icerik.tr;
+  const ic = icerik[dil as keyof typeof icerik] || icerik.en;
 
   return (
     <footer style={{ background: "#12103a", color: "#fff", padding: mobil ? "40px 16px 24px" : "48px 32px 24px" }}>
@@ -87,7 +87,7 @@ export default function Footer() {
             <div style={{ fontSize: "22px", fontWeight: 700, marginBottom: "14px" }}>med<span style={{ color: "#7F77DD", fontWeight: 300 }}>oqa</span></div>
             <p style={{ fontSize: "13px", color: "#6b6fa8", lineHeight: "1.7", marginBottom: "16px" }}>{ic.aciklama}</p>
             <div style={{ display: "flex", gap: "6px", flexWrap: "wrap" }}>
-              {(["tr","en","de","ar","ru","fr"] as const).map(d => (
+              {(["en","de","fr","ar","ru","tr"] as const).map(d => (
                 <span key={d} style={{ fontSize: "11px", padding: "3px 8px", border: "1px solid #2a2a4e", borderRadius: "4px", color: dil===d?"#7F77DD":"#6b6fa8", textTransform: "uppercase", cursor: "default" }}>{d}</span>
               ))}
             </div>
