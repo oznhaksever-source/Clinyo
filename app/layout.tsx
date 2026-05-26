@@ -17,21 +17,23 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Medoqa - Sağlık Turizmi Platformu | Dental, Saç Ekimi, Göz Ameliyatı",
-  description: "Türkiye'de diş tedavisi, saç ekimi, göz ameliyatı ve plastik cerrahi için en iyi klinikleri keşfedin. Ücretsiz teklif alın, karşılaştırın, en iyisini seçin.",
-  keywords: "sağlık turizmi, diş implant türkiye, saç ekimi istanbul, göz ameliyatı, zirkonyum kaplama, medikal turizm",
+  title: "Medoqa - Health Tourism Platform | Dental, Hair Transplant, Eye Surgery Turkey",
+  description: "Find the best clinics in Turkey for dental treatment, hair transplant, eye surgery and plastic surgery. Get free quotes, compare and choose the best. Escrow payment protection.",
+  keywords: "health tourism turkey, dental implant turkey, hair transplant istanbul, eye surgery turkey, medical tourism, zirconia crown, plastic surgery turkey",
   openGraph: {
-    title: "Medoqa - Sağlık Turizmi Platformu",
-    description: "Diş tedavisinden saç ekimine, göz ameliyatından plastik cerrahiye kadar en iyi klinikler tek platformda.",
+    title: "Medoqa - Health Tourism Platform Turkey",
+    description: "Verified clinics in Turkey for dental, hair transplant, eye surgery and more. Free quotes, escrow payment, multilingual support.",
     url: "https://www.medoqa.com",
     siteName: "Medoqa",
-    locale: "tr_TR",
+    locale: "en_US",
     type: "website",
+    images: [{ url: "https://www.medoqa.com/og-image.jpg", width: 1200, height: 630 }],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Medoqa - Sağlık Turizmi Platformu",
-    description: "Diş tedavisinden saç ekimine, göz ameliyatından plastik cerrahiye kadar en iyi klinikler.",
+    title: "Medoqa - Health Tourism Platform Turkey",
+    description: "Verified clinics for dental, hair transplant, eye surgery in Turkey. Free quotes, escrow payment protection.",
+    images: ["https://www.medoqa.com/og-image.jpg"],
   },
   robots: {
     index: true,
@@ -48,7 +50,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="tr" className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}>
+    <html lang="en" className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}>
       <body className="min-h-full flex flex-col">
         <DilProvider>
           {children}
