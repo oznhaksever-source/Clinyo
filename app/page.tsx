@@ -290,12 +290,15 @@ export default function AnaSayfa() {
       const { count: hc } = await supabase.from("profiles").select("*", { count: "exact", head: true }).eq("hesap_turu", "hasta");
       const { count: oc } = await supabase.from("profiles").select("*", { count: "exact", head: true }).eq("hesap_turu", "otel").eq("onaylandi", true);
       const { count: tc } = await supabase.from("profiles").select("*", { count: "exact", head: true }).eq("hesap_turu", "transfer").eq("onaylandi", true);
-      setKlinikler(klinikData || []);
+ setKlinikler(klinikData || []);
       setOteller(otelData || []);
       setIstatistik({ klinik: kc || 0, hasta: hc || 0, otel: oc || 0, transfer: tc || 0 });
     }
     veriYukle();
   }, []);
+
+  const [dilYuklendi, setDilYuklendi] = useState(false);
+  useEffect(() => { setDilYuklendi(true); }, [dil]);
 
   const px = mobil ? "16px" : "32px";
   const sectionPad = mobil ? "48px 16px" : "80px 32px";
@@ -370,7 +373,7 @@ export default function AnaSayfa() {
                 </div>
                 <div style={{ padding: mobil ? "10px" : "14px 12px" }}>
                   <div style={{ fontSize: mobil ? "12px" : "13px", fontWeight: 700, color: "#0f0d2e", marginBottom: "3px" }}>
-                    {(t as any)[dil] ?? (t as any)['en']}
+                    {dilYuklendi ? ((t as any)[dil] ?? (t as any)['en']) : ""}
                   </div>
                   <div style={{ fontSize: "11px", color: "#534AB7", fontWeight: 700 }}>{t.fiyat}</div>
                 </div>
