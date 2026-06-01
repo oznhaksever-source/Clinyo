@@ -45,7 +45,7 @@ export default function BlogPage() {
 
   function renderIcerik(metin: string) {
     if (!metin) return null;
-    return metin.split("\n").map((satir, i) => {
+    return metin.replace(/\\n/g, "\n").split("\n").map((satir, i) => {
       if (satir.startsWith("## ")) return (
         <h2 key={i} style={{ fontSize: "22px", fontWeight: 700, color: "#0f0d2e", margin: "32px 0 12px" }}>{satir.replace("## ", "")}</h2>
       );
