@@ -1,0 +1,68 @@
+"use client";
+import { useDil } from "../locales/context";
+import Navbar from "../components/Navbar";
+import Footer from "../components/Footer";
+import { useRouter } from "next/navigation";
+
+export default function BlogListIstemci({ yazilar }: { yazilar: any[] }) {
+  const { dil } = useDil();
+  const d = dil as string;
+  const router = useRouter();
+
+  const metinler: Record<string, any> = {
+    tr: { baslik: "Blog", alt: "Sağlık turizmi rehberleri ve uzman tavsiyeleri", yok: "Henüz yazı yok." },
+    en: { baslik: "Blog", alt: "Health tourism guides and expert advice", yok: "No posts yet." },
+    de: { baslik: "Blog", alt: "Gesundheitstourismus-Ratgeber", yok: "Noch keine Beiträge." },
+    ar: { baslik: "المدونة", alt: "أدلة السياحة الصحية", yok: "لا توجد مقالات بعد." },
+    ru: { baslik: "Блог", alt: "Руководства по медицинскому туризму", yok: "Пока нет статей." },
+    fr: { baslik: "Blog", alt: "Guides de tourisme médical", yok: "Pas encore d articles." },
+  };
+
+  const m = metinler[d] || metinler.en;
+
+  function baslik(y: any) { return y[`baslik_${d}`] || y.baslik_en || y.baslik_tr || ""; }
+  function ozet(y: any) { return y[`ozet_${d}`] || y.ozet_en || y.ozet_tr || ""; }
+
+  return (
+    <main style={{ minHeight: "100vh", fontFamily: "'Segoe UI', system-ui, sans-serif", background: "#f8f9ff" }}>
+      <Navbar />
+      <section style={{ background: "linear-gradient(135deg, #0f0d2e 0%, #1e1b4b 100%)", padding: "64px 16px 48px", textAlign: "center" }}>
+        <h1 style={{ fontSize: "40px", fontWeight: 800, color: "#fff", marginBottom: "12px" }}>{m.baslik}</h1>
+        <p style={{ fontSize: "17px", color: "rgba(255,255,255,0.7)" }}>{m.alt}</p>
+      </section>
+
+      <div style={{ maxWidth: "900px", margin: "0 auto", padding: "48px 16px" }}>
+        {yazilar.length === 0 && (
+          <div style={{ textAlign: "center", padding: "64px", background: "#fff", borderRadius: "20px", border: "1px solid #e8e6ff", color: "#888" }}>{m.yok}</div>
+        )}
+        <div style={{ display: "flex", flexDirection: "column", gap: "24px" }}>
+          {yazilar.map(yazi => (
+            <a key={yazi.slug} href={`/blog/${yazi.slug}`}
+              style={{ background: "#fff", borderRadius: "20px", border: "1px solid #e8e6ff", overflow: "hidden", textDecoration: "none", display: "block", transition: "border-color 0.2s" }}
+              onMouseEnter={e => (e.currentTarget as HTMLElement).style.borderColor = "#534AB7"}
+              onMouseLeave={e => (e.currentTarget as HTMLElement).style.borderColor = "#e8e6ff"}>
+              {yazi.kapak_gorsel && (
+                <div style={{ height: "200px", overflow: "hidden" }}>
+                  <img src={yazi.kapak_gorsel} alt={baslik(yazi)} style={{ width: "100%", height: "100%", objectFit: "cover" }} loading="lazy" />
+                </div>
+              )}
+              <div style={{ padding: "28px 32px" }}>
+                <div style={{ display: "flex", gap: "12px", marginBottom: "10px", alignItems: "center" }}>
+                  {yazi.emoji && <span style={{ fontSize: "28px" }}>{yazi.emoji}</span>}
+                  <span style={{ fontSize: "12px", color: "#94a3b8" }}>{yazi.tarih}</span>
+                </div>
+                <h2 style={{ fontSize: "22px", fontWeight: 700, color: "#0f0d2e", marginBottom: "10px", lineHeight: 1.4 }}>
+                  {baslik(yazi)}
+                </h2>
+                <p style={{ fontSize: "14px", color: "#64748b", lineHeight: 1.7, margin: 0 }}>
+                  {ozet(yazi)}
+                </p>
+              </div>
+            </a>
+          ))}
+        </div>
+      </div>
+      <Footer />
+    </main>
+  );
+}
