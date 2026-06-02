@@ -15,7 +15,7 @@ export default function BlogPage() {
     const supabase = createClient();
     supabase
       .from("blog_yazilari")
-      .select("slug, emoji, tarih, baslik_tr, baslik_en, baslik_de, baslik_ar, baslik_ru, baslik_fr, ozet_tr, ozet_en, ozet_de, ozet_ar, ozet_ru, ozet_fr, kapak_gorsel")
+      .select("slug, emoji, tarih, baslik_tr, baslik_en, baslik_de, baslik_ar, baslik_ru, baslik_fr, ozet_tr, ozet_en, ozet_de, ozet_ar, ozet_ru, ozet_fr")
       .eq("yayin", true)
       .order("tarih", { ascending: false })
       .then(({ data }) => {
@@ -57,9 +57,7 @@ export default function BlogPage() {
               style={{ background: "#fff", borderRadius: "20px", border: "1px solid #e8e6ff", overflow: "hidden", textDecoration: "none", display: "block" }}
               onMouseEnter={e => (e.currentTarget as HTMLElement).style.borderColor = "#534AB7"}
               onMouseLeave={e => (e.currentTarget as HTMLElement).style.borderColor = "#e8e6ff"}>
-              {yazi.kapak_gorsel && (
                 <div style={{ height: "200px", overflow: "hidden" }}>
-                  <img src={yazi.kapak_gorsel} alt={baslik(yazi)} style={{ width: "100%", height: "100%", objectFit: "cover" }} loading="lazy" />
                 </div>
               )}
               <div style={{ padding: "28px 32px" }}>
