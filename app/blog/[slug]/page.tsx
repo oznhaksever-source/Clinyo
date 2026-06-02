@@ -13,7 +13,6 @@ export async function generateMetadata({ params }: { params: { slug: string } })
     .single();
 
   if (!yazi) return { title: "Medoqa Blog" };
-
   const baslik = yazi.baslik_en || yazi.baslik_tr || "Medoqa Blog";
   const ozet = yazi.ozet_en || yazi.ozet_tr || "";
 
@@ -35,9 +34,7 @@ export async function generateMetadata({ params }: { params: { slug: string } })
       description: ozet,
       images: ["https://www.medoqa.com/og-image.jpg"],
     },
-    alternates: {
-      canonical: `https://www.medoqa.com/blog/${params.slug}`,
-    },
+    alternates: { canonical: `https://www.medoqa.com/blog/${params.slug}` },
   };
 }
 
@@ -78,7 +75,6 @@ export default async function BlogYaziSayfasi({ params }: { params: { slug: stri
     "mainEntityOfPage": { "@type": "WebPage", "@id": `https://www.medoqa.com/blog/${params.slug}` }
   };
 
-  // Google için SSR içerik
   const icerikMetni = (yazi.icerik_en || yazi.icerik_tr || "").replace(/\\n/g, " ");
 
   return (
@@ -87,7 +83,6 @@ export default async function BlogYaziSayfasi({ params }: { params: { slug: stri
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
-      {/* Google bu kısmı okur */}
       <div style={{ position: "absolute", left: "-9999px", width: "1px", height: "1px", overflow: "hidden" }}>
         <h1>{yazi.baslik_en || yazi.baslik_tr}</h1>
         <p>{yazi.ozet_en || yazi.ozet_tr}</p>
@@ -98,7 +93,6 @@ export default async function BlogYaziSayfasi({ params }: { params: { slug: stri
           ))}
         </nav>
       </div>
-      {/* Dil desteği için client component */}
       <BlogIcerikIstemci yazi={yazi} digerYazilar={digerYazilar || []} />
     </>
   );
