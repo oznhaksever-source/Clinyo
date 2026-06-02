@@ -57,9 +57,6 @@ export default function BlogPage() {
               style={{ background: "#fff", borderRadius: "20px", border: "1px solid #e8e6ff", overflow: "hidden", textDecoration: "none", display: "block" }}
               onMouseEnter={e => (e.currentTarget as HTMLElement).style.borderColor = "#534AB7"}
               onMouseLeave={e => (e.currentTarget as HTMLElement).style.borderColor = "#e8e6ff"}>
-                <div style={{ height: "200px", overflow: "hidden" }}>
-                </div>
-              )}
               <div style={{ padding: "28px 32px" }}>
                 <div style={{ display: "flex", gap: "12px", marginBottom: "10px", alignItems: "center" }}>
                   {yazi.emoji && <span style={{ fontSize: "28px" }}>{yazi.emoji}</span>}
