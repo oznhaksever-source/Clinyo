@@ -18,11 +18,11 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "Medoqa - Health Tourism Platform | Dental, Hair Transplant, Eye Surgery Turkey",
-  description: "Find the best clinics in Turkey for dental treatment, hair transplant, eye surgery and plastic surgery. Get free quotes, compare and choose the best. Escrow payment protection.",
+  description: "Find the best clinics in Turkey for dental treatment, hair transplant, eye surgery and plastic surgery. Get free quotes, compare verified clinics and choose the best.",
   keywords: "health tourism turkey, dental implant turkey, hair transplant istanbul, eye surgery turkey, medical tourism, zirconia crown, plastic surgery turkey",
   openGraph: {
     title: "Medoqa - Health Tourism Platform Turkey",
-    description: "Verified clinics in Turkey for dental, hair transplant, eye surgery and more. Free quotes, escrow payment, multilingual support.",
+    description: "Verified clinics in Turkey for dental, hair transplant, eye surgery and more. Free quotes, transparent pricing, multilingual support.",
     url: "https://www.medoqa.com",
     siteName: "Medoqa",
     locale: "en_US",
@@ -32,7 +32,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "Medoqa - Health Tourism Platform Turkey",
-    description: "Verified clinics for dental, hair transplant, eye surgery in Turkey. Free quotes, escrow payment protection.",
+    description: "Verified clinics for dental, hair transplant, eye surgery in Turkey. Free quotes, transparent pricing, verified clinic network.",
     images: ["https://www.medoqa.com/og-image.jpg"],
   },
   robots: {
