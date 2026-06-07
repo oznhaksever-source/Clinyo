@@ -3,12 +3,13 @@ import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import BlogIcerikIstemci from "./BlogIcerikIstemci";
 
-export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
+  const { slug } = await params;
   const supabase = await createClient();
   const { data: yazi } = await supabase
     .from("blog_yazilari")
     .select("baslik_en, baslik_tr, ozet_en, ozet_tr")
-    .eq("slug", params.slug)
+    .eq("slug", slug)
     .eq("yayin", true)
     .single();
 
@@ -22,7 +23,7 @@ export async function generateMetadata({ params }: { params: { slug: string } })
     openGraph: {
       title: `${baslik} | Medoqa`,
       description: ozet,
-      url: `https://www.medoqa.com/blog/${params.slug}`,
+      url: `https://www.medoqa.com/blog/${slug}`,
       siteName: "Medoqa",
       locale: "en_US",
       type: "article",
@@ -34,17 +35,18 @@ export async function generateMetadata({ params }: { params: { slug: string } })
       description: ozet,
       images: ["https://www.medoqa.com/og-image.jpg"],
     },
-    alternates: { canonical: `https://www.medoqa.com/blog/${params.slug}` },
+    alternates: { canonical: `https://www.medoqa.com/blog/${slug}` },
   };
 }
 
-export default async function BlogYaziSayfasi({ params }: { params: { slug: string } }) {
+export default async function BlogYaziSayfasi({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
   const supabase = await createClient();
 
   const { data: yazi } = await supabase
     .from("blog_yazilari")
     .select("*")
-    .eq("slug", params.slug)
+    .eq("slug", slug)
     .eq("yayin", true)
     .single();
 
@@ -54,7 +56,7 @@ export default async function BlogYaziSayfasi({ params }: { params: { slug: stri
     .from("blog_yazilari")
     .select("slug, emoji, baslik_tr, baslik_en, baslik_de, baslik_ar, baslik_ru, baslik_fr, tarih")
     .eq("yayin", true)
-    .neq("slug", params.slug)
+    .neq("slug", slug)
     .limit(3);
 
   const jsonLd = {
@@ -70,9 +72,9 @@ export default async function BlogYaziSayfasi({ params }: { params: { slug: stri
       "name": "Medoqa",
       "logo": { "@type": "ImageObject", "url": "https://www.medoqa.com/icon.png" }
     },
-    "url": `https://www.medoqa.com/blog/${params.slug}`,
+    "url": `https://www.medoqa.com/blog/${slug}`,
     "image": "https://www.medoqa.com/og-image.jpg",
-    "mainEntityOfPage": { "@type": "WebPage", "@id": `https://www.medoqa.com/blog/${params.slug}` }
+    "mainEntityOfPage": { "@type": "WebPage", "@id": `https://www.medoqa.com/blog/${slug}` }
   };
 
   const icerikMetni = (yazi.icerik_en || yazi.icerik_tr || "").replace(/\\n/g, " ");
